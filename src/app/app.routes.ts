@@ -9,7 +9,7 @@ export const routes: Routes = [
     children: [
       {
         path: '',
-        redirectTo: '/  dashboard',
+        redirectTo: '/dashboard',
         pathMatch: 'full',
       },
       {
@@ -39,7 +39,49 @@ export const routes: Routes = [
         path: 'users',
         loadChildren: () =>
           import('./pages/users/users.routes').then((m) => m.UserRoutes),
-      }
+      },
+      {
+        path: 'gestion-institucional',
+        children: [
+          { path: '**', redirectTo: '/dashboard' }
+        ]
+      },
+      {
+        path: 'gestion-territorial',
+        children: [
+          {
+            path: 'mapa',
+            loadChildren: () =>
+              import('./pages/mapa-territorial/mapa-territorial.routes')
+                .then((m) => m.MapaTerritorialRoutes),
+          },
+          { path: '**', redirectTo: '/dashboard' }
+        ]
+      },
+      {
+        path: 'anotaciones',
+        children: [
+          { path: '**', redirectTo: '/dashboard' }
+        ]
+      },
+      {
+        path: 'monitoreo',
+        children: [
+          { path: '**', redirectTo: '/dashboard' }
+        ]
+      },
+      {
+        path: 'reportes',
+        children: [
+          { path: '**', redirectTo: '/dashboard' }
+        ]
+      },
+      {
+        path: 'cuenta',
+        children: [
+          { path: '**', redirectTo: '/dashboard' }
+        ]
+      },
     ],
   },
   {

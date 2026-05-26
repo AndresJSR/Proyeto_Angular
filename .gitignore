@@ -46,3 +46,6 @@ project-structure.ps1
 project-structure.js
 run-structure.bat
 STRUCTURE-SCRIPT-README.md
+
+
+.angular/cache

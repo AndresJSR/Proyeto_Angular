@@ -1,2 +1,6 @@
 @use "sidebar";
 @use "header";
+
+.pageWrapper:has(app-mapa-territorial) {
+	padding: 0 !important;
+}
