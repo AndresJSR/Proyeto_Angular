@@ -1,0 +1,23 @@
+<div class="mapa-layout">
+  <!-- Panel izquierdo: filtros CU-14 -->
+  <aside class="panel-izq">
+    <app-filtros-panel />
+  </aside>
+
+  <!-- Mapa central -->
+  <main class="mapa-centro">
+    <div id="map"></div>
+
+    @if (!filtered().length) {
+      <!-- CU-14 flujo 6a -->
+      <div class="mapa-empty">
+        <span>No annotations found for the selected filters</span>
+      </div>
+    }
+  </main>
+
+  <!-- Panel derecho: detalle anotación CU-14 paso 10 -->
+  <aside class="panel-der">
+    <app-anotacion-detalle [annotation]="selected()" />
+  </aside>
+</div>

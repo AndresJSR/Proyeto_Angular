@@ -9,7 +9,7 @@ export const routes: Routes = [
     children: [
       {
         path: '',
-        redirectTo: '/dashboard',
+        redirectTo: '/  dashboard',
         pathMatch: 'full',
       },
       {
@@ -28,6 +28,12 @@ export const routes: Routes = [
         path: 'extra',
         loadChildren: () =>
           import('./pages/extra/extra.routes').then((m) => m.ExtraRoutes),
+      },
+      {
+        path: 'mapa',
+        loadChildren: () =>
+          import('./pages/mapa-territorial/mapa-territorial.routes')
+            .then(m => m.MapaTerritorialRoutes)
       },
       {
         path: 'users',

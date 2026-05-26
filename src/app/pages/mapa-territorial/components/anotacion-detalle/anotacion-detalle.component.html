@@ -1,0 +1,16 @@
+@if (annotation()) {
+  <div class="detalle-panel">
+    <h3>Annotation detail</h3>
+    <p class="detalle-desc">{{ annotation()!.description }}</p>
+    <div class="detalle-meta">
+      <span><strong>Status:</strong> {{ annotation()!.status }}</span>
+      <span><strong>Date:</strong> {{ annotation()!.registration_date | date:'short' }}</span>
+      <span><strong>Lat:</strong> {{ annotation()!.latitude }}</span>
+      <span><strong>Lng:</strong> {{ annotation()!.longitude }}</span>
+    </div>
+  </div>
+} @else {
+  <div class="detalle-empty">
+    <p>Click a marker to see details</p>
+  </div>
+}
