@@ -66,9 +66,9 @@ export const routes: Routes = [
       },
       {
         path: 'anotaciones',
-        children: [
-          { path: '**', redirectTo: '/dashboard' }
-        ]
+        loadChildren: () =>
+          import('./pages/anotaciones/anotaciones.routes')
+            .then((m) => m.AnotacionesRoutes),
       },
       {
         path: 'monitoreo',

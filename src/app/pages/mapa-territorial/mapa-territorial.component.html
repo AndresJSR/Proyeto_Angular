@@ -16,7 +16,7 @@
       <app-tracking-panel (officialsUpdate)="onOfficialsUpdate($event)" />
     } @else if (mode() === 'demarcacion') {
       <app-demarcacion-panel
-        #demarcacionPanel
+        #demarcacionPanelRef
         (barrioSeleccionado)="onBarrioSeleccionado($event)"
         (guardado)="recargarPoligono()" />
       @if (barrioActivo()) {
@@ -27,8 +27,8 @@
           </button>
           <button mat-flat-button color="primary" class="flex-1"
             (click)="savePolygon()"
-            [disabled]="demarcacionPanel.saving() || drawCoords().length < 3">
-            {{ demarcacionPanel.saving() ? 'Guardando...' : 'Guardar' }}
+            [disabled]="demarcacionPanel()?.saving() || drawCoords().length < 3">
+            {{ demarcacionPanel()?.saving() ? 'Guardando...' : 'Guardar' }}
           </button>
         </div>
       }
@@ -39,6 +39,15 @@
 
   <main class="mapa-centro">
     <div id="map"></div>
+
+    @if (showForm()) {
+      <div class="form-overlay">
+        <app-anotacion-form
+          [coords]="formCoords()"
+          (closed)="showForm.set(false)"
+          (saved)="showForm.set(false)" />
+      </div>
+    }
 
     @if (loading()) {
       <div class="mapa-loading">Cargando anotaciones...</div>

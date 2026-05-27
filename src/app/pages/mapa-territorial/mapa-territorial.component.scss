@@ -49,6 +49,20 @@
   }
 }
 
+.form-overlay {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  width: 340px;
+  max-height: calc(100% - 2rem);
+  overflow-y: auto;
+  background: #fff;
+  border-radius: 8px;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+  z-index: 1000;
+  padding: 1rem;
+}
+
 .mapa-loading, .mapa-empty {
   position: absolute;
   bottom: 2rem;

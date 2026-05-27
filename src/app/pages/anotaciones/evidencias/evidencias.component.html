@@ -1,0 +1,95 @@
+<p>evidencias works!</p>
+<mat-card class="cardWithShadow">
+  <mat-card-content>
+    <mat-card-title class="mb-4">Evidencias fotográficas</mat-card-title>
+
+    <div class="evidencias-layout">
+
+      <!-- Lista de anotaciones -->
+      <aside class="ann-list-panel">
+        <mat-form-field appearance="outline" class="w-full">
+          <mat-label>Buscar anotación</mat-label>
+          <input matInput [(ngModel)]="searchText" placeholder="Descripción o ID" />
+          <mat-icon matSuffix>search</mat-icon>
+        </mat-form-field>
+
+        @if (loading()) {
+          <p class="hint">Cargando...</p>
+        }
+
+        @for (a of filteredAnnotations; track a.id_annotation) {
+          <div class="ann-item"
+            [class.active]="selectedAnnotation()?.id_annotation === a.id_annotation"
+            (click)="selectAnnotation(a)">
+            <div class="ann-header">
+              <mat-icon class="loc-icon">location_on</mat-icon>
+              <span class="ann-id">#{{ a.id_annotation }}</span>
+              <span class="ann-date">{{ a.registration_date | date:'shortDate' }}</span>
+            </div>
+            <p class="ann-desc">{{ a.description }}</p>
+          </div>
+        }
+
+        @if (!loading() && !filteredAnnotations.length) {
+          <p class="empty-msg">Sin resultados</p>
+        }
+      </aside>
+
+      <!-- Panel de evidencias -->
+      <div class="evidencias-panel">
+        @if (!selectedAnnotation()) {
+          <div class="empty-state">
+            <mat-icon>photo_library</mat-icon>
+            <p>Selecciona una anotación para ver sus evidencias</p>
+          </div>
+        } @else {
+          <div class="evidencias-header">
+            <h4>Anotación #{{ selectedAnnotation()!.id_annotation }}</h4>
+            <p class="ann-desc-detail">{{ selectedAnnotation()!.description }}</p>
+
+            <label class="upload-btn">
+              <input type="file" multiple accept="image/*" (change)="onFiles($event)" hidden />
+              <button mat-flat-button color="primary" [disabled]="uploading()"
+                onclick="this.previousElementSibling.click()">
+                <mat-icon>upload</mat-icon>
+                {{ uploading() ? 'Subiendo...' : 'Subir fotos' }}
+              </button>
+            </label>
+          </div>
+
+          @if (loadingEvidences()) {
+            <p class="hint">Cargando evidencias...</p>
+          }
+
+          @if (!loadingEvidences() && !evidences().length) {
+            <div class="empty-state small">
+              <mat-icon>no_photography</mat-icon>
+              <p>Sin evidencias. Sube la primera foto.</p>
+            </div>
+          }
+
+          <div class="evidencias-grid">
+            @for (ev of evidences(); track ev.id_evidence) {
+              <div class="ev-card">
+                <img [src]="apiUrl + '/api/images/' + ev.file_url"
+                     [alt]="'Evidencia ' + ev.id_evidence"
+                     (error)="$any($event.target).src='assets/images/backgrounds/login-bg.svg'" />
+                <div class="ev-actions">
+                  <a [href]="apiUrl + '/api/images/' + ev.file_url"
+                     target="_blank" mat-icon-button>
+                    <mat-icon>open_in_new</mat-icon>
+                  </a>
+                  <button mat-icon-button color="warn"
+                    (click)="deleteEvidence(ev.id_evidence)">
+                    <mat-icon>delete</mat-icon>
+                  </button>
+                </div>
+              </div>
+            }
+          </div>
+        }
+      </div>
+
+    </div>
+  </mat-card-content>
+</mat-card>

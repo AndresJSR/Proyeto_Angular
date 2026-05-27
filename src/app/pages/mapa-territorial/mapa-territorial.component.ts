@@ -6,6 +6,7 @@ import { CommonModule } from '@angular/common';
 import * as L from 'leaflet';
 import 'leaflet.markercluster';
 import { AnnotationsService } from './services/annotations.service';
+import { AnotacionFormComponent } from './components/anotacion-form/anotacion-form.component';
 import { FiltrosPanelComponent } from './components/filtros-panel/filtros-panel.component';
 import { DemarcacionPanelComponent } from './components/demarcacion-panel/demarcacion-panel.component';
 import { TrackingPanelComponent } from './components/tracking-panel/tracking-panel.component';
@@ -25,6 +26,7 @@ import { MaterialModule } from '../../material.module';
   imports: [
     CommonModule,
     MaterialModule,
+    AnotacionFormComponent,
     FiltrosPanelComponent,
     DemarcacionPanelComponent,
     TrackingPanelComponent,
@@ -43,9 +45,11 @@ export class MapaTerritorialComponent implements OnInit, AfterViewInit {
   loading = this.annSvc.loading;
   selected = signal<Annotation | null>(null);
   mode = signal<'mapa' | 'demarcacion' | 'tracking'>('mapa');
-  demarcacionPanel = viewChild<DemarcacionPanelComponent>('demarcacionPanel');
+  demarcacionPanel = viewChild<DemarcacionPanelComponent>('demarcacionPanelRef');
   barrioActivo = signal<Barrio | null>(null);
   drawCoords = signal<[number, number][]>([]);
+  formCoords = signal<[number, number] | null>(null);
+  showForm = signal(false);
 
   private map!: L.Map;
   private clusterGroup!: L.MarkerClusterGroup;
@@ -94,6 +98,17 @@ export class MapaTerritorialComponent implements OnInit, AfterViewInit {
     });
     this.map.addLayer(this.clusterGroup);
 
+    this.map.on('click', (e: L.LeafletMouseEvent) => {
+      if (this.mode() === 'mapa') {
+        this.formCoords.set([e.latlng.lat, e.latlng.lng]);
+        this.showForm.set(true);
+      } else if (this.mode() === 'demarcacion' && this.barrioActivo()) {
+        const coords = [...this.drawCoords(), [e.latlng.lat, e.latlng.lng] as [number, number]];
+        this.drawCoords.set(coords);
+        this.redrawPolygon();
+      }
+    });
+
     this.map.on('moveend', () => this.annSvc.loadMore());
 
     this.filtered$.subscribe(annotations => this.renderMarkers(annotations));
@@ -105,7 +120,6 @@ export class MapaTerritorialComponent implements OnInit, AfterViewInit {
     this.clearDrawLayers();
 
     if (!b) {
-      this.map.off('click');
       return;
     }
 
@@ -184,6 +198,11 @@ export class MapaTerritorialComponent implements OnInit, AfterViewInit {
   setMode(mode: 'mapa' | 'demarcacion' | 'tracking') {
     this.mode.set(mode);
 
+    if (mode !== 'mapa') {
+      this.showForm.set(false);
+      this.formCoords.set(null);
+    }
+
     if (mode === 'demarcacion') {
       if (this.barrioActivo()) {
         this.enableDrawMode();
@@ -194,7 +213,6 @@ export class MapaTerritorialComponent implements OnInit, AfterViewInit {
     this.barrioActivo.set(null);
     this.drawCoords.set([]);
     this.clearDrawLayers();
-    this.map.off('click');
 
     if (mode !== 'tracking') {
       this.officialMarkers.forEach(m => this.map.removeLayer(m));
@@ -203,15 +221,7 @@ export class MapaTerritorialComponent implements OnInit, AfterViewInit {
   }
 
   private enableDrawMode() {
-    this.map.off('click');
     if (!this.barrioActivo()) return;
-
-    // CU-09 paso 3: clic agrega punto
-    this.map.on('click', (e: L.LeafletMouseEvent) => {
-      const coords = [...this.drawCoords(), [e.latlng.lat, e.latlng.lng] as [number, number]];
-      this.drawCoords.set(coords);
-      this.redrawPolygon();
-    });
   }
 
   public clearDrawLayers() {

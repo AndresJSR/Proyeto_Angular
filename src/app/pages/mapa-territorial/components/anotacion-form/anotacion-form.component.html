@@ -1,0 +1,51 @@
+<div class="anotacion-form">
+  <h3>Nueva anotación</h3>
+
+  @if (coords()) {
+    <p class="coords-hint">
+      📍 {{ coords()![0] | number:'1.4-4' }}, {{ coords()![1] | number:'1.4-4' }}
+    </p>
+  }
+
+  @if (outOfBounds()) {
+    <div class="alert-warning">
+      ⚠️ El punto está fuera de un barrio demarcado.
+      <button mat-button color="warn" (click)="save(true)">Guardar de todas formas</button>
+    </div>
+  }
+
+  <mat-form-field appearance="outline" class="w-full">
+    <mat-label>Descripción</mat-label>
+    <textarea matInput [(ngModel)]="description" rows="3"></textarea>
+  </mat-form-field>
+
+  <p class="section-label">Categorías</p>
+  @for (cat of categories(); track cat.id_category) {
+    <mat-checkbox
+      [checked]="selectedCategories.has(cat.id_category)"
+      (change)="toggleCat(cat.id_category)">
+      {{ cat.name }}
+    </mat-checkbox>
+  }
+
+  <p class="section-label">Entidades interesadas</p>
+  @for (ent of entities(); track ent.id_entity) {
+    <mat-checkbox
+      [checked]="selectedEntities.has(ent.id_entity)"
+      (change)="toggleEnt(ent.id_entity)">
+      {{ ent.name }}
+    </mat-checkbox>
+  }
+
+  <p class="section-label">Fotografías</p>
+  <input type="file" multiple accept="image/*" (change)="onFiles($event)" />
+
+  <div class="form-actions">
+    <button mat-stroked-button (click)="closed.emit()">Cancelar</button>
+    <button mat-flat-button color="primary"
+      [disabled]="saving() || !description.trim() || outOfBounds()"
+      (click)="save()">
+      {{ saving() ? 'Guardando...' : 'Guardar' }}
+    </button>
+  </div>
+</div>
