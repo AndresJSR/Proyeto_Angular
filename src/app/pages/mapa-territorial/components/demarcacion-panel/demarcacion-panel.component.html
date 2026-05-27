@@ -1,0 +1,18 @@
+<div class="demarcacion-panel">
+  <h3 class="panel-title">Demarcar barrio</h3>
+
+  <mat-selection-list [multiple]="false">
+    @for (b of barrios(); track b.id_neighborhood) {
+      <mat-list-option
+        [value]="b"
+        [selected]="selected()?.id_neighborhood === b.id_neighborhood"
+        (click)="select(b)">
+        {{ b.name }}
+      </mat-list-option>
+    }
+  </mat-selection-list>
+
+  @if (selected()) {
+    <p class="hint">Haz clic en el mapa para agregar puntos al polígono.</p>
+  }
+</div>

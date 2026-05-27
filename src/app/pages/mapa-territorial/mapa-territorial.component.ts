@@ -1,35 +1,52 @@
 import {
   Component, inject, OnInit, signal,
-  AfterViewInit, DestroyRef
+  AfterViewInit, DestroyRef, viewChild
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import * as L from 'leaflet';
 import 'leaflet.markercluster';
 import { AnnotationsService } from './services/annotations.service';
 import { FiltrosPanelComponent } from './components/filtros-panel/filtros-panel.component';
+import { DemarcacionPanelComponent } from './components/demarcacion-panel/demarcacion-panel.component';
 import { AnotacionDetalleComponent } from './components/anotacion-detalle/anotacion-detalle.component';
 import { Annotation } from './models/annotation.model';
+import { Barrio } from './models/barrio.model';
+import { BarriosService } from './services/barrios.service';
 import { toObservable, takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Observable } from 'rxjs';
+import { MaterialModule } from '../../material.module';
 
 @Component({
   selector: 'app-mapa-territorial',
   standalone: true,
-  imports: [CommonModule, FiltrosPanelComponent, AnotacionDetalleComponent],
+  imports: [
+    CommonModule,
+    MaterialModule,
+    FiltrosPanelComponent,
+    DemarcacionPanelComponent,
+    AnotacionDetalleComponent,
+  ],
   templateUrl: './mapa-territorial.component.html',
   styleUrl: './mapa-territorial.component.scss'
 })
 export class MapaTerritorialComponent implements OnInit, AfterViewInit {
   private annSvc = inject(AnnotationsService);
+  private barriosSvc = inject(BarriosService);
   private destroyRef = inject(DestroyRef);
 
   filtered = this.annSvc.filtered;
   loading = this.annSvc.loading;
   selected = signal<Annotation | null>(null);
+  mode = signal<'mapa' | 'demarcacion'>('mapa');
+  demarcacionPanel = viewChild<DemarcacionPanelComponent>('demarcacionPanel');
+  barrioActivo = signal<Barrio | null>(null);
+  drawCoords = signal<[number, number][]>([]);
 
   private map!: L.Map;
   private clusterGroup!: L.MarkerClusterGroup;
   private filtered$: Observable<Annotation[]>;
+  private drawLayer?: L.Polygon;
+  private drawMarkers: L.Marker[] = [];
 
   constructor() {
     // toObservable debe crearse en un contexto de inyeccion.
@@ -75,6 +92,123 @@ export class MapaTerritorialComponent implements OnInit, AfterViewInit {
 
     this.filtered$.subscribe(annotations => this.renderMarkers(annotations));
   }
+
+  onBarrioSeleccionado(b: Barrio | null) {
+    this.barrioActivo.set(b);
+    this.drawCoords.set([]);
+    this.clearDrawLayers();
+
+    if (!b) {
+      this.map.off('click');
+      return;
+    }
+
+    // CU-10 paso 2: cargar puntos existentes
+    this.barriosSvc.getPointsByNeighborhood(b.id_neighborhood).subscribe({
+      next: (res: any) => {
+        const items = Array.isArray(res) ? res : (res.items ?? []);
+        if (items.length) {
+          const sorted = [...items].sort((a: any, b: any) => a.order - b.order);
+          this.drawCoords.set(sorted.map((p: any) => [p.latitude, p.longitude] as [number, number]));
+          this.redrawPolygon();
+          // Centrar mapa en el polígono
+          if (this.drawLayer) {
+            this.map.fitBounds(this.drawLayer.getBounds(), { padding: [40, 40] });
+          }
+        }
+        this.enableDrawMode();
+      },
+      error: () => this.enableDrawMode()
+    });
+  }
+
+  savePolygon() {
+    this.demarcacionPanel()?.save(this.drawCoords());
+  }
+
+  recargarPoligono() {
+    const b = this.barrioActivo();
+    if (!b) return;
+
+    this.barriosSvc.getPointsByNeighborhood(b.id_neighborhood).subscribe({
+      next: (res: any[]) => {
+        const boundary = res
+          .filter(p => p.point_type === 'boundary' && p.id_neighborhood === b.id_neighborhood)
+          .sort((a, b) => a.order - b.order);
+        this.drawCoords.set(boundary.map(p => [p.latitude, p.longitude] as [number, number]));
+        this.redrawPolygon();
+        if (this.drawLayer) {
+          this.map.fitBounds(this.drawLayer.getBounds(), { padding: [40, 40] });
+        }
+      }
+    });
+  }
+
+  setMode(mode: 'mapa' | 'demarcacion') {
+    this.mode.set(mode);
+
+    if (mode === 'demarcacion') {
+      if (this.barrioActivo()) {
+        this.enableDrawMode();
+      }
+      return;
+    }
+
+    this.barrioActivo.set(null);
+    this.drawCoords.set([]);
+    this.clearDrawLayers();
+    this.map.off('click');
+  }
+
+  private enableDrawMode() {
+    this.map.off('click');
+    if (!this.barrioActivo()) return;
+
+    // CU-09 paso 3: clic agrega punto
+    this.map.on('click', (e: L.LeafletMouseEvent) => {
+      const coords = [...this.drawCoords(), [e.latlng.lat, e.latlng.lng] as [number, number]];
+      this.drawCoords.set(coords);
+      this.redrawPolygon();
+    });
+  }
+
+  private clearDrawLayers() {
+    if (this.drawLayer) {
+      this.map.removeLayer(this.drawLayer);
+      this.drawLayer = undefined;
+    }
+    this.drawMarkers.forEach(marker => this.map.removeLayer(marker));
+    this.drawMarkers = [];
+  }
+
+  private redrawPolygon() {
+    this.clearDrawLayers();
+
+    const coords = this.drawCoords();
+    if (!coords.length) return;
+
+    this.drawLayer = L.polygon(coords, { color: '#1976d2', weight: 2 }).addTo(this.map);
+
+    // Marcadores arrastrables (flujo 3a)
+    coords.forEach((c, i) => {
+      const marker = L.marker(c, { draggable: true })
+        .addTo(this.map)
+        .on('drag', (e: L.LeafletEvent) => {
+          const dragEvent = e as L.LeafletMouseEvent;
+          const updated = [...this.drawCoords()];
+          updated[i] = [dragEvent.latlng.lat, dragEvent.latlng.lng];
+          this.drawCoords.set(updated);
+          this.redrawPolygon();
+        })
+        .on('contextmenu', () => {
+          const updated = this.drawCoords().filter((_, idx) => idx !== i);
+          this.drawCoords.set(updated);
+          this.redrawPolygon();
+        });
+      this.drawMarkers.push(marker);
+    });
+  }
+
   private renderMarkers(annotations: Annotation[]) {
     this.clusterGroup.clearLayers();
     if (!annotations.length) return;

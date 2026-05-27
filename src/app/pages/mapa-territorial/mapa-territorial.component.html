@@ -1,6 +1,27 @@
+<div class="mapa-toolbar">
+  <button mat-stroked-button (click)="setMode('mapa')" [color]="mode() === 'mapa' ? 'primary' : ''">
+    Mapa
+  </button>
+  <button mat-stroked-button (click)="setMode('demarcacion')" [color]="mode() === 'demarcacion' ? 'primary' : ''">
+    Demarcación
+  </button>
+</div>
+
 <div class="mapa-layout">
   <aside class="panel-izq">
-    <app-filtros-panel />
+    @if (mode() === 'demarcacion') {
+      <app-demarcacion-panel
+        #demarcacionPanel
+        (barrioSeleccionado)="onBarrioSeleccionado($event)"
+        (guardado)="recargarPoligono()" />
+      @if (barrioActivo()) {
+        <button mat-flat-button color="primary" class="w-full mt-2" (click)="savePolygon()">
+          Guardar poligono
+        </button>
+      }
+    } @else {
+      <app-filtros-panel />
+    }
   </aside>
 
   <main class="mapa-centro">

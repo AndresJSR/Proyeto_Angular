@@ -50,6 +50,12 @@ export const routes: Routes = [
         path: 'gestion-territorial',
         children: [
           {
+            path: 'demarcacion',
+            loadChildren: () =>
+              import('./pages/mapa-territorial/mapa-territorial.routes')
+                .then((m) => m.MapaTerritorialRoutes),
+          },
+          {
             path: 'mapa',
             loadChildren: () =>
               import('./pages/mapa-territorial/mapa-territorial.routes')
