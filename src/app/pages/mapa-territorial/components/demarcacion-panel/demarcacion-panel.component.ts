@@ -32,6 +32,8 @@ export class DemarcacionPanelComponent implements OnInit {
   }
 
   save(coords: [number, number][]) {
+    if (coords.length < 3) return;
+
     const b = this.selected();
     if (!b) return;
 

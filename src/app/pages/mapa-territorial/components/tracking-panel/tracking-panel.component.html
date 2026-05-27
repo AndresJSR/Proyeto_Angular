@@ -1,0 +1,27 @@
+<div class="tracking-panel">
+  <h3 class="panel-title">Funcionarios activos</h3>
+
+  <mat-form-field appearance="outline" class="w-full">
+    <mat-label>Filtrar por entidad</mat-label>
+    <mat-select (selectionChange)="filterByEntity($event.value)" [value]="selectedEntity()">
+      <mat-option [value]="null">Todas</mat-option>
+      @for (e of entities(); track e.id) {
+        <mat-option [value]="e.id">{{ e.name }}</mat-option>
+      }
+    </mat-select>
+  </mat-form-field>
+
+  @if (noResults()) {
+    <p class="empty-msg">No hay funcionarios activos para esta entidad</p>
+  }
+
+  @for (o of filtered(); track o.id_official) {
+    <div class="official-item" [class.inactive]="!o.gps_active">
+      <span class="dot" [class.active]="o.gps_active"></span>
+      <div>
+        <strong>{{ o.name }}</strong>
+        <small>{{ o.last_gps_update | date:'short' }}</small>
+      </div>
+    </div>
+  }
+</div>

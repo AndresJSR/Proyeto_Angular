@@ -5,19 +5,32 @@
   <button mat-stroked-button (click)="setMode('demarcacion')" [color]="mode() === 'demarcacion' ? 'primary' : ''">
     Demarcación
   </button>
+  <button mat-stroked-button (click)="setMode('tracking')" [color]="mode() === 'tracking' ? 'primary' : ''">
+    Tiempo Real
+  </button>
 </div>
 
 <div class="mapa-layout">
   <aside class="panel-izq">
-    @if (mode() === 'demarcacion') {
+    @if (mode() === 'tracking') {
+      <app-tracking-panel (officialsUpdate)="onOfficialsUpdate($event)" />
+    } @else if (mode() === 'demarcacion') {
       <app-demarcacion-panel
         #demarcacionPanel
         (barrioSeleccionado)="onBarrioSeleccionado($event)"
         (guardado)="recargarPoligono()" />
       @if (barrioActivo()) {
-        <button mat-flat-button color="primary" class="w-full mt-2" (click)="savePolygon()">
-          Guardar poligono
-        </button>
+        <div class="flex gap-2 mt-2">
+          <button mat-stroked-button color="warn" class="flex-1"
+            (click)="drawCoords.set([]); clearDrawLayers()">
+            Limpiar
+          </button>
+          <button mat-flat-button color="primary" class="flex-1"
+            (click)="savePolygon()"
+            [disabled]="demarcacionPanel.saving() || drawCoords().length < 3">
+            {{ demarcacionPanel.saving() ? 'Guardando...' : 'Guardar' }}
+          </button>
+        </div>
       }
     } @else {
       <app-filtros-panel />
