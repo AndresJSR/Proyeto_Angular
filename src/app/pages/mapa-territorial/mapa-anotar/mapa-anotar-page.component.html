@@ -1,27 +1,58 @@
 <div class="anotar-layout">
-  <header class="anotar-header">
-    <div>
-      <h1>Crear anotación</h1>
-      <p>Haz clic en el mapa para agregar una anotación en el territorio.</p>
-    </div>
-
-    <button mat-stroked-button type="button">
-      <mat-icon>help_outline</mat-icon>
-      Guía de uso
-    </button>
-  </header>
-
   <div class="anotar-body">
+
     <div class="map-panel">
       <app-mapa-base
         (mapReady)="onMapReady($event)"
         (mapClick)="onMapClick($event)" />
 
-      <app-coords-tooltip [coords]="formCoords()" />
+      <!-- HOVER CARD -->
+      @if (hoverAnnotation() && hoverPos()) {
+        <div
+          class="hover-card"
+          [style.left.px]="hoverPos()!.x + 16"
+          [style.top.px]="hoverPos()!.y - 80"
+          (mouseenter)="$any(null)"
+          (mouseleave)="hoverAnnotation.set(null); hoverPos.set(null); hoverEvidence.set(null)">
+
+          <!-- imagen -->
+          @if (hoverEvidence()) {
+            <div class="hover-card__img-wrap">
+              <img
+                class="hover-card__img"
+                [src]="resolveImageUrl(hoverEvidence()!.file_url)"
+                [alt]="hoverAnnotation()!.description"
+                (error)="$any($event.target).style.display='none'" />
+            </div>
+          } @else {
+            <div class="hover-card__img-placeholder">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"
+                width="28" height="28">
+                <path d="M3 9l4-4 4 4 4-5 4 5M3 20h18V4H3v16z"
+                  stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            </div>
+          }
+
+          <div class="hover-card__body">
+            <p class="hover-card__title">
+              {{ hoverAnnotation()!.description | slice:0:70 }}
+              @if (hoverAnnotation()!.description.length > 70) { ... }
+            </p>
+            <span class="hover-card__meta">
+              📍 Barrio {{ hoverAnnotation()!.id_neighborhood }}
+              &nbsp;·&nbsp;
+              {{ hoverAnnotation()!.registration_date | date:'shortDate' }}
+            </span>
+            <span class="hover-card__hint">Click para ver detalle</span>
+          </div>
+        </div>
+      }
     </div>
 
-    @if (showForm()) {
-      <aside class="form-panel">
+    <!-- SIDEBAR FORM -->
+    @if (showForm() && formCoords()) {
+      <aside class="side-panel side-panel--form">
         <app-anotacion-form
           [coords]="formCoords()"
           (saved)="onFormSaved($event)"
@@ -29,10 +60,23 @@
       </aside>
     }
 
-    @if (selectedAnnotation()) {
-      <aside class="form-panel">
-        <app-anotacion-detalle [annotation]="selectedAnnotation()" />
+    <!-- SIDEBAR DETALLE -->
+    @if (sidebarOpen() && selectedAnnotation()) {
+      <aside class="side-panel side-panel--detalle">
+        <div class="side-panel__header">
+          <span class="side-panel__title">Detalle de anotación</span>
+          <button class="side-panel__close" (click)="closeSidebar()" aria-label="Cerrar">
+            <svg viewBox="0 0 20 20" fill="currentColor" width="18" height="18">
+              <path d="M6 6l8 8M14 6l-8 8" stroke="currentColor" stroke-width="2"
+                stroke-linecap="round" fill="none"/>
+            </svg>
+          </button>
+        </div>
+        <div class="side-panel__content">
+          <app-anotacion-detalle [annotation]="selectedAnnotation()" />
+        </div>
       </aside>
     }
+
   </div>
 </div>

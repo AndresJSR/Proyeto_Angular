@@ -5,6 +5,12 @@ import { MaterialModule } from 'src/app/material.module';
 import { Annotation } from '../../models/annotation.model';
 import { VotesService } from '../../services/votes.service';
 import { Vote } from '../../models/vote.model';
+import { EvidencesService } from '../../services/evidences.service';
+import { Evidence } from '../../models/evidence.model';
+import { AnnotationCategoriesService } from '../../services/annotation-categories.service';
+import { CategoriesService } from '../../services/categories.service';
+import { Category } from '../../models/category.model';
+import { environment } from 'src/environments/environment';
 
 @Component({
   selector: 'app-anotacion-detalle',
@@ -15,26 +21,39 @@ import { Vote } from '../../models/vote.model';
 })
 export class AnotacionDetalleComponent implements OnChanges {
   private votesSvc = inject(VotesService);
+  private evidencesSvc = inject(EvidencesService);
+  private annCatSvc = inject(AnnotationCategoriesService);
+  private catSvc = inject(CategoriesService);
+
+  readonly apiUrl = environment.apiUrl;
 
   annotation = input<Annotation | null>(null);
 
   votes = signal<Vote[]>([]);
   avgStars = signal<number>(0);
   existingVote = signal<Vote | null>(null);
+  evidences = signal<Evidence[]>([]);
+  categories = signal<Category[]>([]);
+  selectedImageIndex = signal<number>(0);
 
-  // formulario
   stars = 0;
   comment = '';
   saving = signal(false);
 
-  readonly ID_CITIZEN = 1; // TODO: reemplazar con auth
+  readonly ID_CITIZEN = 1;
+  readonly stars_range = [1, 2, 3, 4, 5];
 
   ngOnChanges() {
     const ann = this.annotation();
     if (!ann) return;
     this.stars = 0;
     this.comment = '';
+    this.evidences.set([]);
+    this.categories.set([]);
+    this.selectedImageIndex.set(0);
     this.loadVotes(ann.id_annotation);
+    this.loadEvidences(ann.id_annotation);
+    this.loadCategories(ann.id_annotation);
   }
 
   private loadVotes(id: number) {
@@ -44,11 +63,35 @@ export class AnotacionDetalleComponent implements OnChanges {
         ? votes.reduce((s, v) => s + v.stars, 0) / votes.length
         : 0;
       this.avgStars.set(Math.round(avg * 10) / 10);
-      // CU-13 flujo 4a: voto existente del ciudadano
       const mine = votes.find(v => v.id_citizen === this.ID_CITIZEN) ?? null;
       this.existingVote.set(mine);
       if (mine) { this.stars = mine.stars; this.comment = mine.comment; }
     });
+  }
+
+  private loadEvidences(id: number) {
+    this.evidencesSvc.getByAnnotation(id).subscribe({
+      next: evs => this.evidences.set(evs ?? []),
+      error: () => this.evidences.set([])
+    });
+  }
+
+  private loadCategories(id: number) {
+    this.annCatSvc.getAll().subscribe(acs => {
+      const catIds = acs.filter(ac => ac.id_annotation === id).map(ac => ac.id_category);
+      if (!catIds.length) return;
+      this.catSvc.getAll().subscribe(cats => {
+        this.categories.set(cats.filter(c => catIds.includes(c.id_category)));
+      });
+    });
+  }
+
+  resolveImageUrl(fileUrl: string): string {
+    if (!fileUrl) return '';
+    if (fileUrl.startsWith('http') || fileUrl.startsWith('data:')) return fileUrl;
+    const cleaned = fileUrl.replace(/^\.?\//, '');
+    if (this.apiUrl?.trim()) return `${this.apiUrl.replace(/\/$/, '')}/api/images/${cleaned}`;
+    return `/api/images/${cleaned}`;
   }
 
   setStars(n: number) { this.stars = n; }
@@ -57,27 +100,33 @@ export class AnotacionDetalleComponent implements OnChanges {
     const ann = this.annotation();
     if (!ann || !this.stars) return;
     this.saving.set(true);
-
     const payload = {
       id_citizen: this.ID_CITIZEN,
       id_annotation: ann.id_annotation,
       stars: this.stars,
       comment: this.comment
     };
-
     const existing = this.existingVote();
     const req$ = existing
       ? this.votesSvc.update(existing.id_vote, payload)
       : this.votesSvc.create(payload);
-
     req$.subscribe({
-      next: () => {
-        this.saving.set(false);
-        this.loadVotes(ann.id_annotation);
-      },
+      next: () => { this.saving.set(false); this.loadVotes(ann.id_annotation); },
       error: () => this.saving.set(false)
     });
   }
 
-  stars_range = [1, 2, 3, 4, 5];
-}
+  getStarColor(index: number): string {
+    return index < Math.round(this.avgStars()) ? '#f59e0b' : '#e2e8f0';
+  }
+
+  getRelativeDate(dateStr: string): string {
+    const diff = Date.now() - new Date(dateStr).getTime();
+    const days = Math.floor(diff / 86400000);
+    if (days === 0) return 'Hoy';
+    if (days === 1) return 'Hace 1 día';
+    if (days < 7) return `Hace ${days} días`;
+    if (days < 30) return `Hace ${Math.floor(days / 7)} semana(s)`;
+    return `Hace ${Math.floor(days / 30)} mes(es)`;
+  }
+} 
