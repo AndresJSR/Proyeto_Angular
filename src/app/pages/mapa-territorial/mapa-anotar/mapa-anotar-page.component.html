@@ -28,5 +28,11 @@
           (closed)="onFormClosed()" />
       </aside>
     }
+
+    @if (selectedAnnotation()) {
+      <aside class="form-panel">
+        <app-anotacion-detalle [annotation]="selectedAnnotation()" />
+      </aside>
+    }
   </div>
 </div>

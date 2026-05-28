@@ -18,6 +18,7 @@ import { AnotacionFormService } from '../../services/anotacion-form.service';
 import { Category } from '../../models/category.model';
 import { Entity } from '../../models/entity.model';
 import { NeighborhoodSearchResult } from '../../models/annotation.model';
+import { environment } from 'src/environments/environment';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 @Component({
@@ -93,16 +94,28 @@ export class AnotacionFormComponent implements OnInit {
       return null;
     }
 
+    // absolute URLs and data URIs — keep
     if (
       imageUrl.startsWith('http://') ||
       imageUrl.startsWith('https://') ||
-      imageUrl.startsWith('data:') ||
-      imageUrl.startsWith('/')
+      imageUrl.startsWith('data:')
     ) {
       return imageUrl;
     }
 
-    return `/${imageUrl.replace(/^\.?\//, '')}`;
+    // static assets inside the app
+    if (imageUrl.startsWith('/assets') || imageUrl.startsWith('assets')) {
+      return imageUrl.startsWith('/') ? imageUrl : `/${imageUrl}`;
+    }
+
+    // If environment.apiUrl is set, build absolute URL against it.
+    const cleaned = imageUrl.replace(/^\.?\//, '');
+    if (environment.apiUrl && environment.apiUrl.trim()) {
+      return `${environment.apiUrl.replace(/\/$/, '')}/${cleaned}`;
+    }
+
+    // Development: proxy static files through `/api/` so the dev server forwards to backend
+    return `/api/${cleaned}`;
   }
 
   onCategoryImageError(categoryId: number) {
