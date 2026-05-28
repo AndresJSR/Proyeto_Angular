@@ -1,61 +1,83 @@
-import { Component, inject, input, output, signal, OnInit } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  DestroyRef,
+  computed,
+  inject,
+  input,
+  output,
+  signal,
+  OnInit,
+} from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { MaterialModule } from 'src/app/material.module';
-import { AnnotationsService } from '../../services/annotations.service';
-import { EvidencesService } from '../../services/evidences.service';
-import { InterestedPartiesService } from '../../services/interested-parties.service';
 import { CategoriesService } from '../../services/categories.service';
 import { EntitiesService } from '../../services/entities.service';
-import { AnnotationCategoriesService } from '../../services/annotation-categories.service';
+import { AnotacionFormService } from '../../services/anotacion-form.service';
 import { Category } from '../../models/category.model';
 import { Entity } from '../../models/entity.model';
-import { forkJoin, of, switchMap } from 'rxjs';
-import { HttpClient } from '@angular/common/http';
-import { environment } from '../../../../../environments/environment';
+import { NeighborhoodSearchResult } from '../../models/annotation.model';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 @Component({
   selector: 'app-anotacion-form',
   standalone: true,
   imports: [CommonModule, FormsModule, MaterialModule],
   templateUrl: './anotacion-form.component.html',
+  styleUrls: ['./anotacion-form.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class AnotacionFormComponent implements OnInit {
-  private annSvc = inject(AnnotationsService);
-  private evidSvc = inject(EvidencesService);
-  private intSvc = inject(InterestedPartiesService);
-  private catSvc = inject(CategoriesService);
-  private entSvc = inject(EntitiesService);
-  private annCatSvc = inject(AnnotationCategoriesService);
-  private http = inject(HttpClient);
+  private readonly destroyRef = inject(DestroyRef);
+  private readonly anotacionFormService = inject(AnotacionFormService);
+  private readonly catSvc = inject(CategoriesService);
+  private readonly entSvc = inject(EntitiesService);
 
   coords = input<[number, number] | null>(null);
   closed = output<void>();
-  saved = output<number>(); // emite id_annotation
+  saved = output<number>();
 
   categories = signal<Category[]>([]);
   entities = signal<Entity[]>([]);
+  categorySearch = signal('');
+  maxFiles = 5;
+  filteredCategories = computed(() =>
+    this.categories().filter(c =>
+      c.name.toLowerCase().includes(this.categorySearch().toLowerCase())
+    )
+  );
+
   selectedCategories = new Set<number>();
   selectedEntities = new Set<number>();
+  selectedEntityIds = signal<number[]>([]);
   files = signal<File[]>([]);
   saving = signal(false);
-  outOfBounds = signal(false);
+  outOfBoundsNeighborhood = signal<NeighborhoodSearchResult | null>(null);
 
   description = '';
-  id_citizen = 1; // TODO: reemplazar con auth
+  id_citizen = 1;
 
   ngOnInit() {
-    this.catSvc.getAll().subscribe(c => this.categories.set(c));
-    this.entSvc.getAll().subscribe(e => this.entities.set(e));
-    // CU-12 flujo 4a: verificar si cae en barrio
+    this.catSvc
+      .getAll()
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe(c => this.categories.set(c));
+
+    this.entSvc
+      .getAll()
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe(e => this.entities.set(e));
+
     const c = this.coords();
     if (c) {
-      this.http.get<any[]>(
-        `${environment.apiUrl}/api/neighborhoods/search?lat=${c[0]}&lng=${c[1]}`
-      ).subscribe({
-        next: res => this.outOfBounds.set(!res?.length),
-        error: () => this.outOfBounds.set(false)
-      });
+      this.anotacionFormService
+        .searchNeighborhood(c[0], c[1])
+        .pipe(takeUntilDestroyed(this.destroyRef))
+        .subscribe({
+          next: res => this.outOfBoundsNeighborhood.set(res?.length ? res[0] : null),
+          error: () => this.outOfBoundsNeighborhood.set(null),
+        });
     }
   }
 
@@ -69,50 +91,84 @@ export class AnotacionFormComponent implements OnInit {
     this.selectedEntities.has(id)
       ? this.selectedEntities.delete(id)
       : this.selectedEntities.add(id);
+
+    this.selectedEntityIds.set([...this.selectedEntities]);
+  }
+
+  onEntitiesSelectionChange(ids: number[] | null) {
+    const nextIds = ids ?? [];
+    this.selectedEntities = new Set(nextIds);
+    this.selectedEntityIds.set(nextIds);
+  }
+
+  onDragOver(event: DragEvent) {
+    event.preventDefault();
+  }
+
+  onDrop(event: DragEvent) {
+    event.preventDefault();
+    const dropped = event.dataTransfer?.files;
+    if (!dropped?.length) {
+      return;
+    }
+
+    const images = Array.from(dropped).filter(file => file.type.startsWith('image/'));
+    const current = this.files();
+    const available = Math.max(this.maxFiles - current.length, 0);
+    this.files.set([...current, ...images.slice(0, available)]);
   }
 
   onFiles(event: Event) {
     const input = event.target as HTMLInputElement;
-    if (input.files) this.files.set(Array.from(input.files));
+    if (!input.files) {
+      return;
+    }
+
+    const selected = Array.from(input.files).filter(file => file.type.startsWith('image/'));
+    const current = this.files();
+    const available = Math.max(this.maxFiles - current.length, 0);
+    this.files.set([...current, ...selected.slice(0, available)]);
+    input.value = '';
   }
 
-  save(forceOutOfBounds = false) {
-    if (this.outOfBounds() && !forceOutOfBounds) return;
+  removeFile(index: number) {
+    this.files.set(this.files().filter((_, i) => i !== index));
+  }
+
+  save() {
     const c = this.coords();
-    if (!c || !this.description.trim()) return;
+    if (!c || !this.description.trim()) {
+      return;
+    }
 
     this.saving.set(true);
 
-    this.http.post<any>(`${environment.apiUrl}/api/annotations`, {
-      id_neighborhood: 1, // backend puede resolver por coords
-      id_citizen: this.id_citizen,
-      description: this.description,
-      latitude: c[0],
-      longitude: c[1],
-      status: 'active'
-    }).pipe(
-      switchMap(ann => {
-        const id = ann.id_annotation;
-        const cats$ = [...this.selectedCategories].map(id_cat =>
-          this.http.post(`${environment.apiUrl}/api/annotation-categories`, {
-            id_category: id_cat, id_annotation: id
-          })
-        );
-        const ents$ = [...this.selectedEntities].map(id_ent =>
-          this.intSvc.create(id_ent, id)
-        );
-        const files$ = this.files().map(f => this.evidSvc.upload(id, f));
-        const all = [...cats$, ...ents$, ...files$];
-        return all.length ? forkJoin(all).pipe(switchMap(() => of(id))) : of(id);
-      })
-    ).subscribe({
-      next: id => {
-        this.saving.set(false);
-        this.annSvc.loadAll();
-        this.saved.emit(id);
-        this.closed.emit();
-      },
-      error: () => this.saving.set(false)
-    });
+    this.anotacionFormService
+      .saveAll(
+        c,
+        {
+          id_neighborhood: 1,
+          id_citizen: this.id_citizen,
+          description: this.description.trim(),
+          latitude: c[0],
+          longitude: c[1],
+          status: 'active',
+        },
+        {
+          categoryIds: [...this.selectedCategories],
+          entityIds: [...this.selectedEntities],
+          files: this.files(),
+        }
+      )
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: id => {
+          this.saving.set(false);
+          this.anotacionFormService.loadAllAnnotations();
+          this.saved.emit(id);
+          this.closed.emit();
+        },
+        error: () => this.saving.set(false),
+      });
   }
 }

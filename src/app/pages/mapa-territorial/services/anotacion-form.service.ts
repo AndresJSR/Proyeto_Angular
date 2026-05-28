@@ -4,6 +4,7 @@ import { Observable, forkJoin, map, of, switchMap } from 'rxjs';
 import { NeighborhoodSearchResult } from '../models/annotation.model';
 import { EvidencesService } from './evidences.service';
 import { InterestedPartiesService } from './interested-parties.service';
+import { AnnotationsService } from './annotations.service';
 import { environment } from '../../../../environments/environment';
 
 export interface CreateAnnotationPayload {
@@ -26,6 +27,7 @@ export class AnotacionFormService {
   private readonly http = inject(HttpClient);
   private readonly evidencesService = inject(EvidencesService);
   private readonly interestedPartiesService = inject(InterestedPartiesService);
+  private readonly annotationsService = inject(AnnotationsService);
   private readonly baseUrl = environment.apiUrl;
 
   searchNeighborhood(lat: number, lng: number): Observable<NeighborhoodSearchResult[]> {
@@ -78,5 +80,9 @@ export class AnotacionFormService {
         this.saveRelations(id_annotation, opts).pipe(map(() => id_annotation))
       )
     );
+  }
+
+  loadAllAnnotations(): void {
+    this.annotationsService.loadAll();
   }
 }
