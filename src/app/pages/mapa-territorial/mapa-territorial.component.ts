@@ -1,22 +1,14 @@
 import {
   Component, inject, OnInit, signal,
-  AfterViewInit, DestroyRef, viewChild
+  AfterViewInit, viewChild
 } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import * as L from 'leaflet';
 import 'leaflet.markercluster';
-import { AnnotationsService } from './services/annotations.service';
-import { AnnotationCategoriesService } from './services/annotation-categories.service';
-import { AnotacionFormComponent } from './components/anotacion-form/anotacion-form.component';
-import { FiltrosPanelComponent } from './components/filtros-panel/filtros-panel.component';
 import { DemarcacionPanelComponent } from './components/demarcacion-panel/demarcacion-panel.component';
-import { AnotacionDetalleComponent } from './components/anotacion-detalle/anotacion-detalle.component';
-import { Annotation } from './models/annotation.model';
 import { Barrio } from './models/barrio.model';
 import { BarriosService } from './services/barrios.service';
-import { toObservable, takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { Observable } from 'rxjs';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { MaterialModule } from '../../material.module';
 
@@ -26,60 +18,32 @@ import { MaterialModule } from '../../material.module';
   imports: [
     CommonModule,
     MaterialModule,
-    AnotacionFormComponent,
-    FiltrosPanelComponent,
     DemarcacionPanelComponent,
-    AnotacionDetalleComponent,
   ],
   templateUrl: './mapa-territorial.component.html',
   styleUrl: './mapa-territorial.component.scss'
 })
 export class MapaTerritorialComponent implements OnInit, AfterViewInit {
-  private annSvc = inject(AnnotationsService);
   private barriosSvc = inject(BarriosService);
-  private annCatSvc = inject(AnnotationCategoriesService);
-  private destroyRef = inject(DestroyRef);
   private snack = inject(MatSnackBar);
   private route = inject(ActivatedRoute);
   private router = inject(Router);
 
-  filtered = this.annSvc.filtered;
-  loading = this.annSvc.loading;
-  selected = signal<Annotation | null>(null);
-  mode = signal<'mapa' | 'demarcacion'>('mapa');
+  mode = signal<'demarcacion'>('demarcacion');
   demarcacionPanel = viewChild<DemarcacionPanelComponent>('demarcacionPanel');
   barrioActivo = signal<Barrio | null>(null);
   drawCoords = signal<[number, number][]>([]);
-  formCoords = signal<[number, number] | null>(null);
-  showForm = signal(false);
   isSaving = signal(false);
 
   private map!: L.Map;
-  private clusterGroup!: L.MarkerClusterGroup;
-  private readonly COLORS = [
-    '#e74c3c', '#3498db', '#2ecc71', '#f39c12',
-    '#9b59b6', '#1abc9c', '#e67e22', '#e91e63'
-  ];
-  private categoryColorMap = new Map<number, string>();
-  private filtered$: Observable<Annotation[]>;
   private drawLayer?: L.Polygon;
   private drawMarkers: L.Marker[] = [];
 
-  constructor() {
-    // toObservable debe crearse en un contexto de inyeccion.
-    this.filtered$ = toObservable(this.filtered).pipe(
-      takeUntilDestroyed(this.destroyRef)
-    );
-  }
-
   ngOnInit() {
-    this.annSvc.loadAll();
-    this.loadCategoryColors();
     this.setModeFromRoute();
   }
 
   private setModeFromRoute() {
-    const mode = this.route.snapshot.data['mode'];
     const currentPath = this.router.url;
 
     if (currentPath.includes('/mapa/demarcacion')) {
@@ -87,16 +51,7 @@ export class MapaTerritorialComponent implements OnInit, AfterViewInit {
       return;
     }
 
-    this.mode.set('mapa');
-
-    if (currentPath.includes('/mapa/anotar')) {
-      this.formCoords.set(null);
-      this.showForm.set(true);
-    }
-
-    if (currentPath.includes('/mapa/filtros')) {
-      this.showForm.set(false);
-    }
+    this.mode.set('demarcacion');
   }
 
   ngAfterViewInit() {
@@ -118,30 +73,13 @@ export class MapaTerritorialComponent implements OnInit, AfterViewInit {
     // Forzar recálculo de tamaño después de que el layout termine de renderizar.
     setTimeout(() => this.map.invalidateSize(), 200);
 
-    this.clusterGroup = (L as any).markerClusterGroup({
-      chunkedLoading: true,
-      chunkInterval: 100,
-      chunkDelay: 50,
-      maxClusterRadius: 60,
-      spiderfyOnMaxZoom: true,
-      disableClusteringAtZoom: 17
-    });
-    this.map.addLayer(this.clusterGroup);
-
     this.map.on('click', (e: L.LeafletMouseEvent) => {
-      if (this.mode() === 'mapa') {
-        this.formCoords.set([e.latlng.lat, e.latlng.lng]);
-        this.showForm.set(true);
-      } else if (this.mode() === 'demarcacion' && this.barrioActivo()) {
+      if (this.barrioActivo()) {
         const coords = [...this.drawCoords(), [e.latlng.lat, e.latlng.lng] as [number, number]];
         this.drawCoords.set(coords);
         this.redrawPolygon();
       }
     });
-
-    this.map.on('moveend', () => this.annSvc.loadMore());
-
-    this.filtered$.subscribe(annotations => this.renderMarkers(annotations));
   }
 
   onBarrioSeleccionado(b: Barrio | null) {
@@ -197,26 +135,6 @@ export class MapaTerritorialComponent implements OnInit, AfterViewInit {
     });
   }
 
-  setMode(mode: 'mapa' | 'demarcacion') {
-    this.mode.set(mode);
-
-    if (mode !== 'mapa') {
-      this.showForm.set(false);
-      this.formCoords.set(null);
-    }
-
-    if (mode === 'demarcacion') {
-      if (this.barrioActivo()) {
-        this.enableDrawMode();
-      }
-      return;
-    }
-
-    this.barrioActivo.set(null);
-    this.drawCoords.set([]);
-    this.clearDrawLayers();
-  }
-
   private enableDrawMode() {
     if (!this.barrioActivo()) return;
   }
@@ -258,49 +176,4 @@ export class MapaTerritorialComponent implements OnInit, AfterViewInit {
     });
   }
 
-  private renderMarkers(annotations: Annotation[]) {
-    this.clusterGroup.clearLayers();
-    if (!annotations.length) return;
-
-    // Procesar en chunks para no bloquear el hilo principal
-    const chunkSize = 100;
-    let i = 0;
-
-    const processChunk = () => {
-      const end = Math.min(i + chunkSize, annotations.length);
-      const batch: L.CircleMarker[] = [];
-
-      for (; i < end; i++) {
-        const a = annotations[i];
-        const color = this.categoryColorMap.get(a.id_annotation) ?? '#e74c3c';
-        const marker = L.circleMarker([a.latitude, a.longitude], {
-          radius: 7,
-          fillColor: color,
-          color: '#fff',
-          weight: 2,
-          fillOpacity: 0.85
-        }).on('click', () => this.selected.set(a));
-        batch.push(marker);
-      }
-
-      this.clusterGroup.addLayers(batch);
-
-      if (i < annotations.length) {
-        requestAnimationFrame(processChunk);
-      }
-    };
-
-    requestAnimationFrame(processChunk);
-  }
-
-  private loadCategoryColors() {
-    this.annCatSvc.getAll().subscribe((acs: any[]) => {
-      acs.forEach((ac: any) => {
-        if (!this.categoryColorMap.has(ac.id_annotation)) {
-          const color = this.COLORS[ac.id_category % this.COLORS.length];
-          this.categoryColorMap.set(ac.id_annotation, color);
-        }
-      });
-    });
-  }
 }

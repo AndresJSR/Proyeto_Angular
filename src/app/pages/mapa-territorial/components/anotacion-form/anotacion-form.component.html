@@ -49,8 +49,12 @@
             class="category-item"
             [class.selected]="selectedCategories.has(cat.id_category)"
             (click)="toggleCat(cat.id_category)">
-            @if (cat.image_url) {
-              <img class="category-icon" [src]="cat.image_url" [alt]="cat.name">
+            @if (resolveCategoryImageUrl(cat.image_url) && !brokenCategoryImages().has(cat.id_category)) {
+              <img
+                class="category-icon"
+                [src]="resolveCategoryImageUrl(cat.image_url)"
+                [alt]="cat.name"
+                (error)="onCategoryImageError(cat.id_category)">
             } @else {
               <mat-icon class="category-icon category-icon-fallback">category</mat-icon>
             }

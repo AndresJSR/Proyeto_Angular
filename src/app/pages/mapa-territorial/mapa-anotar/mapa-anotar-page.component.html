@@ -11,18 +11,6 @@
     </button>
   </header>
 
-  <app-anotar-filters-bar
-    [communes]="communes()"
-    [barrios]="barriosFiltro()"
-    [categories]="categories()"
-    [selectedCommune]="selectedCommune()"
-    [selectedBarrio]="selectedBarrio()"
-    [selectedCategories]="selectedCategories()"
-    (communeChange)="onCommuneChange($event)"
-    (barrioChange)="onBarrioChange($event)"
-    (categoryToggle)="onCategoryToggle($event)"
-    (filtrosClick)="onFiltrosClick()" />
-
   <div class="anotar-body">
     <div class="map-panel">
       <app-mapa-base
@@ -30,10 +18,6 @@
         (mapClick)="onMapClick($event)" />
 
       <app-coords-tooltip [coords]="formCoords()" />
-
-      @if (loading()) {
-        <div class="loading-toast">Cargando anotaciones...</div>
-      }
     </div>
 
     @if (showForm()) {

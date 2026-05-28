@@ -20,6 +20,12 @@ export const MapaTerritorialRoutes: Routes = [
         (m) => m.MapaSeguimientoPageComponent
       ),
   },
-  { path: 'anotar', component: MapaTerritorialComponent, data: { mode: 'mapa' } },
+  {
+    path: 'anotar',
+    loadComponent: () =>
+      import('./mapa-anotar/mapa-anotar-page.component').then(
+        (m) => m.MapaAnotarPageComponent
+      ),
+  },
   { path: 'filtros', component: MapaTerritorialComponent, data: { mode: 'mapa' } },
 ];

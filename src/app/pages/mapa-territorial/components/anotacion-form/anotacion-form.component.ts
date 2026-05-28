@@ -47,6 +47,7 @@ export class AnotacionFormComponent implements OnInit {
       c.name.toLowerCase().includes(this.categorySearch().toLowerCase())
     )
   );
+  brokenCategoryImages = signal(new Set<number>());
 
   selectedCategories = new Set<number>();
   selectedEntities = new Set<number>();
@@ -85,6 +86,29 @@ export class AnotacionFormComponent implements OnInit {
     this.selectedCategories.has(id)
       ? this.selectedCategories.delete(id)
       : this.selectedCategories.add(id);
+  }
+
+  resolveCategoryImageUrl(imageUrl: string | null): string | null {
+    if (!imageUrl) {
+      return null;
+    }
+
+    if (
+      imageUrl.startsWith('http://') ||
+      imageUrl.startsWith('https://') ||
+      imageUrl.startsWith('data:') ||
+      imageUrl.startsWith('/')
+    ) {
+      return imageUrl;
+    }
+
+    return `/${imageUrl.replace(/^\.?\//, '')}`;
+  }
+
+  onCategoryImageError(categoryId: number) {
+    const next = new Set(this.brokenCategoryImages());
+    next.add(categoryId);
+    this.brokenCategoryImages.set(next);
   }
 
   toggleEnt(id: number) {

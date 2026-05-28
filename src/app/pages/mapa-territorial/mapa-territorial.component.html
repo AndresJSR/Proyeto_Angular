@@ -1,51 +1,26 @@
 <div class="mapa-layout">
   <aside class="panel-izq">
-    @if (mode() === 'demarcacion') {
-      <app-demarcacion-panel
-        #demarcacionPanel
-        [tienePoligono]="drawCoords().length > 0"
-        (barrioSeleccionado)="onBarrioSeleccionado($event)"
-        (guardado)="recargarPoligono()" />
-      @if (barrioActivo()) {
-        <div class="flex gap-2 mt-2">
-          <button mat-stroked-button color="warn" class="flex-1"
-            (click)="drawCoords.set([]); clearDrawLayers()">
-            Limpiar
-          </button>
-          <button mat-flat-button color="primary" class="w-full mt-2"
-            (click)="savePolygon()"
-            [disabled]="isSaving() || drawCoords().length < 3">
-            {{ isSaving() ? 'Guardando...' : 'Guardar polígono' }}
-          </button>
-        </div>
-      }
-    } @else {
-      <app-filtros-panel />
+    <app-demarcacion-panel
+      #demarcacionPanel
+      [tienePoligono]="drawCoords().length > 0"
+      (barrioSeleccionado)="onBarrioSeleccionado($event)"
+      (guardado)="recargarPoligono()" />
+    @if (barrioActivo()) {
+      <div class="flex gap-2 mt-2">
+        <button mat-stroked-button color="warn" class="flex-1"
+          (click)="drawCoords.set([]); clearDrawLayers()">
+          Limpiar
+        </button>
+        <button mat-flat-button color="primary" class="w-full mt-2"
+          (click)="savePolygon()"
+          [disabled]="isSaving() || drawCoords().length < 3">
+          {{ isSaving() ? 'Guardando...' : 'Guardar polígono' }}
+        </button>
+      </div>
     }
   </aside>
 
   <main class="mapa-centro">
     <div id="map"></div>
-
-    @if (showForm()) {
-      <div class="form-overlay">
-        <app-anotacion-form
-          [coords]="formCoords()"
-          (closed)="showForm.set(false)"
-          (saved)="showForm.set(false)" />
-      </div>
-    }
-
-    @if (loading()) {
-      <div class="mapa-loading">Cargando anotaciones...</div>
-    }
-
-    @if (!filtered().length && !loading()) {
-      <div class="mapa-empty">No hay anotaciones para los filtros seleccionados</div>
-    }
   </main>
-
-  <aside class="panel-der">
-    <app-anotacion-detalle [annotation]="selected()" />
-  </aside>
 </div>
