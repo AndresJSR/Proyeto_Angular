@@ -16,7 +16,8 @@
       <app-tracking-panel (officialsUpdate)="onOfficialsUpdate($event)" />
     } @else if (mode() === 'demarcacion') {
       <app-demarcacion-panel
-        #demarcacionPanelRef
+        #demarcacionPanel
+        [tienePoligono]="drawCoords().length > 0"
         (barrioSeleccionado)="onBarrioSeleccionado($event)"
         (guardado)="recargarPoligono()" />
       @if (barrioActivo()) {
@@ -25,10 +26,10 @@
             (click)="drawCoords.set([]); clearDrawLayers()">
             Limpiar
           </button>
-          <button mat-flat-button color="primary" class="flex-1"
+          <button mat-flat-button color="primary" class="w-full mt-2"
             (click)="savePolygon()"
-            [disabled]="demarcacionPanel()?.saving() || drawCoords().length < 3">
-            {{ demarcacionPanel()?.saving() ? 'Guardando...' : 'Guardar' }}
+            [disabled]="isSaving() || drawCoords().length < 3">
+            {{ isSaving() ? 'Guardando...' : 'Guardar polígono' }}
           </button>
         </div>
       }

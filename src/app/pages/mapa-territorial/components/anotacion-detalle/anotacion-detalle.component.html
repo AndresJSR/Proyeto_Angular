@@ -1,16 +1,48 @@
 @if (annotation()) {
   <div class="detalle-panel">
-    <h3>Annotation detail</h3>
-    <p class="detalle-desc">{{ annotation()!.description }}</p>
+    <h3>{{ annotation()!.description }}</h3>
     <div class="detalle-meta">
-      <span><strong>Status:</strong> {{ annotation()!.status }}</span>
-      <span><strong>Date:</strong> {{ annotation()!.registration_date | date:'short' }}</span>
-      <span><strong>Lat:</strong> {{ annotation()!.latitude }}</span>
-      <span><strong>Lng:</strong> {{ annotation()!.longitude }}</span>
+      <span><strong>Estado:</strong> {{ annotation()!.status }}</span>
+      <span><strong>Fecha:</strong> {{ annotation()!.registration_date | date:'short' }}</span>
+    </div>
+
+    <div class="avg-stars">
+      @for (s of stars_range; track s) {
+        <span [class.filled]="s <= avgStars()">★</span>
+      }
+      <small>{{ avgStars() }} ({{ votes().length }} votos)</small>
+    </div>
+
+    <div class="rating-form">
+      <p class="section-label">
+        {{ existingVote() ? 'Editar calificación' : 'Calificar' }}
+      </p>
+
+      <div class="star-picker">
+        @for (s of stars_range; track s) {
+          <span
+            [class.selected]="s <= stars"
+            (click)="setStars(s)"
+            style="cursor:pointer; font-size:1.5rem">
+            ★
+          </span>
+        }
+      </div>
+
+      <mat-form-field appearance="outline" class="w-full mt-2">
+        <mat-label>Comentario</mat-label>
+        <textarea matInput [(ngModel)]="comment" rows="2"></textarea>
+      </mat-form-field>
+
+      <button mat-flat-button color="primary" class="w-full"
+        [disabled]="saving() || !stars"
+        (click)="submit()">
+        {{ saving() ? 'Guardando...' : (existingVote() ? 'Actualizar' : 'Enviar') }}
+      </button>
     </div>
   </div>
 } @else {
   <div class="detalle-empty">
-    <p>Click a marker to see details</p>
+    <p>Haz clic en un marcador para ver el detalle</p>
   </div>
 }

@@ -2,6 +2,7 @@ import {
   Component, inject, OnInit, signal,
   AfterViewInit, DestroyRef, viewChild
 } from '@angular/core';
+import { ActivatedRoute } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import * as L from 'leaflet';
 import 'leaflet.markercluster';
@@ -40,16 +41,18 @@ export class MapaTerritorialComponent implements OnInit, AfterViewInit {
   private barriosSvc = inject(BarriosService);
   private destroyRef = inject(DestroyRef);
   private snack = inject(MatSnackBar);
+  private route = inject(ActivatedRoute);
 
   filtered = this.annSvc.filtered;
   loading = this.annSvc.loading;
   selected = signal<Annotation | null>(null);
   mode = signal<'mapa' | 'demarcacion' | 'tracking'>('mapa');
-  demarcacionPanel = viewChild<DemarcacionPanelComponent>('demarcacionPanelRef');
+  demarcacionPanel = viewChild<DemarcacionPanelComponent>('demarcacionPanel');
   barrioActivo = signal<Barrio | null>(null);
   drawCoords = signal<[number, number][]>([]);
   formCoords = signal<[number, number] | null>(null);
   showForm = signal(false);
+  isSaving = signal(false);
 
   private map!: L.Map;
   private clusterGroup!: L.MarkerClusterGroup;
@@ -67,6 +70,11 @@ export class MapaTerritorialComponent implements OnInit, AfterViewInit {
 
   ngOnInit() {
     this.annSvc.loadAll();
+
+    const mode = this.route.snapshot.data['mode'];
+    if (mode === 'tracking') {
+      this.mode.set('tracking');
+    }
   }
 
   ngAfterViewInit() {
@@ -143,6 +151,7 @@ export class MapaTerritorialComponent implements OnInit, AfterViewInit {
   }
 
   savePolygon() {
+    this.isSaving.set(true);
     this.demarcacionPanel()?.save(this.drawCoords());
   }
 
@@ -177,6 +186,7 @@ export class MapaTerritorialComponent implements OnInit, AfterViewInit {
   }
 
   recargarPoligono() {
+    this.isSaving.set(false);
     this.snack.open('Polígono guardado correctamente', '✕', { duration: 3000 });
     const b = this.barrioActivo();
     if (!b) return;

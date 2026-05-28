@@ -1,0 +1,8 @@
+.avg-stars, .star-picker {
+  span { color: #ccc; font-size: 1.2rem; }
+  span.filled, span.selected { color: #f5a623; }
+}
+.detalle-meta { display: flex; flex-direction: column; gap: 4px; font-size: 0.85rem; margin-bottom: 1rem; }
+.section-label { font-weight: 600; margin: 0.75rem 0 0.25rem; font-size: 0.85rem; }
+.rating-form { margin-top: 1rem; border-top: 1px solid #e0e0e0; padding-top: 1rem; }
+.detalle-empty { color: #999; text-align: center; padding: 2rem 1rem; font-size: 0.9rem; }

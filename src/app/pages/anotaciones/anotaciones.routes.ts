@@ -15,5 +15,12 @@ export const AnotacionesRoutes: Routes = [
     path: 'evidencias',
     loadComponent: () =>
       import('./evidencias/evidencias.component').then(m => m.EvidenciasComponent)
+  },
+  {
+    path: 'filtros',
+    loadChildren: () =>
+      import('../mapa-territorial/mapa-territorial.routes').then(
+        (m) => m.MapaTerritorialRoutes
+      )
   }
 ];

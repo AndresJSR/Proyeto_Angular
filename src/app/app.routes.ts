@@ -73,6 +73,14 @@ export const routes: Routes = [
       {
         path: 'monitoreo',
         children: [
+          {
+            path: 'tiempo-real',
+            loadChildren: () =>
+              import('./pages/mapa-territorial/mapa-territorial.routes').then(
+                (m) => m.MapaTerritorialRoutes
+              ),
+            data: { mode: 'tracking' }
+          },
           { path: '**', redirectTo: '/dashboard' }
         ]
       },

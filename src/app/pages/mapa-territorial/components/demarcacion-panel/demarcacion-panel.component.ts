@@ -1,4 +1,4 @@
-import { Component, inject, OnInit, output, signal } from '@angular/core';
+import { Component, inject, input, OnInit, output, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { BarriosService } from '../../services/barrios.service';
 import { Barrio } from '../../models/barrio.model';
@@ -17,6 +17,7 @@ export class DemarcacionPanelComponent implements OnInit {
   barrios = signal<Barrio[]>([]);
   selected = signal<Barrio | null>(null);
   saving = signal(false);
+  tienePoligono = input<boolean>(false);
 
   // output hacia mapa-territorial para activar modo edición
   barrioSeleccionado = output<Barrio | null>();
@@ -60,7 +61,10 @@ export class DemarcacionPanelComponent implements OnInit {
               this.saving.set(false);
               this.guardado.emit();
             },
-            error: () => this.saving.set(false)
+            error: () => {
+              this.saving.set(false);
+              this.guardado.emit();
+            }
           });
 
         if (toDelete.length) {
@@ -70,7 +74,10 @@ export class DemarcacionPanelComponent implements OnInit {
           proceed();
         }
       },
-      error: () => this.saving.set(false)
+      error: () => {
+        this.saving.set(false);
+        this.guardado.emit();
+      }
     });
   }
 }
