@@ -20,6 +20,7 @@
         />
         <label [for]="'cat-' + cat.id_category">
           {{ cat.name }}
+          <span class="conteo">({{ getConteo(cat.id_category) }})</span>
         </label>
 
         @if (cat.children?.length) {
@@ -42,7 +43,10 @@
                 [checked]="isSelected(sub.id_category)"
                 (change)="toggleCategory(sub)"
               />
-              <label [for]="'sub-' + sub.id_category">{{ sub.name }}</label>
+              <label [for]="'sub-' + sub.id_category">
+                {{ sub.name }}
+                <span class="conteo">({{ getConteo(sub.id_category) }})</span>
+              </label>
             </div>
           }
         </div>

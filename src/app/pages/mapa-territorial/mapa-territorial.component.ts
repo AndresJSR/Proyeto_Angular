@@ -7,6 +7,7 @@ import { CommonModule } from '@angular/common';
 import * as L from 'leaflet';
 import 'leaflet.markercluster';
 import { AnnotationsService } from './services/annotations.service';
+import { AnnotationCategoriesService } from './services/annotation-categories.service';
 import { AnotacionFormComponent } from './components/anotacion-form/anotacion-form.component';
 import { FiltrosPanelComponent } from './components/filtros-panel/filtros-panel.component';
 import { DemarcacionPanelComponent } from './components/demarcacion-panel/demarcacion-panel.component';
@@ -39,6 +40,7 @@ import { MaterialModule } from '../../material.module';
 export class MapaTerritorialComponent implements OnInit, AfterViewInit {
   private annSvc = inject(AnnotationsService);
   private barriosSvc = inject(BarriosService);
+  private annCatSvc = inject(AnnotationCategoriesService);
   private destroyRef = inject(DestroyRef);
   private snack = inject(MatSnackBar);
   private route = inject(ActivatedRoute);
@@ -56,6 +58,11 @@ export class MapaTerritorialComponent implements OnInit, AfterViewInit {
 
   private map!: L.Map;
   private clusterGroup!: L.MarkerClusterGroup;
+  private readonly COLORS = [
+    '#e74c3c', '#3498db', '#2ecc71', '#f39c12',
+    '#9b59b6', '#1abc9c', '#e67e22', '#e91e63'
+  ];
+  private categoryColorMap = new Map<number, string>();
   private filtered$: Observable<Annotation[]>;
   private drawLayer?: L.Polygon;
   private drawMarkers: L.Marker[] = [];
@@ -70,6 +77,7 @@ export class MapaTerritorialComponent implements OnInit, AfterViewInit {
 
   ngOnInit() {
     this.annSvc.loadAll();
+    this.loadCategoryColors();
 
     const mode = this.route.snapshot.data['mode'];
     if (mode === 'tracking') {
@@ -285,9 +293,10 @@ export class MapaTerritorialComponent implements OnInit, AfterViewInit {
 
       for (; i < end; i++) {
         const a = annotations[i];
+        const color = this.categoryColorMap.get(a.id_annotation) ?? '#e74c3c';
         const marker = L.circleMarker([a.latitude, a.longitude], {
           radius: 7,
-          fillColor: '#e74c3c',
+          fillColor: color,
           color: '#fff',
           weight: 2,
           fillOpacity: 0.85
@@ -303,5 +312,16 @@ export class MapaTerritorialComponent implements OnInit, AfterViewInit {
     };
 
     requestAnimationFrame(processChunk);
+  }
+
+  private loadCategoryColors() {
+    this.annCatSvc.getAll().subscribe((acs: any[]) => {
+      acs.forEach((ac: any) => {
+        if (!this.categoryColorMap.has(ac.id_annotation)) {
+          const color = this.COLORS[ac.id_category % this.COLORS.length];
+          this.categoryColorMap.set(ac.id_annotation, color);
+        }
+      });
+    });
   }
 }

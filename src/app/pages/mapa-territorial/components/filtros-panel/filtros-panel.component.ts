@@ -66,6 +66,11 @@ export class FiltrosPanelComponent implements OnInit {
     this.annSvc.applyFilter(null);
   }
 
+  getConteo(id_category: number): number {
+    return this.allAnnotationCategories
+      .filter(ac => ac.id_category === id_category).length;
+  }
+
   isSelected(id: number) { return this.selectedCategories.has(id); }
   isExpanded(id: number) { return this.expanded.has(id); }
 }
