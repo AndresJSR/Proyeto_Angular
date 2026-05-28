@@ -1,56 +1,63 @@
 <div class="filtros-panel">
   <div class="panel-header">
-    <span class="panel-title">Filter by category</span>
-    <button class="btn-clear" (click)="clearFilters()">Clear filters</button>
+    <div class="header-title">
+      <span class="header-icon">🗂</span>
+      <span class="panel-title">Categorías</span>
+    </div>
+    <button class="btn-clear" (click)="clearFilters()">Limpiar</button>
   </div>
 
   @if (!tree.length) {
-    <!-- CU-14 flujo 2a -->
-    <p class="empty-msg">No categories available</p>
-  }
-
-  @for (cat of tree; track cat.id_category) {
-    <div class="cat-block">
-      <div class="cat-row">
-        <input
-          type="checkbox"
-          [id]="'cat-' + cat.id_category"
-          [checked]="isSelected(cat.id_category)"
-          (change)="toggleCategory(cat)"
-        />
-        <label [for]="'cat-' + cat.id_category">
-          {{ cat.name }}
-          <span class="conteo">({{ getConteo(cat.id_category) }})</span>
-        </label>
-
-        @if (cat.children?.length) {
-          <button class="btn-expand" (click)="toggleExpand(cat.id_category)">
-            {{ isExpanded(cat.id_category) ? '▲' : '▼' }}
-          </button>
-        } @else {
-          <!-- CU-14 flujo 7a: sin subcategorías -->
-          <span class="no-sub">—</span>
-        }
-      </div>
-
-      @if (isExpanded(cat.id_category) && cat.children?.length) {
-        <div class="subcats">
-          @for (sub of cat.children; track sub.id_category) {
-            <div class="subcat-row">
-              <input
-                type="checkbox"
-                [id]="'sub-' + sub.id_category"
-                [checked]="isSelected(sub.id_category)"
-                (change)="toggleCategory(sub)"
-              />
-              <label [for]="'sub-' + sub.id_category">
-                {{ sub.name }}
-                <span class="conteo">({{ getConteo(sub.id_category) }})</span>
-              </label>
-            </div>
-          }
-        </div>
-      }
+    <div class="empty-msg">
+      <span>Sin categorías disponibles</span>
     </div>
   }
+
+  <div class="cat-list">
+    @for (cat of tree; track cat.id_category) {
+      <div class="cat-block">
+        <div class="cat-row">
+          <label class="cat-label">
+            <input
+              type="checkbox"
+              [id]="'cat-' + cat.id_category"
+              [checked]="isSelected(cat.id_category)"
+              (change)="toggleCategory(cat)"
+              class="cat-checkbox"
+            />
+            <span class="checkmark"></span>
+            <span class="cat-name">{{ cat.name }}</span>
+            <span class="conteo">{{ getConteo(cat.id_category) }}</span>
+          </label>
+
+          @if (cat.children?.length) {
+            <button class="btn-expand" (click)="toggleExpand(cat.id_category)">
+              <span [class.rotated]="isExpanded(cat.id_category)">▾</span>
+            </button>
+          }
+        </div>
+
+        @if (isExpanded(cat.id_category) && cat.children?.length) {
+          <div class="subcats">
+            @for (sub of cat.children; track sub.id_category) {
+              <div class="subcat-row">
+                <label class="cat-label sub">
+                  <input
+                    type="checkbox"
+                    [id]="'sub-' + sub.id_category"
+                    [checked]="isSelected(sub.id_category)"
+                    (change)="toggleCategory(sub)"
+                    class="cat-checkbox"
+                  />
+                  <span class="checkmark small"></span>
+                  <span class="cat-name">{{ sub.name }}</span>
+                  <span class="conteo">{{ getConteo(sub.id_category) }}</span>
+                </label>
+              </div>
+            }
+          </div>
+        }
+      </div>
+    }
+  </div>
 </div>

@@ -1,6 +1,6 @@
 import { NavItem } from './nav-item/nav-item';
 
-export const navItems: NavItem[] = [
+export const navItemsBackup: NavItem[] = [
   {
     navCap: 'Dashboard',
   },
@@ -8,14 +8,6 @@ export const navItems: NavItem[] = [
     displayName: 'Dashboard',
     iconName: 'solar:atom-line-duotone',
     route: '/dashboard',
-  },
-  {
-    navCap: 'Mapa Territorial',
-  },
-  {
-    displayName: 'Mapa Territorial',
-    iconName: 'solar:map-pin-line-duotone',
-    route: '/mapa',
   },
   {
     navCap: 'Gestión Institucional',
@@ -57,6 +49,57 @@ export const navItems: NavItem[] = [
     displayName: 'Barrios',
     iconName: 'solar:home-city-line-duotone',
     route: '/gestion-territorial/barrios',
+  },
+  {
+    displayName: 'Demarcación',
+    iconName: 'solar:map-line-duotone',
+    route: '/gestion-territorial/demarcacion',
+  },
+  {
+    displayName: 'Mapa',
+    iconName: 'solar:map-pin-line-duotone',
+    route: '/gestion-territorial/mapa',
+  },
+  {
+    navCap: 'Anotaciones',
+  },
+  {
+    displayName: 'Crear',
+    iconName: 'solar:edit-square-line-duotone',
+    route: '/anotaciones/crear',
+  },
+  {
+    displayName: 'Visualizar',
+    iconName: 'solar:eye-bold-duotone',
+    route: '/anotaciones/visualizar',
+  },
+  {
+    displayName: 'Filtros',
+    iconName: 'solar:funnel-line-duotone',
+    route: '/anotaciones/filtros',
+  },
+  {
+    displayName: 'Evidencias',
+    iconName: 'solar:camera-line-duotone',
+    route: '/anotaciones/evidencias',
+  },
+  {
+    navCap: 'Monitoreo',
+  },
+  {
+    displayName: 'Tiempo real',
+    iconName: 'solar:clock-line-duotone',
+    route: '/monitoreo/tiempo-real',
+  },
+  {
+    displayName: 'Funcionarios',
+    iconName: 'solar:user-check-line-duotone',
+    route: '/monitoreo/funcionarios',
+  },
+  {
+    displayName: 'Ubicaciones',
+    iconName: 'solar:location-circle-line-duotone',
+    route: '/monitoreo/ubicaciones',
   },
   {
     navCap: 'Reportes Inteligentes',

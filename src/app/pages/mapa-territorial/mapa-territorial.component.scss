@@ -1,39 +1,35 @@
-.mapa-toolbar {
-  display: flex;
-  gap: 8px;
-  padding: 8px 12px;
-  background: #fff;
-  border-bottom: 1px solid #e0e0e0;
-}
-
 .mapa-layout {
   display: flex;
-  height: calc(100vh - 112px); // 64px header + 48px toolbar
+  height: calc(100vh - 112px);
   overflow: hidden;
   position: relative;
+  background: var(--mat-sys-surface-dim);
 }
 
-.mapa-toolbar {
-  display: flex;
-  gap: 0.75rem;
-  padding: 0.75rem 1rem 0;
-  background: transparent;
-}
-
-.panel-izq, .panel-der {
-  width: 280px;
+.panel-izq,
+.panel-der {
+  width: 300px;
   height: 100%;
   overflow-y: auto;
-  background: #fff;
-  border-right: 1px solid #e0e0e0;
-  padding: 1rem;
+  background: var(--mat-sys-surface-dim);
+  padding: 14px 10px;
   flex-shrink: 0;
   z-index: 10;
-}
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
 
-.panel-der {
-  border-left: 1px solid #e0e0e0;
-  border-right: none;
+  scrollbar-width: thin;
+  scrollbar-color: var(--mat-sys-outline-variant) transparent;
+
+  &::-webkit-scrollbar {
+    width: 4px;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background: var(--mat-sys-outline-variant);
+    border-radius: 4px;
+  }
 }
 
 .mapa-centro {
@@ -53,28 +49,39 @@
   position: absolute;
   top: 1rem;
   right: 1rem;
-  width: 340px;
+  width: 360px;
   max-height: calc(100% - 2rem);
   overflow-y: auto;
-  background: #fff;
-  border-radius: 8px;
-  box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+  background: var(--mat-sys-surface-container-low);
+  border-radius: 16px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
   z-index: 1000;
-  padding: 1rem;
+  padding: 1.25rem;
+  border: 1px solid var(--mat-sys-outline-variant);
 }
 
-.mapa-loading, .mapa-empty {
+.mapa-loading,
+.mapa-empty {
   position: absolute;
   bottom: 2rem;
   left: 50%;
   transform: translateX(-50%);
-  background: rgba(255,255,255,0.95);
-  padding: 0.5rem 1.5rem;
-  border-radius: 20px;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.15);
-  font-size: 0.85rem;
+  background: var(--mat-sys-surface-container);
+  border: 1px solid var(--mat-sys-outline-variant);
+  color: var(--mat-sys-on-surface);
+  padding: 0.6rem 1.75rem;
+  border-radius: 24px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+  font-size: 0.82rem;
+  font-weight: 600;
   z-index: 1000;
   white-space: nowrap;
+  letter-spacing: 0.02em;
 }
 
-.mapa-loading { color: #1976d2; }
+.mapa-loading {
+  color: var(--mat-sys-primary);
+  background: var(--mat-sys-primary-container);
+  border-color: var(--mat-sys-primary);
+  opacity: 0.9;
+}

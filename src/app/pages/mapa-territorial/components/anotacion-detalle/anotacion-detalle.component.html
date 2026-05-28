@@ -1,48 +1,62 @@
 @if (annotation()) {
   <div class="detalle-panel">
-    <h3>{{ annotation()!.description }}</h3>
-    <div class="detalle-meta">
-      <span><strong>Estado:</strong> {{ annotation()!.status }}</span>
-      <span><strong>Fecha:</strong> {{ annotation()!.registration_date | date:'short' }}</span>
+
+    <div class="detalle-header">
+      <div class="detalle-badge">
+        <span class="status-dot"></span>
+        <span class="status-text">{{ annotation()!.status }}</span>
+      </div>
+      <span class="detalle-fecha">{{ annotation()!.registration_date | date:'mediumDate' }}</span>
     </div>
 
-    <div class="avg-stars">
-      @for (s of stars_range; track s) {
-        <span [class.filled]="s <= avgStars()">★</span>
-      }
-      <small>{{ avgStars() }} ({{ votes().length }} votos)</small>
+    <div class="detalle-body">
+      <h2 class="detalle-title">{{ annotation()!.description }}</h2>
+
+      <div class="avg-stars-block">
+        <div class="avg-stars">
+          @for (s of stars_range; track s) {
+            <span [class.filled]="s <= avgStars()">★</span>
+          }
+        </div>
+        <span class="avg-label">{{ avgStars() }} <em>({{ votes().length }} votos)</em></span>
+      </div>
     </div>
+
+    <div class="divider"></div>
 
     <div class="rating-form">
       <p class="section-label">
-        {{ existingVote() ? 'Editar calificación' : 'Calificar' }}
+        <span class="label-icon">✦</span>
+        {{ existingVote() ? 'Editar calificación' : 'Calificar anotación' }}
       </p>
 
       <div class="star-picker">
         @for (s of stars_range; track s) {
           <span
             [class.selected]="s <= stars"
-            (click)="setStars(s)"
-            style="cursor:pointer; font-size:1.5rem">
+            (click)="setStars(s)">
             ★
           </span>
         }
       </div>
 
-      <mat-form-field appearance="outline" class="w-full mt-2">
+      <mat-form-field appearance="outline" class="w-full comment-field">
         <mat-label>Comentario</mat-label>
-        <textarea matInput [(ngModel)]="comment" rows="2"></textarea>
+        <textarea matInput [(ngModel)]="comment" rows="3"></textarea>
       </mat-form-field>
 
-      <button mat-flat-button color="primary" class="w-full"
+      <button mat-flat-button color="primary" class="submit-btn"
         [disabled]="saving() || !stars"
         (click)="submit()">
-        {{ saving() ? 'Guardando...' : (existingVote() ? 'Actualizar' : 'Enviar') }}
+        {{ saving() ? 'Guardando...' : (existingVote() ? 'Actualizar calificación' : 'Enviar calificación') }}
       </button>
     </div>
+
   </div>
 } @else {
   <div class="detalle-empty">
-    <p>Haz clic en un marcador para ver el detalle</p>
+    <div class="empty-icon">📍</div>
+    <p class="empty-title">Sin selección</p>
+    <p class="empty-sub">Haz clic en un marcador del mapa para ver su detalle</p>
   </div>
 }

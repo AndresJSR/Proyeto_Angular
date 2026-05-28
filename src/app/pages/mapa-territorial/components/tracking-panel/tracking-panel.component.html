@@ -1,27 +1,45 @@
 <div class="tracking-panel">
-  <h3 class="panel-title">Funcionarios activos</h3>
-
-  <mat-form-field appearance="outline" class="w-full">
-    <mat-label>Filtrar por entidad</mat-label>
-    <mat-select (selectionChange)="filterByEntity($event.value)" [value]="selectedEntity()">
-      <mat-option [value]="null">Todas</mat-option>
-      @for (e of entities(); track e.id) {
-        <mat-option [value]="e.id">{{ e.name }}</mat-option>
-      }
-    </mat-select>
-  </mat-form-field>
-
-  @if (noResults()) {
-    <p class="empty-msg">No hay funcionarios activos para esta entidad</p>
-  }
-
-  @for (o of filtered(); track o.id_official) {
-    <div class="official-item" [class.inactive]="!o.gps_active">
-      <span class="dot" [class.active]="o.gps_active"></span>
-      <div>
-        <strong>{{ o.name }}</strong>
-        <small>{{ o.last_gps_update | date:'short' }}</small>
-      </div>
+  <div class="panel-header">
+    <div class="header-title">
+      <span class="header-icon">📡</span>
+      <span class="panel-title">Funcionarios activos</span>
     </div>
-  }
+  </div>
+
+  <div class="panel-body">
+    <mat-form-field appearance="outline" class="w-full entity-filter">
+      <mat-label>Filtrar por entidad</mat-label>
+      <mat-select (selectionChange)="filterByEntity($event.value)" [value]="selectedEntity()">
+        <mat-option [value]="null">Todas las entidades</mat-option>
+        @for (e of entities(); track e.id) {
+          <mat-option [value]="e.id">{{ e.name }}</mat-option>
+        }
+      </mat-select>
+    </mat-form-field>
+
+    @if (noResults()) {
+      <div class="empty-msg">
+        <span class="empty-icon">🔍</span>
+        <span>No hay funcionarios activos para esta entidad</span>
+      </div>
+    }
+
+    <div class="officials-list">
+      @for (o of filtered(); track o.id_official) {
+        <div class="official-card" [class.inactive]="!o.gps_active">
+          <div class="official-avatar">
+            <span class="avatar-letter">{{ o.name.charAt(0) }}</span>
+            <span class="gps-dot" [class.active]="o.gps_active"></span>
+          </div>
+          <div class="official-info">
+            <span class="official-name">{{ o.name }}</span>
+            <span class="official-time">{{ o.last_gps_update | date:'short' }}</span>
+          </div>
+          <span class="gps-badge" [class.active]="o.gps_active">
+            {{ o.gps_active ? 'En línea' : 'Offline' }}
+          </span>
+        </div>
+      }
+    </div>
+  </div>
 </div>
