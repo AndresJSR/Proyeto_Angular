@@ -1,0 +1,17 @@
+.coords-tooltip {
+  position: absolute;
+  top: 16px;
+  left: 16px;
+  z-index: 800;
+  background: var(--mat-sys-surface, #fff);
+  border-radius: 8px;
+  padding: 12px 16px;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.12);
+  font-size: 0.82rem;
+  color: var(--mat-sys-on-surface);
+}
+
+.coords-tooltip__title {
+  font-weight: 600;
+  margin-bottom: 6px;
+}
