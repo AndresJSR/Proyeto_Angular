@@ -7,6 +7,8 @@ export interface Annotation {
   longitude: number;
   status: string;
   registration_date: string;
+  neighborhood_name?: string;
+  commune_name?: string;
 }
 
 export interface PaginatedResponse<T> {
@@ -15,4 +17,11 @@ export interface PaginatedResponse<T> {
   pageSize: number;
   totalItems: number;
   totalPages: number;
+}
+
+export interface NeighborhoodSearchResult {
+  id_neighborhood: number;
+  name: string;
+  commune_name: string;
+  id_commune: number;
 }
