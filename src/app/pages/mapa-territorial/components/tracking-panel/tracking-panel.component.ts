@@ -1,7 +1,6 @@
-import { Component, inject, OnInit, output, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, effect, input, output, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MaterialModule } from 'src/app/material.module';
-import { OfficialsService } from '../../services/officials.service';
 import { Official } from '../../models/official.model';
 
 @Component({
@@ -9,44 +8,49 @@ import { Official } from '../../models/official.model';
   standalone: true,
   imports: [CommonModule, MaterialModule],
   templateUrl: './tracking-panel.component.html',
+  styleUrls: ['./tracking-panel.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class TrackingPanelComponent implements OnInit {
-  private svc = inject(OfficialsService);
+export class TrackingPanelComponent {
+  readonly officials = input<Official[]>([]);
+  readonly selectedId = input<number | null>(null);
 
-  officials = signal<Official[]>([]);
-  filtered = signal<Official[]>([]);
   entities = signal<{ id: number; name: string }[]>([]);
   selectedEntity = signal<number | null>(null);
-  noResults = signal(false);
+  searchQuery = signal('');
+
+  readonly filtered = computed(() => {
+    const query = this.searchQuery().trim().toLowerCase();
+    const entityId = this.selectedEntity();
+
+    return this.officials().filter((official) => {
+      const matchesEntity = entityId === null || official.id_entity === entityId;
+      const matchesQuery = !query || official.name.toLowerCase().includes(query);
+      return matchesEntity && matchesQuery;
+    });
+  });
 
   officialsUpdate = output<Official[]>();
+  officialSelected = output<Official>();
 
-  ngOnInit() {
-    this.svc.officials$.subscribe(data => {
-      this.officials.set(data);
-      this.applyFilter();
-      this.buildEntities(data);
+  constructor() {
+    effect(() => {
+      this.buildEntities();
+      this.officialsUpdate.emit(this.filtered());
     });
   }
 
   filterByEntity(id: number | null) {
     this.selectedEntity.set(id);
-    this.applyFilter();
   }
 
-  private applyFilter() {
-    const id = this.selectedEntity();
-    const result = id
-      ? this.officials().filter(o => o.id_entity === id)
-      : this.officials();
-    this.noResults.set(result.length === 0);
-    this.filtered.set(result);
-    this.officialsUpdate.emit(result);
+  selectOfficial(official: Official) {
+    this.officialSelected.emit(official);
   }
 
-  private buildEntities(officials: Official[]) {
+  private buildEntities() {
     const map = new Map<number, string>();
-    officials.forEach(o => map.set(o.id_entity, `Entidad ${o.id_entity}`));
+    this.officials().forEach((official) => map.set(official.id_entity, `Entidad ${official.id_entity}`));
     this.entities.set([...map.entries()].map(([id, name]) => ({ id, name })));
   }
 }
