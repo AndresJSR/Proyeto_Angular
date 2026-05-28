@@ -1,0 +1,48 @@
+<div class="anotar-layout">
+  <header class="anotar-header">
+    <div>
+      <h1>Crear anotación</h1>
+      <p>Haz clic en el mapa para agregar una anotación en el territorio.</p>
+    </div>
+
+    <button mat-stroked-button type="button">
+      <mat-icon>help_outline</mat-icon>
+      Guía de uso
+    </button>
+  </header>
+
+  <app-anotar-filters-bar
+    [communes]="communes()"
+    [barrios]="barriosFiltro()"
+    [categories]="categories()"
+    [selectedCommune]="selectedCommune()"
+    [selectedBarrio]="selectedBarrio()"
+    [selectedCategories]="selectedCategories()"
+    (communeChange)="onCommuneChange($event)"
+    (barrioChange)="onBarrioChange($event)"
+    (categoryToggle)="onCategoryToggle($event)"
+    (filtrosClick)="onFiltrosClick()" />
+
+  <div class="anotar-body">
+    <div class="map-panel">
+      <app-mapa-base
+        (mapReady)="onMapReady($event)"
+        (mapClick)="onMapClick($event)" />
+
+      <app-coords-tooltip [coords]="formCoords()" />
+
+      @if (loading()) {
+        <div class="loading-toast">Cargando anotaciones...</div>
+      }
+    </div>
+
+    @if (showForm()) {
+      <aside class="form-panel">
+        <app-anotacion-form
+          [coords]="formCoords()"
+          (saved)="onFormSaved($event)"
+          (closed)="onFormClosed()" />
+      </aside>
+    }
+  </div>
+</div>
