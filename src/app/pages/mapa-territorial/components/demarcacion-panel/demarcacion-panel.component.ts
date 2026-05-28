@@ -21,7 +21,7 @@ export class DemarcacionPanelComponent implements OnInit {
 
   // output hacia mapa-territorial para activar modo edición
   barrioSeleccionado = output<Barrio | null>();
-  guardado = output<void>();
+  guardado = output<boolean>();
 
   ngOnInit() {
     this.barriosSvc.getAll().subscribe(b => this.barrios.set(b));
@@ -59,11 +59,11 @@ export class DemarcacionPanelComponent implements OnInit {
           this.barriosSvc.savePolygon(b.id_neighborhood, coords).subscribe({
             next: () => {
               this.saving.set(false);
-              this.guardado.emit();
+              this.guardado.emit(true);
             },
             error: () => {
               this.saving.set(false);
-              this.guardado.emit();
+              this.guardado.emit(false);
             }
           });
 
@@ -76,7 +76,7 @@ export class DemarcacionPanelComponent implements OnInit {
       },
       error: () => {
         this.saving.set(false);
-        this.guardado.emit();
+        this.guardado.emit(false);
       }
     });
   }
