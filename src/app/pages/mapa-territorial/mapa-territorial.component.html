@@ -1,8 +1,6 @@
 <div class="mapa-layout">
   <aside class="panel-izq">
-    @if (mode() === 'tracking') {
-      <app-tracking-panel (officialsUpdate)="onOfficialsUpdate($event)" />
-    } @else if (mode() === 'demarcacion') {
+    @if (mode() === 'demarcacion') {
       <app-demarcacion-panel
         #demarcacionPanel
         [tienePoligono]="drawCoords().length > 0"

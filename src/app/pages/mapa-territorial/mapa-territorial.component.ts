@@ -11,11 +11,9 @@ import { AnnotationCategoriesService } from './services/annotation-categories.se
 import { AnotacionFormComponent } from './components/anotacion-form/anotacion-form.component';
 import { FiltrosPanelComponent } from './components/filtros-panel/filtros-panel.component';
 import { DemarcacionPanelComponent } from './components/demarcacion-panel/demarcacion-panel.component';
-import { TrackingPanelComponent } from './components/tracking-panel/tracking-panel.component';
 import { AnotacionDetalleComponent } from './components/anotacion-detalle/anotacion-detalle.component';
 import { Annotation } from './models/annotation.model';
 import { Barrio } from './models/barrio.model';
-import { Official } from './models/official.model';
 import { BarriosService } from './services/barrios.service';
 import { toObservable, takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Observable } from 'rxjs';
@@ -31,7 +29,6 @@ import { MaterialModule } from '../../material.module';
     AnotacionFormComponent,
     FiltrosPanelComponent,
     DemarcacionPanelComponent,
-    TrackingPanelComponent,
     AnotacionDetalleComponent,
   ],
   templateUrl: './mapa-territorial.component.html',
@@ -49,7 +46,7 @@ export class MapaTerritorialComponent implements OnInit, AfterViewInit {
   filtered = this.annSvc.filtered;
   loading = this.annSvc.loading;
   selected = signal<Annotation | null>(null);
-  mode = signal<'mapa' | 'demarcacion' | 'tracking'>('mapa');
+  mode = signal<'mapa' | 'demarcacion'>('mapa');
   demarcacionPanel = viewChild<DemarcacionPanelComponent>('demarcacionPanel');
   barrioActivo = signal<Barrio | null>(null);
   drawCoords = signal<[number, number][]>([]);
@@ -67,7 +64,6 @@ export class MapaTerritorialComponent implements OnInit, AfterViewInit {
   private filtered$: Observable<Annotation[]>;
   private drawLayer?: L.Polygon;
   private drawMarkers: L.Marker[] = [];
-  private officialMarkers = new Map<number, L.Marker>();
 
   constructor() {
     // toObservable debe crearse en un contexto de inyeccion.
@@ -86,18 +82,8 @@ export class MapaTerritorialComponent implements OnInit, AfterViewInit {
     const mode = this.route.snapshot.data['mode'];
     const currentPath = this.router.url;
 
-    if (mode === 'tracking') {
-      this.mode.set('tracking');
-      return;
-    }
-
     if (currentPath.includes('/mapa/demarcacion')) {
       this.mode.set('demarcacion');
-      return;
-    }
-
-    if (currentPath.includes('/mapa/seguimiento') || currentPath.includes('/monitoreo/tiempo-real')) {
-      this.mode.set('tracking');
       return;
     }
 
@@ -191,36 +177,6 @@ export class MapaTerritorialComponent implements OnInit, AfterViewInit {
     this.demarcacionPanel()?.save(this.drawCoords());
   }
 
-  onOfficialsUpdate(officials: Official[]) {
-    const active = new Set(officials.map(o => o.id_official));
-
-    this.officialMarkers.forEach((marker, id) => {
-      if (!active.has(id)) {
-        this.map.removeLayer(marker);
-        this.officialMarkers.delete(id);
-      }
-    });
-
-    officials.forEach(o => {
-      const latlng: L.LatLngExpression = [o.last_latitude, o.last_longitude];
-      const icon = L.divIcon({
-        className: '',
-        html: `<div style="background:${o.gps_active ? '#2ecc71' : '#aaa'};width:14px;height:14px;border-radius:50%;border:2px solid #fff;box-shadow:0 1px 4px #0004"></div>`,
-        iconSize: [14, 14],
-        iconAnchor: [7, 7]
-      });
-
-      if (this.officialMarkers.has(o.id_official)) {
-        this.officialMarkers.get(o.id_official)!.setLatLng(latlng);
-      } else {
-        const m = L.marker(latlng, { icon })
-          .bindTooltip(o.name, { permanent: false })
-          .addTo(this.map);
-        this.officialMarkers.set(o.id_official, m);
-      }
-    });
-  }
-
   recargarPoligono() {
     this.isSaving.set(false);
     this.snack.open('Polígono guardado correctamente', '✕', { duration: 3000 });
@@ -241,7 +197,7 @@ export class MapaTerritorialComponent implements OnInit, AfterViewInit {
     });
   }
 
-  setMode(mode: 'mapa' | 'demarcacion' | 'tracking') {
+  setMode(mode: 'mapa' | 'demarcacion') {
     this.mode.set(mode);
 
     if (mode !== 'mapa') {
@@ -259,11 +215,6 @@ export class MapaTerritorialComponent implements OnInit, AfterViewInit {
     this.barrioActivo.set(null);
     this.drawCoords.set([]);
     this.clearDrawLayers();
-
-    if (mode !== 'tracking') {
-      this.officialMarkers.forEach(m => this.map.removeLayer(m));
-      this.officialMarkers.clear();
-    }
   }
 
   private enableDrawMode() {

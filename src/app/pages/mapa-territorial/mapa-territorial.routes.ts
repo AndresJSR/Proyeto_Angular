@@ -13,7 +13,13 @@ export const MapaTerritorialRoutes: Routes = [
         (m) => m.MapaDemarcacionPageComponent
       ),
   },
-  { path: 'seguimiento', component: MapaTerritorialComponent, data: { mode: 'tracking' } },
+  {
+    path: 'seguimiento',
+    loadComponent: () =>
+      import('./mapa-seguimiento/mapa-seguimiento-page.component').then(
+        (m) => m.MapaSeguimientoPageComponent
+      ),
+  },
   { path: 'anotar', component: MapaTerritorialComponent, data: { mode: 'mapa' } },
   { path: 'filtros', component: MapaTerritorialComponent, data: { mode: 'mapa' } },
 ];
