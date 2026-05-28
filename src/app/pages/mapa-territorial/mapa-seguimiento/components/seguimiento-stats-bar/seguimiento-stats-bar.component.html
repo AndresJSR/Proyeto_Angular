@@ -1,0 +1,29 @@
+<div class="seguimiento-stats-bar">
+  <div class="stats-group">
+    <div class="stat-pill stat-pill--active">
+      <span class="stat-dot stat-dot--active"></span>
+      <span class="stat-label">Funcionarios activos</span>
+      <span class="stat-value">{{ activos() }}</span>
+    </div>
+
+    <div class="stat-pill stat-pill--offline">
+      <span class="stat-dot stat-dot--offline"></span>
+      <span class="stat-label">Sin conexión</span>
+      <span class="stat-value">{{ sinConexion() }}</span>
+    </div>
+
+    <div class="stat-pill stat-pill--total">
+      <span class="stat-label">Total</span>
+      <span class="stat-value">{{ total() }}</span>
+    </div>
+  </div>
+
+  <div class="stats-actions">
+    <span class="last-update">Última actualización: {{ lastUpdate() ?? 'Sin datos' }}</span>
+
+    <button mat-stroked-button type="button" class="refresh-button" (click)="refreshClick.emit()">
+      <span class="refresh-icon" aria-hidden="true">⟳</span>
+      <span>Actualizar</span>
+    </button>
+  </div>
+</div>
