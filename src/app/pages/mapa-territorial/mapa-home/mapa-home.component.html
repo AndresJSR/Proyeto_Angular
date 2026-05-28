@@ -1,0 +1,17 @@
+<div class="mapa-home-grid">
+  <a
+    *ngFor="let option of options"
+    class="mapa-home-card"
+    mat-card
+    [routerLink]="option.route">
+    <mat-card-content>
+      <div class="icon-wrapper">
+        <tabler-icon [name]="option.icon" size="40"></tabler-icon>
+      </div>
+      <div>
+        <h2>{{ option.title }}</h2>
+        <p>{{ option.description }}</p>
+      </div>
+    </mat-card-content>
+  </a>
+</div>

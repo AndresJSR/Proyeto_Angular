@@ -2,7 +2,7 @@ import {
   Component, inject, OnInit, signal,
   AfterViewInit, DestroyRef, viewChild
 } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import * as L from 'leaflet';
 import 'leaflet.markercluster';
@@ -44,6 +44,7 @@ export class MapaTerritorialComponent implements OnInit, AfterViewInit {
   private destroyRef = inject(DestroyRef);
   private snack = inject(MatSnackBar);
   private route = inject(ActivatedRoute);
+  private router = inject(Router);
 
   filtered = this.annSvc.filtered;
   loading = this.annSvc.loading;
@@ -78,10 +79,37 @@ export class MapaTerritorialComponent implements OnInit, AfterViewInit {
   ngOnInit() {
     this.annSvc.loadAll();
     this.loadCategoryColors();
+    this.setModeFromRoute();
+  }
 
+  private setModeFromRoute() {
     const mode = this.route.snapshot.data['mode'];
+    const currentPath = this.router.url;
+
     if (mode === 'tracking') {
       this.mode.set('tracking');
+      return;
+    }
+
+    if (currentPath.includes('/mapa/demarcacion')) {
+      this.mode.set('demarcacion');
+      return;
+    }
+
+    if (currentPath.includes('/mapa/seguimiento') || currentPath.includes('/monitoreo/tiempo-real')) {
+      this.mode.set('tracking');
+      return;
+    }
+
+    this.mode.set('mapa');
+
+    if (currentPath.includes('/mapa/anotar')) {
+      this.formCoords.set(null);
+      this.showForm.set(true);
+    }
+
+    if (currentPath.includes('/mapa/filtros')) {
+      this.showForm.set(false);
     }
   }
 

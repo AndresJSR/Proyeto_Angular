@@ -18,83 +18,10 @@ export const routes: Routes = [
           import('./pages/pages.routes').then((m) => m.PagesRoutes),
       },
       {
-        path: 'ui-components',
-        loadChildren: () =>
-          import('./pages/ui-components/ui-components.routes').then(
-            (m) => m.UiComponentsRoutes
-          ),
-      },
-      {
-        path: 'extra',
-        loadChildren: () =>
-          import('./pages/extra/extra.routes').then((m) => m.ExtraRoutes),
-      },
-      {
         path: 'mapa',
         loadChildren: () =>
           import('./pages/mapa-territorial/mapa-territorial.routes')
-            .then(m => m.MapaTerritorialRoutes)
-      },
-      {
-        path: 'users',
-        loadChildren: () =>
-          import('./pages/users/users.routes').then((m) => m.UserRoutes),
-      },
-      {
-        path: 'gestion-institucional',
-        children: [
-          { path: '**', redirectTo: '/dashboard' }
-        ]
-      },
-      {
-        path: 'gestion-territorial',
-        children: [
-          {
-            path: 'demarcacion',
-            loadChildren: () =>
-              import('./pages/mapa-territorial/mapa-territorial.routes')
-                .then((m) => m.MapaTerritorialRoutes),
-          },
-          {
-            path: 'mapa',
-            loadChildren: () =>
-              import('./pages/mapa-territorial/mapa-territorial.routes')
-                .then((m) => m.MapaTerritorialRoutes),
-          },
-          { path: '**', redirectTo: '/dashboard' }
-        ]
-      },
-      {
-        path: 'anotaciones',
-        loadChildren: () =>
-          import('./pages/anotaciones/anotaciones.routes')
-            .then((m) => m.AnotacionesRoutes),
-      },
-      {
-        path: 'monitoreo',
-        children: [
-          {
-            path: 'tiempo-real',
-            loadChildren: () =>
-              import('./pages/mapa-territorial/mapa-territorial.routes').then(
-                (m) => m.MapaTerritorialRoutes
-              ),
-            data: { mode: 'tracking' }
-          },
-          { path: '**', redirectTo: '/dashboard' }
-        ]
-      },
-      {
-        path: 'reportes',
-        children: [
-          { path: '**', redirectTo: '/dashboard' }
-        ]
-      },
-      {
-        path: 'cuenta',
-        children: [
-          { path: '**', redirectTo: '/dashboard' }
-        ]
+            .then((m) => m.MapaTerritorialRoutes),
       },
     ],
   },

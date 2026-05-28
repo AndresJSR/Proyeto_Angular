@@ -1,15 +1,3 @@
-<div class="mapa-toolbar">
-  <button mat-stroked-button (click)="setMode('mapa')" [color]="mode() === 'mapa' ? 'primary' : ''">
-    Mapa
-  </button>
-  <button mat-stroked-button (click)="setMode('demarcacion')" [color]="mode() === 'demarcacion' ? 'primary' : ''">
-    Demarcación
-  </button>
-  <button mat-stroked-button (click)="setMode('tracking')" [color]="mode() === 'tracking' ? 'primary' : ''">
-    Tiempo Real
-  </button>
-</div>
-
 <div class="mapa-layout">
   <aside class="panel-izq">
     @if (mode() === 'tracking') {
