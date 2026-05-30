@@ -1,0 +1,122 @@
+:host {
+  display: block;
+  height: 100%;
+}
+
+.seguimiento-layout {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  overflow: hidden;
+  background: var(--mat-sys-background);
+}
+
+.seguimiento-header {
+  padding: 16px 24px;
+  border-bottom: 1px solid var(--mat-sys-outline-variant);
+  background: var(--mat-sys-surface-container-low);
+}
+
+.seguimiento-header-copy {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.seguimiento-title-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.seguimiento-title {
+  margin: 0;
+  font-size: 1.3rem;
+  font-weight: 800;
+  color: var(--mat-sys-on-surface);
+}
+
+.seguimiento-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 2px 10px;
+  border-radius: 999px;
+  background: #22c55e;
+  color: #fff;
+  font-size: 0.72rem;
+  font-weight: 700;
+}
+
+.seguimiento-badge-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #fff;
+  animation: pulse 1.6s ease-in-out infinite;
+}
+
+.seguimiento-subtitle {
+  margin: 0;
+  font-size: 0.88rem;
+  color: var(--mat-sys-on-surface-variant);
+}
+
+.seguimiento-stats {
+  padding: 16px 24px 0;
+}
+
+.seguimiento-body {
+  display: flex;
+  flex: 1;
+  overflow: hidden;
+  min-height: 0;
+  padding: 16px 24px 24px;
+  gap: 16px;
+}
+
+.map-panel {
+  flex: 1;
+  position: relative;
+  min-width: 0;
+  min-height: 0;
+  border-radius: 18px;
+  overflow: hidden;
+  border: 1px solid var(--mat-sys-outline-variant);
+  background: var(--mat-sys-surface-container-low);
+}
+
+.sidebar-panel {
+  width: 320px;
+  min-width: 320px;
+  overflow-y: auto;
+  border-left: 1px solid var(--mat-sys-outline-variant);
+  padding-left: 16px;
+}
+
+@keyframes pulse {
+  0%, 100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  50% {
+    transform: scale(1.25);
+    opacity: 0.7;
+  }
+}
+
+@media (max-width: 960px) {
+  .seguimiento-body {
+    flex-direction: column;
+  }
+
+  .sidebar-panel {
+    width: 100%;
+    min-width: 0;
+    border-left: none;
+    padding-left: 0;
+    border-top: 1px solid var(--mat-sys-outline-variant);
+    padding-top: 16px;
+  }
+}

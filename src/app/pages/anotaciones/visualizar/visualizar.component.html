@@ -1,0 +1,47 @@
+<mat-card class="cardWithShadow">
+  <mat-card-content>
+    <mat-card-title class="mb-4">Visualizar anotaciones</mat-card-title>
+
+    <div class="visualizar-layout">
+
+      <div class="visualizar-map">
+        @if (loading()) {
+          <div class="map-loading">Cargando anotaciones...</div>
+        }
+        <div id="map-visualizar"></div>
+      </div>
+
+      <aside class="visualizar-side">
+        <div class="side-header">
+          <span>Total: <strong>{{ filtered().length }}</strong></span>
+        </div>
+
+        @if (!loading() && !filtered().length) {
+          <p class="empty-msg">No hay anotaciones registradas</p>
+        }
+
+        <div class="ann-list">
+          @for (a of filtered(); track a.id_annotation) {
+            <div class="ann-item"
+              [class.active]="selected()?.id_annotation === a.id_annotation"
+              (click)="selected.set(a)">
+              <div class="ann-item-header">
+                <mat-icon class="ann-icon">location_on</mat-icon>
+                <span class="ann-id">#{{ a.id_annotation }}</span>
+                <span class="ann-status" [class]="'status-' + a.status">{{ a.status }}</span>
+              </div>
+              <p class="ann-desc">{{ a.description }}</p>
+              <small class="ann-date">{{ a.registration_date | date:'short' }}</small>
+            </div>
+          }
+        </div>
+
+        @if (selected()) {
+          <mat-divider class="my-3"></mat-divider>
+          <app-anotacion-detalle [annotation]="selected()" />
+        }
+      </aside>
+
+    </div>
+  </mat-card-content>
+</mat-card>

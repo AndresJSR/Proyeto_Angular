@@ -1,0 +1,39 @@
+<div class="seguimiento-layout">
+  <header class="seguimiento-header">
+    <div class="seguimiento-header-copy">
+      <div class="seguimiento-title-row">
+        <h1 class="seguimiento-title">Seguimiento en tiempo real</h1>
+        <span class="seguimiento-badge">
+          <span class="seguimiento-badge-dot"></span>
+          En vivo
+        </span>
+      </div>
+      <p class="seguimiento-subtitle">Visualiza la ubicación actual de los funcionarios activos.</p>
+    </div>
+  </header>
+
+  <div class="seguimiento-stats">
+    <app-seguimiento-stats-bar
+      [activos]="activos()"
+      [sinConexion]="sinConexion()"
+      [total]="total()"
+      [lastUpdate]="lastUpdate()"
+      (refreshClick)="onRefresh()">
+    </app-seguimiento-stats-bar>
+  </div>
+
+  <section class="seguimiento-body">
+    <div class="map-panel">
+      <app-mapa-base (mapReady)="onMapReady($event)"></app-mapa-base>
+    </div>
+
+    <aside class="sidebar-panel">
+      <app-tracking-panel
+        [officials]="officials()"
+        [selectedId]="selectedOfficial()?.id_official ?? null"
+        (officialsUpdate)="onOfficialsUpdate($event)"
+        (officialSelected)="onOfficialSelected($event)">
+      </app-tracking-panel>
+    </aside>
+  </section>
+</div>

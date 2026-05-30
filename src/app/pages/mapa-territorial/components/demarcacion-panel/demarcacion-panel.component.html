@@ -1,0 +1,37 @@
+<div class="demarcacion-panel">
+  <div class="panel-header">
+    <div class="header-title">
+      <span class="header-icon">🗺</span>
+      <span class="panel-title">
+        {{ tienePoligono() ? 'Editar polígono' : 'Demarcar barrio' }}
+      </span>
+    </div>
+  </div>
+
+  <div class="panel-body">
+    <p class="section-hint">Selecciona un barrio para demarcar</p>
+
+    <div class="barrios-list">
+      <mat-selection-list [multiple]="false">
+        @for (b of barrios(); track b.id_neighborhood) {
+          <mat-list-option
+            [value]="b"
+            [selected]="selected()?.id_neighborhood === b.id_neighborhood"
+            (click)="select(b)"
+            class="barrio-option">
+            <span class="barrio-name">{{ b.name }}</span>
+          </mat-list-option>
+        }
+      </mat-selection-list>
+    </div>
+
+    @if (selected()) {
+      <div class="hint-box">
+        <span class="hint-icon">{{ tienePoligono() ? '✏️' : '👆' }}</span>
+        <p class="hint">
+          {{ tienePoligono() ? 'Modifica los puntos del polígono existente.' : 'Haz clic en el mapa para agregar puntos.' }}
+        </p>
+      </div>
+    }
+  </div>
+</div>

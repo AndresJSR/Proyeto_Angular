@@ -1,0 +1,29 @@
+<div class="mapa-home-wrapper">
+  <div class="mapa-home-header">
+    <h1 class="page-title">Mapa Territorial</h1>
+    <p class="page-subtitle">Selecciona una herramienta para continuar</p>
+  </div>
+
+  <div class="mapa-home-grid">
+    <div
+      *ngFor="let option of options"
+      class="mapa-card"
+      [routerLink]="option.route"
+      [attr.data-accent]="option.accent">
+      <div class="card-top">
+        <div class="icon-circle">
+          <tabler-icon [name]="option.icon" size="32"></tabler-icon>
+        </div>
+        <span class="card-arrow">→</span>
+      </div>
+      <div class="card-body">
+        <h2 class="card-title">{{ option.title }}</h2>
+        <span class="card-desc">{{ option.description }}</span>
+      </div>
+      <div class="card-footer">
+        <span class="card-tag">{{ option.tag }}</span>
+      </div>
+    </div>
+  </div>
+</div>
+

@@ -1,0 +1,75 @@
+<div class="tracking-panel">
+  <div class="tracking-header">
+    <div class="tracking-title-block">
+      <div class="tracking-title-row">
+        <h2 class="tracking-title">Funcionarios ({{ officials().length }})</h2>
+        <span class="tracking-filter-icon" aria-hidden="true">⎚</span>
+      </div>
+      <p class="tracking-subtitle">Seguimiento en tiempo real del CU-11</p>
+    </div>
+  </div>
+
+  <div class="tracking-controls">
+    <mat-form-field appearance="outline" class="tracking-search">
+      <mat-icon matPrefix>search</mat-icon>
+      <input
+        matInput
+        type="text"
+        placeholder="Buscar funcionario..."
+        [value]="searchQuery()"
+        (input)="searchQuery.set(($any($event.target).value))" />
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="tracking-entity">
+      <mat-label>Entidad</mat-label>
+      <mat-select (selectionChange)="filterByEntity($event.value)" [value]="selectedEntity()">
+        <mat-option [value]="null">Todas las entidades</mat-option>
+        @for (e of entities(); track e.id) {
+          <mat-option [value]="e.id">{{ e.name }}</mat-option>
+        }
+      </mat-select>
+    </mat-form-field>
+  </div>
+
+  <div class="tracking-list">
+    @if (!filtered().length) {
+      <div class="tracking-empty">
+        <span class="tracking-empty-icon">🔍</span>
+        <span>No hay funcionarios para los filtros seleccionados</span>
+      </div>
+    } @else {
+      @for (official of filtered(); track official.id_official) {
+        <button
+          type="button"
+          class="official-card"
+          [class.inactive]="!official.gps_active"
+          [class.selected]="selectedId() === official.id_official"
+          (click)="selectOfficial(official)">
+          <div class="official-avatar" [class.has-photo]="!!official.photo_url">
+            @if (official.photo_url) {
+              <img class="official-photo" [src]="official.photo_url" [alt]="official.name" />
+            } @else {
+              <span class="avatar-letter">{{ official.name.charAt(0) || '?' }}</span>
+            }
+          </div>
+          <div class="official-body">
+            <div class="official-topline">
+              <span class="official-name">{{ official.name }}</span>
+              <span class="status-badge" [class.active]="official.gps_active" [class.offline]="!official.gps_active">
+                {{ official.gps_active ? 'En línea' : 'Sin conexión' }}
+              </span>
+            </div>
+
+            <span class="official-time">{{ official.last_gps_update | date:'shortTime' }}</span>
+            <span class="official-address">{{ official.address || 'Sin dirección registrada' }}</span>
+          </div>
+        </button>
+      }
+    }
+  </div>
+
+  <div class="tracking-info">
+    <span class="tracking-info-icon">ℹ</span>
+    <p>Las ubicaciones se actualizan cada 15 segundos. La precisión puede variar según la conexión del dispositivo.</p>
+  </div>
+</div>

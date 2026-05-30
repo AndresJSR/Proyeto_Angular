@@ -1,0 +1,47 @@
+.crear-layout {
+  display: flex;
+  gap: 1.5rem;
+  height: calc(100vh - 180px);
+  min-height: 500px;
+
+  .crear-map {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+
+    .hint {
+      font-size: 0.85rem;
+      color: #666;
+      margin-bottom: 0.5rem;
+      flex-shrink: 0;
+    }
+
+    #map-crear {
+      flex: 1;
+      min-height: 400px;
+      border-radius: 8px;
+      border: 1px solid #e0e0e0;
+      z-index: 1;
+    }
+  }
+
+  .crear-form {
+    width: 360px;
+    overflow-y: auto;
+  }
+
+  .crear-placeholder {
+    width: 360px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    color: #aaa;
+    border: 2px dashed #e0e0e0;
+    border-radius: 8px;
+
+    mat-icon { font-size: 3rem; width: 3rem; height: 3rem; }
+    p { margin-top: 0.5rem; font-size: 0.9rem; }
+  }
+}

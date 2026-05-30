@@ -40,3 +40,12 @@ testem.log
 # System files
 .DS_Store
 Thumbs.db
+
+# Project utility scripts (local development only)
+project-structure.ps1
+project-structure.js
+run-structure.bat
+STRUCTURE-SCRIPT-README.md
+
+
+.angular/cache

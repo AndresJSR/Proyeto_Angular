@@ -1,0 +1,136 @@
+@if (annotation()) {
+  <div class="detalle-wrap">
+
+    <!-- GALERÍA -->
+    <div class="galeria">
+      @if (evidences().length) {
+        <div class="galeria__main">
+          <img
+            [src]="resolveImageUrl(evidences()[selectedImageIndex()].file_url)"
+            [alt]="annotation()!.description"
+            class="galeria__img"
+            (error)="$any($event.target).src='assets/images/backgrounds/login-bg.svg'" />
+          <span class="galeria__badge">
+            {{ selectedImageIndex() + 1 }} / {{ evidences().length }}
+          </span>
+        </div>
+        @if (evidences().length > 1) {
+          <div class="galeria__thumbs">
+            @for (ev of evidences(); track ev.id_evidence; let i = $index) {
+              <button
+                class="galeria__thumb"
+                [class.active]="i === selectedImageIndex()"
+                (click)="selectedImageIndex.set(i)">
+                <img
+                  [src]="resolveImageUrl(ev.file_url)"
+                  [alt]="'Evidencia ' + (i+1)"
+                  (error)="$any($event.target).src='assets/images/backgrounds/login-bg.svg'" />
+              </button>
+            }
+          </div>
+        }
+      } @else {
+        <div class="galeria__empty">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"
+            width="40" height="40">
+            <path d="M3 9l4-4 4 4 4-5 4 5M3 20h18V4H3v16z"
+              stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+          <span>Sin evidencias fotográficas</span>
+        </div>
+      }
+    </div>
+
+    <!-- CATEGORÍAS -->
+    @if (categories().length) {
+      <div class="cats-row">
+        @for (cat of categories(); track cat.id_category) {
+          <span class="cat-chip">{{ cat.name }}</span>
+        }
+      </div>
+    }
+
+    <!-- INFO PRINCIPAL -->
+    <div class="info-block">
+      <h2 class="info-title">{{ annotation()!.description }}</h2>
+      <div class="info-meta-row">
+        <span class="info-meta-item">
+          <svg viewBox="0 0 20 20" fill="currentColor" width="14" height="14">
+            <path fill-rule="evenodd" d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z" clip-rule="evenodd"/>
+          </svg>
+          Barrio {{ annotation()!.id_neighborhood }}
+        </span>
+        <span class="info-meta-sep">·</span>
+        <span class="info-meta-item">
+          <svg viewBox="0 0 20 20" fill="currentColor" width="14" height="14">
+            <path fill-rule="evenodd" d="M6 2a1 1 0 00-1 1v1H4a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-1V3a1 1 0 10-2 0v1H7V3a1 1 0 00-1-1zm0 5a1 1 0 000 2h8a1 1 0 100-2H6z" clip-rule="evenodd"/>
+          </svg>
+          {{ getRelativeDate(annotation()!.registration_date) }}
+        </span>
+        <span class="info-meta-sep">·</span>
+        <span class="info-status" [class]="'status--' + annotation()!.status">
+          {{ annotation()!.status }}
+        </span>
+      </div>
+    </div>
+
+    <div class="divider"></div>
+
+    <!-- CALIFICACIÓN PROMEDIO -->
+    <div class="rating-summary">
+      <div class="rating-score">
+        <span class="rating-number">{{ avgStars() }}</span>
+        <div class="rating-stars">
+          @for (s of stars_range; track s) {
+            <svg viewBox="0 0 20 20" width="18" height="18"
+              [attr.fill]="s <= avgStars() ? '#f59e0b' : '#e2e8f0'">
+              <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/>
+            </svg>
+          }
+        </div>
+        <span class="rating-count">({{ votes().length }} votos)</span>
+      </div>
+    </div>
+
+    <div class="divider"></div>
+
+    <!-- FORMULARIO CALIFICACIÓN -->
+    <div class="rate-form">
+      <p class="rate-form__label">
+        {{ existingVote() ? 'Editar tu calificación' : 'Calificar esta anotación' }}
+      </p>
+
+      <div class="star-picker">
+        @for (s of stars_range; track s) {
+          <button type="button" class="star-btn" (click)="setStars(s)">
+            <svg viewBox="0 0 20 20" width="28" height="28"
+              [attr.fill]="s <= stars ? '#f59e0b' : '#e2e8f0'">
+              <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/>
+            </svg>
+          </button>
+        }
+      </div>
+
+      <mat-form-field appearance="outline" class="w-full">
+        <mat-label>Comentario (opcional)</mat-label>
+        <textarea matInput [(ngModel)]="comment" rows="3" maxlength="300"></textarea>
+      </mat-form-field>
+
+      <button
+        mat-flat-button
+        color="primary"
+        class="submit-btn"
+        [disabled]="saving() || !stars"
+        (click)="submit()">
+        {{ saving() ? 'Guardando...' : (existingVote() ? 'Actualizar' : 'Enviar calificación') }}
+      </button>
+    </div>
+
+  </div>
+} @else {
+  <div class="detalle-empty">
+    <div class="empty-icon">📍</div>
+    <p class="empty-title">Sin selección</p>
+    <p class="empty-sub">Haz clic en un marcador del mapa para ver su detalle</p>
+  </div>
+}

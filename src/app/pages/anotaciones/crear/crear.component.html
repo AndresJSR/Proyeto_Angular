@@ -1,0 +1,26 @@
+<mat-card class="cardWithShadow">
+  <mat-card-content>
+    <mat-card-title class="mb-4">Crear anotación</mat-card-title>
+
+    <div class="crear-layout">
+      <div class="crear-map">
+        <p class="hint">Haz clic en el mapa para seleccionar la ubicación</p>
+        <div id="map-crear"></div>
+      </div>
+
+      @if (mapReady()) {
+        <div class="crear-form">
+          <app-anotacion-form
+            [coords]="coords()"
+            (saved)="onSaved()"
+            (closed)="onCancelled()" />
+        </div>
+      } @else {
+        <div class="crear-placeholder">
+          <mat-icon>location_on</mat-icon>
+          <p>Selecciona un punto en el mapa para continuar</p>
+        </div>
+      }
+    </div>
+  </mat-card-content>
+</mat-card>
