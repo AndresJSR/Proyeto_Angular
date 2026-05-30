@@ -71,11 +71,11 @@
           <div class="evidencias-grid">
             @for (ev of evidences(); track ev.id_evidence) {
               <div class="ev-card">
-                <img [src]="apiUrl + '/api/images/' + ev.file_url"
+                <img [src]="resolveImageUrl(ev.file_url)"
                      [alt]="'Evidencia ' + ev.id_evidence"
                      (error)="$any($event.target).src='assets/images/backgrounds/login-bg.svg'" />
                 <div class="ev-actions">
-                  <a [href]="apiUrl + '/api/images/' + ev.file_url"
+                  <a [href]="resolveImageUrl(ev.file_url)"
                      target="_blank" mat-icon-button>
                     <mat-icon>open_in_new</mat-icon>
                   </a>

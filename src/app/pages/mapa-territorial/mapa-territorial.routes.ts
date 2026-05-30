@@ -1,5 +1,4 @@
 import { Routes } from '@angular/router';
-import { MapaTerritorialComponent } from './mapa-territorial.component';
 import { MapaHomeComponent } from './mapa-home/mapa-home.component';
 import { MapaVerComponent } from './mapa-ver/mapa-ver.component';
 
@@ -27,5 +26,11 @@ export const MapaTerritorialRoutes: Routes = [
         (m) => m.MapaAnotarPageComponent
       ),
   },
-  { path: 'filtros', component: MapaTerritorialComponent, data: { mode: 'mapa' } },
+  {
+    path: 'filtros',
+    loadComponent: () =>
+      import('./mapa-filtros/mapa-filtros-page.component').then(
+        (m) => m.MapaFiltrosPageComponent
+      ),
+  },
 ];

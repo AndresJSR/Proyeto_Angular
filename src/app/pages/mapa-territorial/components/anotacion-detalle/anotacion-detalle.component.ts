@@ -10,7 +10,6 @@ import { Evidence } from '../../models/evidence.model';
 import { AnnotationCategoriesService } from '../../services/annotation-categories.service';
 import { CategoriesService } from '../../services/categories.service';
 import { Category } from '../../models/category.model';
-import { environment } from 'src/environments/environment';
 
 @Component({
   selector: 'app-anotacion-detalle',
@@ -24,8 +23,6 @@ export class AnotacionDetalleComponent implements OnChanges {
   private evidencesSvc = inject(EvidencesService);
   private annCatSvc = inject(AnnotationCategoriesService);
   private catSvc = inject(CategoriesService);
-
-  readonly apiUrl = environment.apiUrl;
 
   annotation = input<Annotation | null>(null);
 
@@ -87,11 +84,7 @@ export class AnotacionDetalleComponent implements OnChanges {
   }
 
   resolveImageUrl(fileUrl: string): string {
-    if (!fileUrl) return '';
-    if (fileUrl.startsWith('http') || fileUrl.startsWith('data:')) return fileUrl;
-    const cleaned = fileUrl.replace(/^\.?\//, '');
-    if (this.apiUrl?.trim()) return `${this.apiUrl.replace(/\/$/, '')}/api/images/${cleaned}`;
-    return `/api/images/${cleaned}`;
+    return this.evidencesSvc.resolveImageUrl(fileUrl);
   }
 
   setStars(n: number) { this.stars = n; }

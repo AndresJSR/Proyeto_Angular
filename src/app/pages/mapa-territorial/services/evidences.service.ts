@@ -26,4 +26,20 @@ export class EvidencesService {
   delete(id_evidence: number) {
     return this.http.delete(`${this.base}/${id_evidence}`);
   }
+
+  resolveImageUrl(fileUrl: string): string {
+    if (!fileUrl) return '';
+    if (fileUrl.startsWith('http://') || fileUrl.startsWith('https://') || fileUrl.startsWith('data:')) {
+      return fileUrl;
+    }
+
+    const apiBase = environment.apiUrl?.trim().replace(/\/$/, '') ?? '';
+    const cleaned = fileUrl.replace(/^\.?\//, '');
+
+    if (cleaned.startsWith('api/images/')) {
+      return apiBase ? `${apiBase}/${cleaned}` : `/${cleaned}`;
+    }
+
+    return apiBase ? `${apiBase}/api/images/${cleaned}` : `/api/images/${cleaned}`;
+  }
 }

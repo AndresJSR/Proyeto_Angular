@@ -19,7 +19,6 @@ import { AnotacionDetalleComponent } from '../components/anotacion-detalle/anota
 import { AnnotationCategoriesService } from '../services/annotation-categories.service';
 import { EvidencesService } from '../services/evidences.service';
 import { Evidence } from '../models/evidence.model';
-import { environment } from 'src/environments/environment';
 
 const DEFAULT_COLOR = '#e74c3c';
 
@@ -43,8 +42,6 @@ export class MapaAnotarPageComponent implements OnInit {
   private readonly annCatSvc = inject(AnnotationCategoriesService);
   private readonly evidencesSvc = inject(EvidencesService);
   private readonly destroyRef = inject(DestroyRef);
-
-  readonly apiUrl = environment.apiUrl;
 
   formCoords = signal<[number, number] | null>(null);
   showForm = signal(false);
@@ -126,15 +123,7 @@ export class MapaAnotarPageComponent implements OnInit {
   }
 
   resolveImageUrl(fileUrl: string): string {
-    if (!fileUrl) return '';
-    if (fileUrl.startsWith('http://') || fileUrl.startsWith('https://') || fileUrl.startsWith('data:')) {
-      return fileUrl;
-    }
-    const cleaned = fileUrl.replace(/^\.?\//, '');
-    if (this.apiUrl?.trim()) {
-      return `${this.apiUrl.replace(/\/$/, '')}/api/images/${cleaned}`;
-    }
-    return `/api/images/${cleaned}`;
+    return this.evidencesSvc.resolveImageUrl(fileUrl);
   }
 
   private renderMarkers(annotations: Annotation[]) {

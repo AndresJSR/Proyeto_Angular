@@ -6,7 +6,6 @@ import { AnnotationsService } from '../../mapa-territorial/services/annotations.
 import { EvidencesService } from '../../mapa-territorial/services/evidences.service';
 import { Annotation } from '../../mapa-territorial/models/annotation.model';
 import { Evidence } from '../../mapa-territorial/models/evidence.model';
-import { environment } from '../../../../environments/environment';
 
 @Component({
   selector: 'app-evidencias',
@@ -27,8 +26,6 @@ export class EvidenciasComponent implements OnInit {
   loadingEvidences = signal(false);
   uploading = signal(false);
   searchText = '';
-  apiUrl = environment.apiUrl;
-
   ngOnInit() {
     this.annSvc.loadAll();
   }
@@ -82,6 +79,10 @@ export class EvidenciasComponent implements OnInit {
       const ann = this.selectedAnnotation();
       if (ann) this.loadEvidences(ann.id_annotation);
     });
+  }
+
+  resolveImageUrl(fileUrl: string): string {
+    return this.evidSvc.resolveImageUrl(fileUrl);
   }
 
   get filteredAnnotations() {
