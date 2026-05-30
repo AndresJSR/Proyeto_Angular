@@ -25,7 +25,7 @@ export class TrackingPanelComponent {
 
     return this.officials().filter((official) => {
       const matchesEntity = entityId === null || official.id_entity === entityId;
-      const matchesQuery = !query || official.name.toLowerCase().includes(query);
+      const matchesQuery = !query || (official.name?.toLowerCase().includes(query) ?? false);
       return matchesEntity && matchesQuery;
     });
   });

@@ -49,10 +49,9 @@
             @if (official.photo_url) {
               <img class="official-photo" [src]="official.photo_url" [alt]="official.name" />
             } @else {
-              <span class="avatar-letter">{{ official.name.charAt(0) }}</span>
+              <span class="avatar-letter">{{ official.name.charAt(0) || '?' }}</span>
             }
           </div>
-
           <div class="official-body">
             <div class="official-topline">
               <span class="official-name">{{ official.name }}</span>

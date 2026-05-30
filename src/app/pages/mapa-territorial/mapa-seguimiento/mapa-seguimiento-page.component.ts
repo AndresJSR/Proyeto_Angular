@@ -2,7 +2,7 @@ import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, Component, DestroyRef, OnDestroy, computed, inject, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import * as L from 'leaflet';
-import { take } from 'rxjs';
+import { take, switchMap } from 'rxjs';
 import { MapaBaseComponent } from '../components/mapa-base/mapa-base.component';
 import { SeguimientoStatsBarComponent } from './components/seguimiento-stats-bar/seguimiento-stats-bar.component';
 import { TrackingPanelComponent } from '../components/tracking-panel/tracking-panel.component';
@@ -38,26 +38,76 @@ export class MapaSeguimientoPageComponent implements OnDestroy {
     this.map = map;
     if (!this.pollingStarted) {
       this.pollingStarted = true;
-      this.startPolling();
+      this.initializeTracking();
     }
   }
 
-  startPolling() {
+  /**
+   * Inicializa el seguimiento en tiempo real vía Socket.IO
+   * 1. Obtiene la lista de officials (GET /api/officials)
+   * 2. Extrae sus IDs
+   * 3. Inicia el rastreo (POST /api/officials/tracking/start)
+   * 4. Se suscribe a eventos oficial_tracking del Socket.IO
+   */
+  initializeTracking() {
     this.officialsSvc
-      .startPolling(15_000)
-      .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe((data) => {
-        this.officials.set(data);
-        this.lastUpdate.set(new Intl.DateTimeFormat(undefined, {
-          hour: '2-digit',
-          minute: '2-digit',
-          second: '2-digit',
-        }).format(new Date()));
+      .getOfficials()
+      .pipe(
+        switchMap((officials) => {
+          console.log('[MapaSeguimiento] Officials loaded:', officials);
+          this.officials.set(officials);
+          this.updateLastUpdate();
 
-        if (this.map) {
-          this.markersSvc.syncMarkers(this.map, data);
-        }
+          // Inicializar cache de officials en el servicio
+          this.officialsSvc.initializeCache(officials);
+
+          // Extraer IDs de officials que cumplen requisitos (gps_active + status active)
+          const trackableIds = officials
+            .filter((o) => o.gps_active && (o.status === 'active' || o.status === 'activo'))
+            .map((o) => o.id_official);
+
+          if (trackableIds.length === 0) {
+            console.warn('[MapaSeguimiento] No trackable officials found');
+          } else {
+            console.log('[MapaSeguimiento] Starting tracking for IDs:', trackableIds);
+          }
+
+          // Iniciar rastreo via POST /api/officials/tracking/start
+          return this.officialsSvc.startTracking(trackableIds);
+        }),
+        switchMap(() => {
+          // Conectar a Socket.IO después de iniciar rastreo
+          console.log('[MapaSeguimiento] Connected to Socket.IO for real-time tracking');
+          return this.officialsSvc.connectSocketIO();
+        }),
+        takeUntilDestroyed(this.destroyRef)
+      )
+      .subscribe({
+        next: (data) => {
+          console.debug('[MapaSeguimiento] official_tracking event:', data);
+          this.officials.set(data);
+          this.updateLastUpdate();
+
+          if (this.map) {
+            this.markersSvc.syncMarkers(this.map, data);
+          }
+        },
+        error: (err) => console.error('[MapaSeguimiento] Tracking error:', err),
+        complete: () => console.warn('[MapaSeguimiento] Tracking completed'),
       });
+  }
+
+  private updateLastUpdate() {
+    this.lastUpdate.set(new Intl.DateTimeFormat(undefined, {
+      hour: '2-digit',
+      minute: '2-digit',
+      second: '2-digit',
+    }).format(new Date()));
+  }
+
+  startPolling() {
+    // Mantener para compatibilidad, pero preferir initializeTracking
+    this.initializeTracking();
   }
 
   onOfficialsUpdate(officials: Official[]) {
@@ -94,5 +144,10 @@ export class MapaSeguimientoPageComponent implements OnDestroy {
     if (this.map) {
       this.markersSvc.clearAll(this.map);
     }
+    // Detener rastreo al destruir el componente (opcional)
+    this.officialsSvc.stopTracking().subscribe({
+      next: () => console.log('[MapaSeguimiento] Tracking stopped'),
+      error: (err) => console.warn('[MapaSeguimiento] Error stopping tracking:', err),
+    });
   }
 }

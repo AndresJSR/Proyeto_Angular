@@ -10,13 +10,19 @@ export class OfficialMarkersService {
     const activeIds = new Set<number>();
 
     for (const official of officials) {
+      // Skip officials sin ubicación válida
+      if (official.last_latitude === undefined || official.last_longitude === undefined) {
+        console.warn('[OfficialMarkersService] Official', official.id_official, 'missing coordinates');
+        continue;
+      }
+
       activeIds.add(official.id_official);
 
       const latlng: L.LatLngExpression = [official.last_latitude, official.last_longitude];
       const icon = this.buildMarkerIcon(official);
-      const tooltipText = official.gps_active
-        ? official.name
-        : `Sin conexión - Últ: ${this.formatShortDate(official.last_gps_update)}`;
+      const tooltipText = (official.gps_active ?? true)
+        ? official.name ?? 'Funcionario'
+        : `Sin conexión - Últ: ${this.formatShortDate(official.last_gps_update ?? '')}`;
       const popupHtml = this.buildPopupHtml(official);
 
       const existing = this.markers.get(official.id_official);
@@ -89,12 +95,12 @@ export class OfficialMarkersService {
   }
 
   private buildMarkerIcon(official: Official): L.DivIcon {
-    const isActive = official.gps_active;
+    const isActive = official.gps_active ?? true;
     const borderColor = isActive ? '#22c55e' : '#94a3b8';
     const opacity = isActive ? '1' : '0.6';
     const badge = official.photo_url?.trim()
-      ? `<img src="${this.escapeHtml(official.photo_url)}" alt="${this.escapeHtml(official.name)}" style="width:100%;height:100%;object-fit:cover;border-radius:50%;display:block;" />`
-      : `<span style="display:flex;align-items:center;justify-content:center;width:100%;height:100%;border-radius:50%;font-weight:800;font-size:1rem;color:#0f172a;background:linear-gradient(135deg,#e2e8f0,#cbd5e1);">${this.getInitial(official.name)}</span>`;
+      ? `<img src="${this.escapeHtml(official.photo_url)}" alt="${this.escapeHtml(official.name ?? 'Funcionario')}" style="width:100%;height:100%;object-fit:cover;border-radius:50%;display:block;" />`
+      : `<span style="display:flex;align-items:center;justify-content:center;width:100%;height:100%;border-radius:50%;font-weight:800;font-size:1rem;color:#0f172a;background:linear-gradient(135deg,#e2e8f0,#cbd5e1);">${this.getInitial(official.name ?? '?')}</span>`;
 
     return L.divIcon({
       className: 'official-marker-icon',
@@ -118,9 +124,9 @@ export class OfficialMarkersService {
   }
 
   private buildPopupHtml(official: Official): string {
-    const name = this.escapeHtml(official.name);
+    const name = this.escapeHtml(official.name ?? 'Sin nombre');
     const address = this.escapeHtml(official.address ?? 'Sin dirección registrada');
-    const updatedAt = this.formatShortDate(official.last_gps_update);
+    const updatedAt = this.formatShortDate(official.last_gps_update ?? '');
 
     return `
       <div style="min-width:220px;display:flex;flex-direction:column;gap:6px;">
@@ -144,11 +150,13 @@ export class OfficialMarkersService {
   }
 
   private getInitial(name: string): string {
+    if (!name) return '?';
     const trimmed = name.trim();
     return (trimmed.charAt(0) || '?').toUpperCase();
   }
 
-  private escapeHtml(value: string): string {
+  private escapeHtml(value: string | undefined): string {
+    if (!value) return '';
     return value
       .replaceAll('&', '&amp;')
       .replaceAll('<', '&lt;')
