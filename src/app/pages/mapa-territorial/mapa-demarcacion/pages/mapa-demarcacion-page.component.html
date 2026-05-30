@@ -1,0 +1,35 @@
+<div class="demarcacion-dashboard">
+  <section class="map-panel">
+    <app-mapa-base
+      [showLocateControl]="false"
+      (mapReady)="onMapReady($event)"
+      (mapClick)="onMapClick($event)">
+    </app-mapa-base>
+  </section>
+
+  <aside class="sidebar-panel">
+    <div class="panel-card">
+      <div class="panel-header">
+        <h2>Demarcación Territorial</h2>
+        <p>Selecciona un barrio y edita su polígono sobre el mapa.</p>
+      </div>
+
+      <app-demarcacion-panel
+        #demarcacionPanel
+        [tienePoligono]="drawCoords().length > 0"
+        (barrioSeleccionado)="onBarrioSeleccionado($event)"
+        (guardado)="onPolygonSaved($event)">
+      </app-demarcacion-panel>
+    </div>
+
+    <app-demarcacion-sidebar
+      [coords]="drawCoords()"
+      [isSaving]="isSaving()"
+      [hasActiveNeighborhood]="!!barrioActivo()"
+      [isEditing]="drawCoords().length > 0"
+      (save)="savePolygon()"
+      (cancel)="cancelEdit()"
+      (clear)="clearPolygon()">
+    </app-demarcacion-sidebar>
+  </aside>
+</div>

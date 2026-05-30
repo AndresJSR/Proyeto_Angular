@@ -1,0 +1,50 @@
+<div class="filters-bar">
+  <mat-form-field appearance="outline">
+    <mat-label>Comuna</mat-label>
+    <mat-select
+      [value]="selectedCommune()"
+      (valueChange)="onCommuneChange($event)">
+      <mat-option [value]="null">Todas las comunas</mat-option>
+      @for (commune of communes(); track commune.id) {
+        <mat-option [value]="commune.id">{{ commune.name }}</mat-option>
+      }
+    </mat-select>
+  </mat-form-field>
+
+  <mat-form-field appearance="outline">
+    <mat-label>Barrio</mat-label>
+    <mat-select
+      [value]="selectedBarrio()"
+      (valueChange)="onBarrioChange($event)">
+      <mat-option [value]="null">Todos los barrios</mat-option>
+      @for (barrio of barriosFiltrados(); track barrio.id) {
+        <mat-option [value]="barrio.id">{{ barrio.name }}</mat-option>
+      }
+    </mat-select>
+  </mat-form-field>
+
+  <mat-form-field appearance="outline">
+    <mat-label>Categoría</mat-label>
+    <mat-select
+      [value]="null"
+      (valueChange)="onCategoryChange($event)">
+      <mat-option [value]="null">Todas las categorías</mat-option>
+      @for (category of categories(); track category.id_category) {
+        <mat-option [value]="category.id_category">
+          {{ category.name }}
+          @if (selectedCategories().has(category.id_category)) {
+            · seleccionada
+          }
+        </mat-option>
+      }
+    </mat-select>
+  </mat-form-field>
+
+  <button
+    mat-stroked-button
+    type="button"
+    (click)="filtrosClick.emit()">
+    <mat-icon>filter_list</mat-icon>
+    Filtros
+  </button>
+</div>

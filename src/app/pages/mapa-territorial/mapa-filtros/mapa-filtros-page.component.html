@@ -1,0 +1,37 @@
+<div class="mapa-filtros-layout">
+  <aside class="sidebar sidebar--filters">
+    <app-filtros-panel />
+  </aside>
+
+  <main class="map-panel">
+    <app-mapa-base
+      [layers]="layers"
+      (mapReady)="onMapReady($event)"
+      (mapClick)="onMapClick()" />
+
+    <div class="map-status">
+      @if (loading()) {
+        <span>Cargando anotaciones...</span>
+      } @else {
+        <span>{{ filtered().length }} anotaciones</span>
+      }
+    </div>
+  </main>
+
+  @if (selectedAnnotation()) {
+    <aside class="sidebar sidebar--detail">
+      <div class="detail-header">
+        <span>Detalle de anotacion</span>
+        <button type="button" class="detail-close" (click)="closeDetail()" aria-label="Cerrar detalle">
+          <svg viewBox="0 0 20 20" fill="none" aria-hidden="true">
+            <path d="M5 5l10 10M15 5L5 15" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
+          </svg>
+        </button>
+      </div>
+
+      <div class="detail-content">
+        <app-anotacion-detalle [annotation]="selectedAnnotation()" />
+      </div>
+    </aside>
+  }
+</div>
