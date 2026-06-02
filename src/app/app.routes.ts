@@ -1,15 +1,19 @@
 import { Routes } from '@angular/router';
+
 import { BlankComponent } from './layouts/blank/blank.component';
 import { FullComponent } from './layouts/full/full.component';
+
+import { AuthenticatedGuard } from './guards/authenticated.guard';
 
 export const routes: Routes = [
   {
     path: '',
     component: FullComponent,
+    canActivate: [AuthenticatedGuard],
     children: [
       {
         path: '',
-        redirectTo: '/dashboard',
+        redirectTo: 'dashboard',
         pathMatch: 'full',
       },
       {
@@ -18,10 +22,35 @@ export const routes: Routes = [
           import('./pages/pages.routes').then((m) => m.PagesRoutes),
       },
       {
-        path: 'mapa',
+        path: 'mapa-territorial',
         loadChildren: () =>
-          import('./pages/mapa-territorial/mapa-territorial.routes')
-            .then((m) => m.MapaTerritorialRoutes),
+          import('./pages/mapa-territorial/mapa-territorial.routes').then(
+            (m) => m.MapaTerritorialRoutes,
+          ),
+      },
+      {
+        path: 'anotaciones',
+        loadChildren: () =>
+          import('./pages/anotaciones/anotaciones.routes').then(
+            (m) => m.AnotacionesRoutes,
+          ),
+      },
+      {
+        path: 'users',
+        loadChildren: () =>
+          import('./pages/users/users.routes').then((m) => m.UserRoutes),
+      },
+      {
+        path: 'ui-components',
+        loadChildren: () =>
+          import('./pages/ui-components/ui-components.routes').then(
+            (m) => m.UiComponentsRoutes,
+          ),
+      },
+      {
+        path: 'extra',
+        loadChildren: () =>
+          import('./pages/extra/extra.routes').then((m) => m.ExtraRoutes),
       },
     ],
   },
@@ -33,13 +62,13 @@ export const routes: Routes = [
         path: 'authentication',
         loadChildren: () =>
           import('./pages/authentication/authentication.routes').then(
-            (m) => m.AuthenticationRoutes
+            (m) => m.AuthenticationRoutes,
           ),
       },
     ],
   },
   {
     path: '**',
-    redirectTo: 'authentication/error',
+    redirectTo: 'authentication/login',
   },
 ];
