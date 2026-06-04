@@ -13,4 +13,13 @@ export const GestionInstitucionalRoutes: Routes = [
     path: 'ciudadanos',
     loadChildren: () => import('./citizens/citizens.routes').then(m => m.CitizensRoutes),
   },
+  {
+    path: 'categorias',
+    loadChildren: () => import('./categories/categories.routes').then(m => m.CategoriesRoutes),
+  },
+  {
+    path: 'subcategorias',
+    redirectTo: 'categorias',
+    pathMatch: 'full',
+  },
 ];
