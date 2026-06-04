@@ -1,0 +1,71 @@
+<div class="container mx-auto p-4">
+  <h2 class="text-2xl font-bold mb-6">{{ editId() ? 'Editar' : 'Crear' }} Funcionario</h2>
+
+  <form [formGroup]="form" (ngSubmit)="submit()" class="space-y-4">
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <!-- Entidad -->
+      <mat-form-field class="w-full">
+        <mat-label>Entidad *</mat-label>
+        <mat-select formControlName="id_entity">
+          <mat-option *ngFor="let e of entities()" [value]="e.id_entity">
+            {{ e.name }}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+
+      <!-- Nombre -->
+      <mat-form-field class="w-full">
+        <mat-label>Nombre *</mat-label>
+        <input matInput formControlName="name" placeholder="Nombre completo">
+      </mat-form-field>
+
+      <!-- Email -->
+      <mat-form-field class="w-full">
+        <mat-label>Email *</mat-label>
+        <input matInput type="email" formControlName="email" placeholder="correo@ejemplo.com">
+      </mat-form-field>
+
+      <!-- Teléfono -->
+      <mat-form-field class="w-full">
+        <mat-label>Teléfono</mat-label>
+        <input matInput formControlName="phone" placeholder="Número de teléfono">
+      </mat-form-field>
+
+      <!-- Rol -->
+      <mat-form-field class="w-full">
+        <mat-label>Rol *</mat-label>
+        <mat-select formControlName="role">
+          <mat-option value="admin">Administrador</mat-option>
+          <mat-option value="user">Usuario</mat-option>
+          <mat-option value="viewer">Visualizador</mat-option>
+        </mat-select>
+      </mat-form-field>
+
+      <!-- Estado -->
+      <mat-form-field class="w-full">
+        <mat-label>Estado *</mat-label>
+        <mat-select formControlName="status">
+          <mat-option value="active">Activo</mat-option>
+          <mat-option value="inactive">Inactivo</mat-option>
+        </mat-select>
+      </mat-form-field>
+
+      <!-- GPS Activo -->
+      <div class="flex items-center">
+        <mat-checkbox formControlName="gps_active" class="mb-0">
+          GPS Activo
+        </mat-checkbox>
+      </div>
+    </div>
+
+    <!-- Botones -->
+    <div class="flex gap-2 pt-4">
+      <button mat-raised-button color="primary" [disabled]="saving()" type="submit">
+        {{ saving() ? 'Guardando...' : 'Guardar' }}
+      </button>
+      <button mat-stroked-button routerLink="/gestion-institucional/funcionarios" type="button">
+        Cancelar
+      </button>
+    </div>
+  </form>
+</div>

@@ -1,0 +1,64 @@
+<div class="p-6">
+  <div class="flex items-center justify-between mb-6">
+    <div>
+      <h1 class="text-2xl font-bold">Comunas</h1>
+      <p class="text-sm text-muted">Unidades territoriales por ciudad</p>
+    </div>
+    <a mat-flat-button color="primary" routerLink="nueva">
+      <mat-icon>add</mat-icon> Nueva comuna
+    </a>
+  </div>
+
+  @if (loading()) {
+    <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+  }
+
+  <mat-card class="cardWithShadow">
+    <mat-card-content class="overflow-auto">
+      <table mat-table [dataSource]="communes()" class="w-full">
+
+        <ng-container matColumnDef="name">
+          <th mat-header-cell *matHeaderCellDef>Nombre</th>
+          <td mat-cell *matCellDef="let c" class="font-semibold">{{ c.name }}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="id_city">
+          <th mat-header-cell *matHeaderCellDef>ID Ciudad</th>
+          <td mat-cell *matCellDef="let c">{{ c.id_city }}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="status">
+          <th mat-header-cell *matHeaderCellDef>Estado</th>
+          <td mat-cell *matCellDef="let c">
+            <span class="px-2 py-1 rounded-full text-xs font-bold"
+              [class.bg-light-success]="c.status==='active'"
+              [class.text-success]="c.status==='active'"
+              [class.bg-light-error]="c.status!=='active'"
+              [class.text-error]="c.status!=='active'">
+              {{ c.status }}
+            </span>
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="actions">
+          <th mat-header-cell *matHeaderCellDef></th>
+          <td mat-cell *matCellDef="let c">
+            <a mat-icon-button [routerLink]="[c.id_commune, 'editar']" matTooltip="Editar">
+              <mat-icon>edit</mat-icon>
+            </a>
+            <button mat-icon-button color="warn" (click)="openDelete(c)" matTooltip="Eliminar">
+              <mat-icon>delete</mat-icon>
+            </button>
+          </td>
+        </ng-container>
+
+        <tr mat-header-row *matHeaderRowDef="columns"></tr>
+        <tr mat-row *matRowDef="let row; columns: columns"></tr>
+      </table>
+
+      @if (!loading() && !communes().length) {
+        <p class="text-center text-muted py-8">No hay comunas registradas.</p>
+      }
+    </mat-card-content>
+  </mat-card>
+</div>

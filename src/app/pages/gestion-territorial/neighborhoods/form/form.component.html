@@ -1,0 +1,39 @@
+<div class="p-6 max-w-xl mx-auto">
+  <h1 class="text-2xl font-bold mb-6">{{ editId() ? 'Editar' : 'Nuevo' }} barrio</h1>
+
+  <mat-card class="cardWithShadow">
+    <mat-card-content>
+      <form [formGroup]="form" (ngSubmit)="submit()" class="flex flex-col gap-4">
+
+        <mat-form-field appearance="outline">
+          <mat-label>Comuna *</mat-label>
+          <mat-select formControlName="id_commune">
+            @for (c of communes(); track c.id_commune) {
+              <mat-option [value]="c.id_commune">{{ c.name }}</mat-option>
+            }
+          </mat-select>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label>Nombre *</mat-label>
+          <input matInput formControlName="name" />
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label>Estado</mat-label>
+          <mat-select formControlName="status">
+            <mat-option value="active">Activo</mat-option>
+            <mat-option value="inactive">Inactivo</mat-option>
+          </mat-select>
+        </mat-form-field>
+
+        <div class="flex justify-end gap-3">
+          <a mat-stroked-button routerLink="/gestion-territorial/barrios">Cancelar</a>
+          <button mat-flat-button color="primary" type="submit" [disabled]="form.invalid || saving()">
+            {{ saving() ? 'Guardando...' : 'Guardar' }}
+          </button>
+        </div>
+      </form>
+    </mat-card-content>
+  </mat-card>
+</div>

@@ -1,12 +1,12 @@
-import { Component, inject, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { ReactiveFormsModule, FormBuilder, Validators } from '@angular/forms';
+import { Component, inject, OnInit, signal } from '@angular/core';
+import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
+import { MatSnackBar } from '@angular/material/snack-bar';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { MaterialModule } from 'src/app/material.module';
-import { MatSnackBar } from '@angular/material/snack-bar';
-import { OfficialsAdminService } from '../officials.service';
 import { EntitiesAdminService } from '../../entities/entities.service';
 import { Entity } from '../../entities/entity.model';
+import { OfficialsAdminService } from '../officials.service';
 
 @Component({
   selector: 'app-officials-form',
