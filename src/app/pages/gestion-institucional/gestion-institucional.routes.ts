@@ -9,4 +9,8 @@ export const GestionInstitucionalRoutes: Routes = [
     path: 'funcionarios',
     loadChildren: () => import('./officials/officials.routes').then(m => m.OfficialsRoutes),
   },
-];  
+  {
+    path: 'ciudadanos',
+    loadChildren: () => import('./citizens/citizens.routes').then(m => m.CitizensRoutes),
+  },
+];
