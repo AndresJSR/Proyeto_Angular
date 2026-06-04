@@ -23,6 +23,20 @@ export const routes: Routes = [
           import('./pages/mapa-territorial/mapa-territorial.routes')
             .then((m) => m.MapaTerritorialRoutes),
       },
+      // ✅ AGREGAR ESTO
+      {
+        path: 'gestion-institucional',
+        loadChildren: () =>
+          import('./pages/gestion-institucional/gestion-institucional.routes')
+            .then(m => m.GestionInstitucionalRoutes),
+      },
+      // ✅ AGREGAR ESTO
+      {
+        path: 'gestion-territorial',
+        loadChildren: () =>
+          import('./pages/gestion-territorial/gestion-territorial.routes')
+            .then(m => m.GestionTerritorialRoutes),
+      },
     ],
   },
   {
