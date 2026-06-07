@@ -8,6 +8,6 @@ export interface Official {
   status: string;
   last_latitude: number;
   last_longitude: number;
-  last_gps_update: string;
+  last_gps_update: string | null;
   gps_active: boolean;
 }

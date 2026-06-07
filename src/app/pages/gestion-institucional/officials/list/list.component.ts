@@ -1,10 +1,12 @@
-import { Component, inject, OnInit, signal } from '@angular/core';
+import { Component, inject, OnInit, signal, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RouterModule } from '@angular/router';
+import { RouterModule, ActivatedRoute } from '@angular/router';
 import { MaterialModule } from 'src/app/material.module';
 import { MatDialog } from '@angular/material/dialog';
 import { OfficialsAdminService } from '../officials.service';
+import { EntitiesAdminService } from '../../entities/entities.service';
 import { Official } from '../official.model';
+import { Entity } from '../../entities/entity.model';
 import { DeleteOfficialDialogComponent } from '../delete-dialog/delete-dialog.component';
 
 @Component({
@@ -14,14 +16,35 @@ import { DeleteOfficialDialogComponent } from '../delete-dialog/delete-dialog.co
   templateUrl: './list.component.html',
 })
 export class OfficialsListComponent implements OnInit {
-  private svc    = inject(OfficialsAdminService);
-  private dialog = inject(MatDialog);
+  private svc       = inject(OfficialsAdminService);
+  private entSvc    = inject(EntitiesAdminService);
+  private dialog    = inject(MatDialog);
+  private route     = inject(ActivatedRoute);
 
-  officials = signal<Official[]>([]);
-  loading   = signal(false);
-  columns   = ['name', 'email', 'phone', 'role', 'status', 'gps', 'actions'];
+  officials    = signal<Official[]>([]);
+  entities     = signal<Entity[]>([]);
+  loading      = signal(false);
+  entityFilter = signal<number | null>(null);
+  columns      = ['name', 'email', 'phone', 'role', 'status', 'gps', 'actions'];
 
-  ngOnInit() { this.load(); }
+  filtered = computed(() => {
+    const f = this.entityFilter();
+    if (!f) return this.officials();
+    return this.officials().filter(o => o.id_entity === f);
+  });
+
+  entityName = computed(() => {
+    const f = this.entityFilter();
+    if (!f) return null;
+    return this.entities().find(e => e.id_entity === f)?.name ?? null;
+  });
+
+  ngOnInit() {
+    this.entSvc.getAll().subscribe(e => this.entities.set(e));
+    const idEntity = this.route.snapshot.queryParamMap.get('id_entity');
+    if (idEntity) this.entityFilter.set(+idEntity);
+    this.load();
+  }
 
   load() {
     this.loading.set(true);

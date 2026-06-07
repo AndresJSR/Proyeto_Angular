@@ -64,10 +64,12 @@ export class EntitiesFormComponent implements OnInit {
   submit() {
     if (this.form.invalid) return;
     this.saving.set(true);
+    this.saveEntity();
+  }
 
+  private saveEntity() {
     const fd = new FormData();
     Object.entries(this.form.value).forEach(([k, v]) => fd.append(k, v as string));
-    // Archivo bajo el campo 'file' que espera el backend
     if (this.file) fd.append('file', this.file);
 
     const req$ = this.editId()

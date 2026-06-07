@@ -1,12 +1,12 @@
-import { CommonModule } from '@angular/common';
 import { Component, inject, OnInit, signal } from '@angular/core';
-import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
-import { MatSnackBar } from '@angular/material/snack-bar';
+import { CommonModule } from '@angular/common';
+import { ReactiveFormsModule, FormBuilder, Validators } from '@angular/forms';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { MaterialModule } from 'src/app/material.module';
+import { MatSnackBar } from '@angular/material/snack-bar';
+import { OfficialsAdminService } from '../officials.service';
 import { EntitiesAdminService } from '../../entities/entities.service';
 import { Entity } from '../../entities/entity.model';
-import { OfficialsAdminService } from '../officials.service';
 
 @Component({
   selector: 'app-officials-form',
@@ -27,21 +27,26 @@ export class OfficialsFormComponent implements OnInit {
   entities = signal<Entity[]>([]);
 
   form = this.fb.group({
-    id_entity: [null as number | null, Validators.required],
-    name:      ['', Validators.required],
-    email:     ['', [Validators.required, Validators.email]],
-    phone:     [''],
-    role:      ['', Validators.required],
-    status:    ['active', Validators.required],
-    gps_active:[true],
+    id_entity:  [null as number | null, Validators.required],
+    name:       ['', Validators.required],
+    email:      ['', [Validators.required, Validators.email]],
+    phone:      [''],
+    role:       ['', Validators.required],
+    status:     ['active', Validators.required],
+    gps_active: [true],
   });
 
   ngOnInit() {
     this.entSvc.getAll().subscribe(e => this.entities.set(e));
+
+    // precargar entidad si viene de queryParam
+    const idEntity = this.route.snapshot.queryParamMap.get('id_entity');
+    if (idEntity) this.form.patchValue({ id_entity: +idEntity });
+
     const id = this.route.snapshot.paramMap.get('id');
     if (id) {
       this.editId.set(+id);
-      this.svc.getById(+id).subscribe(o => this.form.patchValue(o));
+      this.svc.getById(+id).subscribe(o => this.form.patchValue(o as any));
     }
   }
 
@@ -57,7 +62,11 @@ export class OfficialsFormComponent implements OnInit {
         this.snack.open('Funcionario guardado', '✕', { duration: 3000 });
         this.router.navigate(['/gestion-institucional/funcionarios']);
       },
-      error: () => { this.saving.set(false); this.snack.open('Error al guardar', '✕', { duration: 3000 }); },
+      error: (err: any) => {
+        this.saving.set(false);
+        const msg = err?.error?.message ?? 'Error al guardar';
+        this.snack.open(msg, '✕', { duration: 3000 });
+      },
     });
   }
 }
