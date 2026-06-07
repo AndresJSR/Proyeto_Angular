@@ -5,6 +5,7 @@ import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { MaterialModule } from 'src/app/material.module';
 import { EntitiesAdminService } from '../entities.service';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { environment } from 'src/environments/environment';
 
 @Component({
   selector: 'app-entities-form',
@@ -39,10 +40,19 @@ export class EntitiesFormComponent implements OnInit {
       this.editId.set(+id);
       this.svc.getById(+id).subscribe(e => {
         this.form.patchValue(e);
-        if (e.logo_url) this.preview.set(e.logo_url);
+        if (e.logo_url) this.preview.set(this.buildImageUrl(e.logo_url));
       });
     }
   }
+
+  buildImageUrl(url: string | null): string | null {
+    if (!url) return null;
+    if (url.startsWith('http')) return url;
+    // Backend devuelve "/api/images/logos/..." así que concatenamos directamente
+    return `${environment.apiUrl}${url}`;
+  }
+
+
 
   onFile(event: Event) {
     const input = event.target as HTMLInputElement;
@@ -57,6 +67,7 @@ export class EntitiesFormComponent implements OnInit {
 
     const fd = new FormData();
     Object.entries(this.form.value).forEach(([k, v]) => fd.append(k, v as string));
+    // Archivo bajo el campo 'file' que espera el backend
     if (this.file) fd.append('file', this.file);
 
     const req$ = this.editId()

@@ -37,7 +37,8 @@ export class EntitiesListComponent implements OnInit {
   logoUrl(url: string | null) {
     if (!url) return null;
     if (url.startsWith('http')) return url;
-    return `${environment.apiUrl}/api/images/${url.replace(/^\.?\//, '')}`;
+    // Backend devuelve "/api/images/logos/..." así que concatenamos directamente
+    return `${environment.apiUrl}${url}`;
   }
 
   openDelete(entity: Entity) {
