@@ -64,6 +64,12 @@
         <ng-container matColumnDef="actions">
           <th mat-header-cell *matHeaderCellDef></th>
           <td mat-cell *matCellDef="let e">
+            <a mat-icon-button
+              [routerLink]="['/gestion-institucional/funcionarios']"
+              [queryParams]="{ id_entity: e.id_entity }"
+              matTooltip="Ver funcionarios">
+              <mat-icon>group</mat-icon>
+            </a>
             <a mat-icon-button [routerLink]="[e.id_entity, 'editar']" matTooltip="Editar">
               <mat-icon>edit</mat-icon>
             </a>

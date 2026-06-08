@@ -1,12 +1,20 @@
-import { Component, inject, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { ReactiveFormsModule, FormBuilder, Validators } from '@angular/forms';
+import { Component, inject, OnInit, signal } from '@angular/core';
+import { AbstractControl, FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
+import { MatSnackBar } from '@angular/material/snack-bar';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { MaterialModule } from 'src/app/material.module';
-import { MatSnackBar } from '@angular/material/snack-bar';
-import { OfficialsAdminService } from '../officials.service';
 import { EntitiesAdminService } from '../../entities/entities.service';
 import { Entity } from '../../entities/entity.model';
+import { Official } from '../official.model';
+import { OfficialsAdminService } from '../officials.service';
+
+// Custom validator for float numbers
+const floatValidator = (control: AbstractControl) => {
+  if (!control.value) return null;
+  const value = parseFloat(control.value);
+  return !isNaN(value) ? null : { invalidFloat: true };
+};
 
 @Component({
   selector: 'app-officials-form',
@@ -27,13 +35,16 @@ export class OfficialsFormComponent implements OnInit {
   entities = signal<Entity[]>([]);
 
   form = this.fb.group({
-    id_entity:  [null as number | null, Validators.required],
-    name:       ['', Validators.required],
-    email:      ['', [Validators.required, Validators.email]],
-    phone:      [''],
-    role:       ['', Validators.required],
-    status:     ['active', Validators.required],
-    gps_active: [true],
+    id_entity:      [null as number | null, Validators.required],
+    name:           ['', [Validators.required, Validators.maxLength(160)]],
+    email:          ['', [Validators.required, Validators.email, Validators.maxLength(160)]],
+    phone:          ['', Validators.maxLength(40)],
+    role:           ['', [Validators.required, Validators.maxLength(80)]],
+    status:         ['active', Validators.required],
+    last_latitude:  [null as number | null, [floatValidator]],
+    last_longitude: [null as number | null, [floatValidator]],
+    last_gps_update: [null as string | null],
+    gps_active:     [true, Validators.required],
   });
 
   ngOnInit() {
@@ -46,17 +57,46 @@ export class OfficialsFormComponent implements OnInit {
     const id = this.route.snapshot.paramMap.get('id');
     if (id) {
       this.editId.set(+id);
-      this.svc.getById(+id).subscribe(o => this.form.patchValue(o as any));
+      this.svc.getById(+id).subscribe(o => {
+        const official = o as Official;
+        this.form.patchValue({
+          id_entity: official.id_entity,
+          name: official.name,
+          email: official.email,
+          phone: official.phone,
+          role: official.role,
+          status: official.status,
+          last_latitude: official.last_latitude,
+          last_longitude: official.last_longitude,
+          last_gps_update: official.last_gps_update,
+          gps_active: official.gps_active,
+        });
+      });
     }
   }
 
   submit() {
     if (this.form.invalid) return;
     this.saving.set(true);
-    const body = this.form.value as any;
+    
+    const formValue = this.form.getRawValue();
+    const body: Partial<Official> = {
+      id_entity: formValue.id_entity!,
+      name: formValue.name!,
+      email: formValue.email!,
+      phone: formValue.phone || '',
+      role: formValue.role!,
+      status: formValue.status!,
+      last_latitude: formValue.last_latitude ? parseFloat(formValue.last_latitude as any) : 0,
+      last_longitude: formValue.last_longitude ? parseFloat(formValue.last_longitude as any) : 0,
+      last_gps_update: null,
+      gps_active: formValue.gps_active!,
+    };
+
     const req$ = this.editId()
       ? this.svc.update(this.editId()!, body)
       : this.svc.create(body);
+
     req$.subscribe({
       next: () => {
         this.snack.open('Funcionario guardado', '✕', { duration: 3000 });

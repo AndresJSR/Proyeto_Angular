@@ -18,15 +18,13 @@ export class CategoriesListComponent implements OnInit {
   private svc    = inject(CategoriesAdminService);
   private dialog = inject(MatDialog);
 
-  all      = signal<Category[]>([]);
-  loading  = signal(false);
-  tab      = signal<'categoria' | 'subcategoria'>('categoria');
+  all     = signal<Category[]>([]);
+  loading = signal(false);
+  expanded = signal<Set<number>>(new Set());
 
   roots = computed(() => this.all().filter(c => c.id_parent_category === null));
-  subs  = computed(() => this.all().filter(c => c.id_parent_category !== null));
 
-  columns    = ['image', 'name', 'description', 'status', 'actions'];
-  subColumns = ['name', 'parent', 'description', 'status', 'actions'];
+  columns = ['image', 'name', 'type', 'description', 'status', 'actions'];
 
   ngOnInit() { this.load(); }
 
@@ -38,6 +36,16 @@ export class CategoriesListComponent implements OnInit {
     });
   }
 
+  subsOf(parentId: number): Category[] {
+    return this.all().filter(c => c.id_parent_category === parentId);
+  }
+
+  toggleExpand(id: number) {
+    const s = new Set(this.expanded());
+    s.has(id) ? s.delete(id) : s.add(id);
+    this.expanded.set(s);
+  }
+
   parentName(id: number | null) {
     if (!id) return '—';
     return this.all().find(c => c.id_category === id)?.name ?? '—';
@@ -46,7 +54,12 @@ export class CategoriesListComponent implements OnInit {
   imageUrl(url: string | null) {
     if (!url) return null;
     if (url.startsWith('http')) return url;
-    return `${environment.apiUrl}/api/images/${url.replace(/^\.?\//, '')}`;
+    if (url.includes('/api/images/')) {
+      const path = url.startsWith('/') ? url.substring(1) : url;
+      return `${environment.apiUrl}/${path}`;
+    }
+    const normalized = url.replace(/^\.?\/+/, '');
+    return `${environment.apiUrl}/api/images/${normalized}`;
   }
 
   openDelete(c: Category) {

@@ -22,10 +22,12 @@ export class CategoriesFormComponent implements OnInit {
 
   saving    = signal(false);
   editId    = signal<number | null>(null);
-  isSub     = signal(false);
   preview   = signal<string | null>(null);
   roots     = signal<Category[]>([]);
-  file: File | null = null;
+  selectedFile: File | null = null;
+  fileError = signal<string | null>(null);
+
+  readonly ALLOWED_EXTENSIONS = ['png', 'jpg', 'jpeg', 'webp'];
 
   form = this.fb.group({
     id_parent_category: [null as number | null],
@@ -34,49 +36,87 @@ export class CategoriesFormComponent implements OnInit {
     status:             ['active', Validators.required],
   });
 
+  get isSubcategory(): boolean {
+    return !!this.form.value.id_parent_category;
+  }
+
   ngOnInit() {
     this.svc.getAll().subscribe(all => {
       this.roots.set(all.filter(c => c.id_parent_category === null));
     });
-
-    // detectar si es sub por la ruta
-    const url = this.router.url;
-    if (url.includes('nueva-sub')) this.isSub.set(true);
 
     const id = this.route.snapshot.paramMap.get('id');
     if (id) {
       this.editId.set(+id);
       this.svc.getById(+id).subscribe(c => {
         this.form.patchValue(c);
-        if (c.id_parent_category) this.isSub.set(true);
         if (c.image_url) this.preview.set(c.image_url);
       });
-    }
-
-    if (this.isSub()) {
-      this.form.get('id_parent_category')!.setValidators(Validators.required);
-      this.form.get('id_parent_category')!.updateValueAndValidity();
     }
   }
 
   onFile(event: Event) {
+    this.fileError.set(null);
     const input = event.target as HTMLInputElement;
-    if (!input.files?.length) return;
-    this.file = input.files[0];
-    this.preview.set(URL.createObjectURL(this.file));
+    if (!input.files?.length) {
+      this.selectedFile = null;
+      return;
+    }
+
+    const file = input.files[0];
+    const ext = file.name.split('.').pop()?.toLowerCase();
+
+    if (!ext || !this.ALLOWED_EXTENSIONS.includes(ext)) {
+      this.fileError.set(`Extensión no permitida. Solo: ${this.ALLOWED_EXTENSIONS.join(', ')}`);
+      this.selectedFile = null;
+      input.value = '';
+      return;
+    }
+
+    if (!file.type.startsWith('image/')) {
+      this.fileError.set('El archivo debe ser una imagen');
+      this.selectedFile = null;
+      input.value = '';
+      return;
+    }
+
+    if (file.size > 5 * 1024 * 1024) {
+      this.fileError.set('Imagen muy grande. Máximo 5MB');
+      this.selectedFile = null;
+      input.value = '';
+      return;
+    }
+
+    this.selectedFile = file;
+    this.preview.set(URL.createObjectURL(file));
   }
 
   submit() {
     if (this.form.invalid) return;
-    this.saving.set(true);
 
+    // Imagen requerida en creación solo si NO es subcategoría
+    if (!this.editId() && !this.isSubcategory && !this.selectedFile) {
+      this.fileError.set('Debes seleccionar una imagen para crear la categoría');
+      this.snack.open('Imagen requerida', '✕', { duration: 3000 });
+      return;
+    }
+
+    this.saving.set(true);
     const fd = new FormData();
     const v = this.form.value;
-    if (v.id_parent_category) fd.append('id_parent_category', String(v.id_parent_category));
+
     fd.append('name', v.name ?? '');
-    fd.append('description', v.description ?? '');
     fd.append('status', v.status ?? 'active');
-    if (this.file) fd.append('file', this.file);
+
+    if (v.description) fd.append('description', v.description);
+
+    if (v.id_parent_category) {
+      fd.append('id_parent_category', String(v.id_parent_category));
+    }
+
+    if (this.selectedFile) {
+      fd.append('file', this.selectedFile);
+    }
 
     const req$ = this.editId()
       ? this.svc.update(this.editId()!, fd)
@@ -84,10 +124,15 @@ export class CategoriesFormComponent implements OnInit {
 
     req$.subscribe({
       next: () => {
+        this.saving.set(false);
         this.snack.open('Categoría guardada', '✕', { duration: 3000 });
         this.router.navigate(['/gestion-institucional/categorias']);
       },
-      error: () => { this.saving.set(false); this.snack.open('Error al guardar', '✕', { duration: 3000 }); },
+      error: (err: any) => {
+        this.saving.set(false);
+        const msg = err?.error?.message ?? 'Error al guardar la categoría';
+        this.snack.open(msg, '✕', { duration: 5000 });
+      },
     });
   }
 
