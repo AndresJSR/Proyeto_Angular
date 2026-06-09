@@ -13,4 +13,5 @@ export class CategoriesAdminService {
   create(fd: FormData)              { return this.http.post<Category>(this.base, fd); }
   update(id: number, fd: FormData)  { return this.http.put<Category>(`${this.base}/${id}`, fd); }
   delete(id: number)                { return this.http.delete(`${this.base}/${id}`); }
+  canDelete(id: number)             { return this.http.get<{can_delete: boolean, subcategories_count: number, anotaciones_count: number}>(`${this.base}/${id}/can-delete`); }
 }

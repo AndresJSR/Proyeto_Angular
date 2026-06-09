@@ -24,6 +24,7 @@ export class CategoriesFormComponent implements OnInit {
   editId    = signal<number | null>(null);
   preview   = signal<string | null>(null);
   roots     = signal<Category[]>([]);
+  forbiddenParents = signal<Set<number>>(new Set());
   selectedFile: File | null = null;
   fileError = signal<string | null>(null);
 
@@ -42,17 +43,45 @@ export class CategoriesFormComponent implements OnInit {
 
   ngOnInit() {
     this.svc.getAll().subscribe(all => {
-      this.roots.set(all.filter(c => c.id_parent_category === null));
+      const roots = all.filter(c => c.id_parent_category === null);
+      
+      // Al editar, excluir la categoría actual y sus subcategorías como padres posibles
+      const id = this.route.snapshot.paramMap.get('id');
+      if (id) {
+        this.editId.set(+id);
+        const forbidden = this.getDescendants(+id, all);
+        forbidden.add(+id); // No puede ser padre de sí misma
+        this.forbiddenParents.set(forbidden);
+        
+        // Cargar los datos de la categoría
+        this.svc.getById(+id).subscribe(c => {
+          this.form.patchValue(c);
+          if (c.image_url) this.preview.set(c.image_url);
+        });
+      }
+      
+      this.roots.set(roots);
     });
+  }
 
-    const id = this.route.snapshot.paramMap.get('id');
-    if (id) {
-      this.editId.set(+id);
-      this.svc.getById(+id).subscribe(c => {
-        this.form.patchValue(c);
-        if (c.image_url) this.preview.set(c.image_url);
+  private getDescendants(parentId: number, all: Category[]): Set<number> {
+    const descendants = new Set<number>();
+    const queue = [parentId];
+    
+    while (queue.length) {
+      const current = queue.shift()!;
+      const children = all.filter(c => c.id_parent_category === current);
+      children.forEach(child => {
+        descendants.add(child.id_category);
+        queue.push(child.id_category);
       });
     }
+    
+    return descendants;
+  }
+
+  canSelectAsParent(categoryId: number): boolean {
+    return !this.forbiddenParents().has(categoryId);
   }
 
   onFile(event: Event) {

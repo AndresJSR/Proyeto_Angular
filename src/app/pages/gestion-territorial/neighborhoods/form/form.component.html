@@ -1,39 +1,79 @@
-<div class="p-6 max-w-xl mx-auto">
-  <h1 class="text-2xl font-bold mb-6">{{ editId() ? 'Editar' : 'Nuevo' }} barrio</h1>
+<div>
+  @if (successMessage()) {
+    <div class="mb-4 p-3 rounded bg-light-success text-success text-sm flex items-center gap-2">
+      <mat-icon>check_circle</mat-icon>
+      <p class="font-semibold">{{ successMessage() }}</p>
+    </div>
+  }
 
-  <mat-card class="cardWithShadow">
-    <mat-card-content>
-      <form [formGroup]="form" (ngSubmit)="submit()" class="flex flex-col gap-4">
+  @if (errorMessage()) {
+    <div class="mb-4 p-3 rounded bg-light-error border-l-4 border-error flex items-start gap-3">
+      <mat-icon class="text-error flex-shrink-0">error</mat-icon>
+      <div class="flex-1">
+        <p class="font-semibold text-error">Error</p>
+        <p class="text-sm text-error mt-1">{{ errorMessage() }}</p>
+      </div>
+      <button mat-icon-button (click)="closeError()" class="flex-shrink-0">
+        <mat-icon class="text-error">close</mat-icon>
+      </button>
+    </div>
+  }
 
-        <mat-form-field appearance="outline">
-          <mat-label>Comuna *</mat-label>
-          <mat-select formControlName="id_commune">
-            @for (c of communes(); track c.id_commune) {
-              <mat-option [value]="c.id_commune">{{ c.name }}</mat-option>
-            }
-          </mat-select>
-        </mat-form-field>
+  <form [formGroup]="form" (ngSubmit)="submit()" class="flex flex-col gap-4">
 
-        <mat-form-field appearance="outline">
-          <mat-label>Nombre *</mat-label>
-          <input matInput formControlName="name" />
-        </mat-form-field>
-
-        <mat-form-field appearance="outline">
-          <mat-label>Estado</mat-label>
-          <mat-select formControlName="status">
-            <mat-option value="active">Activo</mat-option>
-            <mat-option value="inactive">Inactivo</mat-option>
-          </mat-select>
-        </mat-form-field>
-
-        <div class="flex justify-end gap-3">
-          <a mat-stroked-button routerLink="/gestion-territorial/barrios">Cancelar</a>
-          <button mat-flat-button color="primary" type="submit" [disabled]="form.invalid || saving()">
-            {{ saving() ? 'Guardando...' : 'Guardar' }}
-          </button>
+    <mat-form-field appearance="outline" class="w-full">
+      <mat-label>Comuna *</mat-label>
+      <mat-select formControlName="id_commune" (valueChange)="onCommuneChange($event)">
+        <mat-option [value]="null">Selecciona una comuna</mat-option>
+        @for (c of communes(); track c.id_commune) {
+          <mat-option [value]="c.id_commune">{{ c.name }}</mat-option>
+        }
+      </mat-select>
+      @if (form.value.id_commune) {
+        <div class="flex items-center gap-2 mt-2 p-2 rounded bg-light-success text-success text-xs">
+          <mat-icon class="text-sm">check_circle</mat-icon>
+          <p>La comuna seleccionada ya existe en el sistema.</p>
         </div>
-      </form>
-    </mat-card-content>
-  </mat-card>
+      }
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="w-full">
+      <mat-label>Nombre del barrio *</mat-label>
+      <input matInput formControlName="name"
+        placeholder="Ej. La Enea"
+        (blur)="checkNameExists()"
+        [class.ng-invalid]="nameExists()" />
+      <mat-hint>Ingresa el nombre oficial del barrio.</mat-hint>
+      @if (nameExists()) {
+        <mat-error>Ya existe un barrio con ese nombre en la comuna seleccionada.</mat-error>
+      }
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="w-full">
+      <mat-label>Estado *</mat-label>
+      <mat-select formControlName="status">
+        <mat-option value="active">Activo</mat-option>
+        <mat-option value="inactive">Inactivo</mat-option>
+      </mat-select>
+      <mat-hint>Los barrios inactivos no estarán disponibles para asignación.</mat-hint>
+    </mat-form-field>
+
+    <div class="flex justify-between gap-3 mt-4">
+      @if (editId()) {
+        <button mat-stroked-button type="button" (click)="cancel()">
+          Cancelar
+        </button>
+      }
+      <div class="flex gap-2 flex-1" [class.justify-end]="!editId()">
+        <button mat-stroked-button type="button" (click)="form.reset({ status: 'active' })">
+          Limpiar
+        </button>
+        <button mat-flat-button color="primary" type="submit"
+          [disabled]="form.invalid || saving() || nameExists()">
+          <mat-icon>{{ saving() ? 'hourglass_empty' : 'save' }}</mat-icon>
+          {{ saving() ? 'Guardando...' : (editId() ? 'Actualizar' : 'Crear') }}
+        </button>
+      </div>
+    </div>
+  </form>
 </div>

@@ -33,45 +33,49 @@
         <ng-container matColumnDef="name">
           <th mat-header-cell *matHeaderCellDef>Categoría / Subcategoría</th>
           <td mat-cell *matCellDef="let c">
-            <div class="flex items-center gap-2">
-              @if (subsOf(c.id_category).length) {
-                <button mat-icon-button type="button"
-                  (click)="toggleExpand(c.id_category)"
-                  style="width:28px;height:28px;line-height:28px;">
-                  <mat-icon style="font-size:18px">
-                    {{ expanded().has(c.id_category) ? 'expand_less' : 'expand_more' }}
-                  </mat-icon>
-                </button>
-              } @else {
-                <span style="width:28px;display:inline-block"></span>
-              }
-              <span class="font-semibold">{{ c.name }}</span>
-            </div>
-
-            <!-- Subcategorías inline -->
-            @if (expanded().has(c.id_category)) {
-              @for (sub of subsOf(c.id_category); track sub.id_category) {
-                <div class="flex items-center gap-2 ml-10 mt-1 text-sm text-muted">
-                  <mat-icon style="font-size:16px;width:16px;height:16px">subdirectory_arrow_right</mat-icon>
-                  <img *ngIf="imageUrl(sub.image_url)" [src]="imageUrl(sub.image_url)"
-                    class="w-6 h-6 object-contain rounded" />
-                  <span>{{ sub.name }}</span>
-                  <span class="px-2 py-0.5 rounded-full text-xs font-bold ml-2"
-                    [class.bg-light-success]="sub.status==='active'"
-                    [class.text-success]="sub.status==='active'"
-                    [class.bg-light-error]="sub.status!=='active'"
-                    [class.text-error]="sub.status!=='active'">
-                    {{ sub.status }}
-                  </span>
-                  <a mat-icon-button [routerLink]="[sub.id_category, 'editar']" matTooltip="Editar">
-                    <mat-icon style="font-size:18px">edit</mat-icon>
-                  </a>
-                  <button mat-icon-button color="warn" (click)="openDelete(sub)" matTooltip="Eliminar">
-                    <mat-icon style="font-size:18px">delete</mat-icon>
+            <div class="flex flex-col gap-2">
+              <div class="flex items-center gap-2">
+                @if (subsOf(c.id_category).length) {
+                  <button mat-icon-button type="button"
+                    (click)="toggleExpand(c.id_category)"
+                    style="width:28px;height:28px;line-height:28px;">
+                    <mat-icon style="font-size:18px">
+                      {{ expanded().has(c.id_category) ? 'expand_less' : 'expand_more' }}
+                    </mat-icon>
                   </button>
-                </div>
+                } @else {
+                  <span style="width:28px;display:inline-block"></span>
+                }
+                <span class="font-semibold">{{ c.name }}</span>
+              </div>
+
+              <!-- Subcategorías inline -->
+              @if (expanded().has(c.id_category)) {
+                @for (sub of subsOf(c.id_category); track sub.id_category) {
+                  <div class="flex items-center gap-2 ml-10 mt-1 text-sm">
+                    <mat-icon style="font-size:16px;width:16px;height:16px">subdirectory_arrow_right</mat-icon>
+                    <img *ngIf="imageUrl(sub.image_url)" [src]="imageUrl(sub.image_url)"
+                      class="w-6 h-6 object-contain rounded" />
+                    <span class="text-muted">{{ sub.name }}</span>
+                    <span class="px-2 py-0.5 rounded-full text-xs font-bold ml-auto"
+                      [class.bg-light-success]="sub.status==='active'"
+                      [class.text-success]="sub.status==='active'"
+                      [class.bg-light-error]="sub.status!=='active'"
+                      [class.text-error]="sub.status!=='active'">
+                      {{ sub.status }}
+                    </span>
+                    <a mat-icon-button [routerLink]="[sub.id_category, 'editar']" matTooltip="Editar" class="!ml-1">
+                      <mat-icon style="font-size:18px">edit</mat-icon>
+                    </a>
+                    <button mat-icon-button color="warn" 
+                      (click)="openDelete(sub)" 
+                      matTooltip="Eliminar">
+                      <mat-icon style="font-size:18px">delete</mat-icon>
+                    </button>
+                  </div>
+                }
               }
-            }
+            </div>
           </td>
         </ng-container>
 
@@ -112,7 +116,9 @@
             <a mat-icon-button [routerLink]="[c.id_category, 'editar']" matTooltip="Editar">
               <mat-icon>edit</mat-icon>
             </a>
-            <button mat-icon-button color="warn" (click)="openDelete(c)" matTooltip="Eliminar">
+            <button mat-icon-button color="warn" 
+              (click)="openDelete(c)" 
+              matTooltip="Eliminar">
               <mat-icon>delete</mat-icon>
             </button>
           </td>

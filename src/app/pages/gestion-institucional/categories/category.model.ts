@@ -5,4 +5,7 @@ export interface Category {
   description: string;
   image_url: string | null;
   status: string;
+  subcategories_count?: number;
+  anotaciones_count?: number;
+  can_delete?: boolean;
 }

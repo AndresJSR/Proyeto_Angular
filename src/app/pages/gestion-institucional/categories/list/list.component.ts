@@ -1,12 +1,12 @@
-import { Component, inject, OnInit, signal, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { Component, computed, inject, OnInit, signal } from '@angular/core';
+import { MatDialog } from '@angular/material/dialog';
 import { RouterModule } from '@angular/router';
 import { MaterialModule } from 'src/app/material.module';
-import { MatDialog } from '@angular/material/dialog';
+import { environment } from 'src/environments/environment';
 import { CategoriesAdminService } from '../categories.service';
 import { Category } from '../category.model';
 import { DeleteCategoryDialogComponent } from '../delete-dialog/delete-dialog.component';
-import { environment } from 'src/environments/environment';
 
 @Component({
   selector: 'app-categories-list',

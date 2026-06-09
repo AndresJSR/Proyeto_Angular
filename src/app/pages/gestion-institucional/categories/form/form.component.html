@@ -43,10 +43,18 @@
           <mat-select formControlName="id_parent_category">
             <mat-option [value]="null">— Sin categoría padre (crear como raíz) —</mat-option>
             @for (r of roots(); track r.id_category) {
-              <mat-option [value]="r.id_category">{{ r.name }}</mat-option>
+              <mat-option [value]="r.id_category" [disabled]="!canSelectAsParent(r.id_category)">
+                {{ r.name }}
+              </mat-option>
             }
           </mat-select>
-          <mat-hint>Si seleccionas una categoría padre, se creará como subcategoría.</mat-hint>
+          <mat-hint>
+            @if (editId()) {
+              Puedes cambiar la categoría padre o dejarla vacía para hacerla raíz.
+            } @else {
+              Si seleccionas una categoría padre, se creará como subcategoría.
+            }
+          </mat-hint>
         </mat-form-field>
 
         <mat-form-field appearance="outline">
