@@ -6,6 +6,19 @@
     </div>
   }
 
+  @if (sameNameAsCommune()) {
+    <div class="mb-4 p-3 rounded bg-light-error border-l-4 border-error flex items-start gap-3">
+      <mat-icon class="text-error flex-shrink-0">error</mat-icon>
+      <div class="flex-1">
+        <p class="font-semibold text-error">Error</p>
+        <p class="text-sm text-error mt-1">No se puede crear un barrio con el mismo nombre que la comuna seleccionada.</p>
+      </div>
+      <button mat-icon-button (click)="sameNameAsCommune.set(false)" class="flex-shrink-0">
+        <mat-icon class="text-error">close</mat-icon>
+      </button>
+    </div>
+  }
+
   @if (errorMessage()) {
     <div class="mb-4 p-3 rounded bg-light-error border-l-4 border-error flex items-start gap-3">
       <mat-icon class="text-error flex-shrink-0">error</mat-icon>
@@ -69,7 +82,7 @@
           Limpiar
         </button>
         <button mat-flat-button color="primary" type="submit"
-          [disabled]="form.invalid || saving() || nameExists()">
+          [disabled]="form.invalid || saving() || nameExists() || sameNameAsCommune()">
           <mat-icon>{{ saving() ? 'hourglass_empty' : 'save' }}</mat-icon>
           {{ saving() ? 'Guardando...' : (editId() ? 'Actualizar' : 'Crear') }}
         </button>

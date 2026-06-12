@@ -1,6 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component, effect, inject, input, OnInit, output, signal } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
+import { MatDialog } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { MaterialModule } from 'src/app/material.module';
@@ -21,6 +22,7 @@ export class NeighborhoodsFormComponent implements OnInit {
   private route      = inject(ActivatedRoute);
   private router     = inject(Router);
   private snack      = inject(MatSnackBar);
+  private dialog     = inject(MatDialog);
 
   onSaved = output<void>();
   onCancel = output<void>();
@@ -30,6 +32,7 @@ export class NeighborhoodsFormComponent implements OnInit {
   editId         = signal<number | null>(null);
   communes       = signal<Commune[]>([]);
   nameExists     = signal(false);
+  sameNameAsCommune = signal(false);
   errorMessage   = signal<string | null>(null);
   successMessage = signal<string | null>(null);
 
@@ -53,6 +56,7 @@ export class NeighborhoodsFormComponent implements OnInit {
           this.form.reset({ status: 'active', id_commune: null, name: '' });
         }
         this.nameExists.set(false);
+        this.sameNameAsCommune.set(false);
         this.errorMessage.set(null);
         this.successMessage.set(null);
       }
@@ -71,6 +75,7 @@ export class NeighborhoodsFormComponent implements OnInit {
   onCommuneChange(id: number | null) {
     this.form.patchValue({ id_commune: id });
     this.nameExists.set(false);
+    this.sameNameAsCommune.set(false);
     this.errorMessage.set(null);
   }
 
@@ -82,6 +87,7 @@ export class NeighborhoodsFormComponent implements OnInit {
     this.form.reset({ status: 'active', id_commune: null });
     this.editId.set(null);
     this.nameExists.set(false);
+    this.sameNameAsCommune.set(false);
     this.errorMessage.set(null);
     this.successMessage.set(null);
     this.onCancel.emit();
@@ -101,6 +107,17 @@ export class NeighborhoodsFormComponent implements OnInit {
 
     const normalized = this.normalize(name);
 
+    // Verificar si el nombre del barrio es igual al de la comuna
+    const commune = this.communes().find(c => c.id_commune === idCommune);
+    if (commune && this.normalize(commune.name) === normalized) {
+      this.sameNameAsCommune.set(true);
+      this.showDuplicateNameDialog(commune.name);
+      return;
+    }
+
+    this.sameNameAsCommune.set(false);
+
+    // Verificar si el nombre ya existe en otros barrios de la misma comuna
     this.svc.searchByCommune(idCommune).subscribe(neighborhoods => {
       this.nameExists.set(
         neighborhoods.some(n =>
@@ -111,8 +128,16 @@ export class NeighborhoodsFormComponent implements OnInit {
     });
   }
 
+  private showDuplicateNameDialog(communeName: string) {
+    this.dialog.open(DuplicateNameDialogComponent, {
+      width: '450px',
+      data: { communeName },
+      disableClose: false,
+    });
+  }
+
   submit() {
-    if (this.form.invalid || this.nameExists()) return;
+    if (this.form.invalid || this.nameExists() || this.sameNameAsCommune()) return;
     this.saving.set(true);
     this.errorMessage.set(null);
     this.successMessage.set(null);
@@ -128,6 +153,7 @@ export class NeighborhoodsFormComponent implements OnInit {
         this.form.reset({ status: 'active', id_commune: null });
         this.editId.set(null);
         this.nameExists.set(false);
+        this.sameNameAsCommune.set(false);
         setTimeout(() => {
           this.successMessage.set(null);
           this.onSaved.emit();
@@ -146,5 +172,46 @@ export class NeighborhoodsFormComponent implements OnInit {
         }
       },
     });
+  }
+}
+
+// Componente del diálogo
+import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { Inject } from '@angular/core';
+
+@Component({
+  selector: 'app-duplicate-name-dialog',
+  standalone: true,
+  imports: [CommonModule, MaterialModule],
+  template: `
+    <div class="p-6">
+      <div class="flex items-start gap-4">
+        <mat-icon class="text-5xl text-warning mt-1">warning</mat-icon>
+        <div class="flex-1">
+          <h2 class="text-xl font-bold mb-2">Nombre duplicado</h2>
+          <p class="text-sm text-muted mb-4">
+            No se puede crear un barrio con el mismo nombre que la comuna <strong>"{{ data.communeName }}"</strong>.
+          </p>
+          <p class="text-sm text-muted">
+            Por favor, ingresa un nombre diferente para el barrio.
+          </p>
+        </div>
+      </div>
+      <div class="flex justify-end mt-6">
+        <button mat-flat-button color="primary" (click)="close()">
+          Entendido
+        </button>
+      </div>
+    </div>
+  `,
+})
+export class DuplicateNameDialogComponent {
+  constructor(
+    private dialogRef: MatDialogRef<DuplicateNameDialogComponent>,
+    @Inject(MAT_DIALOG_DATA) public data: any
+  ) {}
+
+  close() {
+    this.dialogRef.close();
   }
 }
