@@ -1,0 +1,24 @@
+<form (ngSubmit)="submitQuery()">
+  <div class="d-flex gap-12 align-items-center">
+    <mat-form-field appearance="outline" class="w-100">
+      <mat-label>Consulta del reporte</mat-label>
+
+      <input
+        matInput
+        name="query"
+        [(ngModel)]="query"
+        placeholder="Ej: comuna con mas barrios"
+        [disabled]="loading"
+      />
+    </mat-form-field>
+
+    <button
+      mat-flat-button
+      color="primary"
+      type="submit"
+      [disabled]="loading || !query.trim()"
+    >
+      {{ loading ? 'Generando...' : 'Generar' }}
+    </button>
+  </div>
+</form>
