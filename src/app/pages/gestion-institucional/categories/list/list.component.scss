@@ -1,0 +1,110 @@
+// Estilos para el componente de Categorías
+
+:host {
+  display: block;
+  height: 100%;
+}
+
+mat-drawer-container {
+  height: 100% !important;
+}
+
+mat-drawer-content {
+  max-height: calc(100vh - 64px) !important;
+}
+
+mat-drawer {
+  width: 450px !important;
+  box-shadow: -2px 0 8px rgba(0, 0, 0, 0.15) !important;
+
+  @media (max-width: 768px) {
+    width: 100% !important;
+  }
+}
+
+.bg-success {
+  background-color: #10b981;
+}
+
+.bg-error {
+  background-color: #ef4444;
+}
+
+.bg-warning {
+  background-color: #f59e0b;
+}
+
+.text-success {
+  color: #10b981;
+}
+
+.text-error {
+  color: #ef4444;
+}
+
+.text-warning {
+  color: #f59e0b;
+}
+
+.bg-light-success {
+  background-color: #d1fae5;
+}
+
+.bg-light-error {
+  background-color: #fee2e2;
+}
+
+.text-muted {
+  color: #6b7280;
+}
+
+.text-primary {
+  color: #3b82f6;
+}
+
+.bg-light-primary {
+  background-color: #dbeafe;
+}
+
+.cardWithShadow {
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+
+  mat-card-footer {
+    background-color: #f9fafb;
+  }
+}
+
+mat-hint {
+  &.text-blue-600 {
+    color: #2563eb;
+  }
+}
+
+.min-w-80 {
+  min-width: 320px;
+}
+
+.border-b {
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.border-t {
+  border-top: 1px solid #e5e7eb;
+}
+
+.bg-gray-50 {
+  background-color: #f9fafb;
+}
+
+.hover\:border-primary:hover {
+  border-color: #3b82f6 !important;
+}
+
+.bg-purple-200 {
+  background-color: #e9d5ff;
+}
+
+.text-purple-700 {
+  color: #7e22ce;
+}
+
