@@ -1,5 +1,5 @@
 import { Routes } from '@angular/router';
-
+//hhh
 export const CitizensRoutes: Routes = [
   {
     path: '',
