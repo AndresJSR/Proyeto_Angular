@@ -36,20 +36,6 @@
               mat-stroked-button
               class="w-full"
               [disabled]="loadingProvider !== null"
-              (click)="loginWithProvider(authProvider.MICROSOFT)"
-            >
-              @if (isLoading(authProvider.MICROSOFT)) {
-                Ingresando con Microsoft...
-              } @else {
-                Continuar con Microsoft
-              }
-            </button>
-
-            <button
-              type="button"
-              mat-stroked-button
-              class="w-full"
-              [disabled]="loadingProvider !== null"
               (click)="loginWithProvider(authProvider.GITHUB)"
             >
               @if (isLoading(authProvider.GITHUB)) {
@@ -61,7 +47,7 @@
           </div>
 
           <span class="block font-medium text-center mt-6 text-sm text-gray-500">
-            Acceso académico simulado sin backend de autenticación
+            Acceso con Firebase Authentication
           </span>
         </div>
       </div>

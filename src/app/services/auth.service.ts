@@ -1,5 +1,15 @@
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, Observable, of } from 'rxjs';
+import { BehaviorSubject, from, Observable } from 'rxjs';
+import { map } from 'rxjs/operators';
+
+import {
+  Auth,
+  GithubAuthProvider,
+  GoogleAuthProvider,
+  signInWithPopup,
+  signOut,
+  User,
+} from '@angular/fire/auth';
 
 import { AuthProvider } from '../models/auth-provider.enum';
 import { AuthUser } from '../models/auth-user';
@@ -17,19 +27,31 @@ export class AuthService {
 
   public readonly currentUser$ = this.currentUserSubject.asObservable();
 
-  constructor(private readonly storage: StorageService) {}
+  constructor(
+    private readonly storage: StorageService,
+    private readonly firebaseAuth: Auth,
+  ) {}
 
   loginWithProvider(provider: AuthProvider): Observable<AuthUser> {
-    const user = this.buildDemoUser(provider);
-    this.setUser(user);
+    const firebaseProvider = this.getFirebaseProvider(provider);
 
-    return of(user);
+    return from(signInWithPopup(this.firebaseAuth, firebaseProvider)).pipe(
+      map((credential) => {
+        const user = this.mapFirebaseUserToAuthUser(credential.user, provider);
+
+        this.setUser(user);
+
+        return user;
+      }),
+    );
   }
 
   logout(): Observable<void> {
-    this.clearUser();
-
-    return of(void 0);
+    return from(signOut(this.firebaseAuth)).pipe(
+      map(() => {
+        this.clearUser();
+      }),
+    );
   }
 
   getCurrentUser(): Observable<AuthUser | null> {
@@ -60,28 +82,32 @@ export class AuthService {
     this.storage.removeItem(this.storageKey);
   }
 
-  private buildDemoUser(provider: AuthProvider): AuthUser {
-    const users: Record<AuthProvider, AuthUser> = {
-      [AuthProvider.GOOGLE]: {
-        id: 'google-demo-user',
-        name: 'Usuario Google',
-        email: 'usuario.google@demo.com',
-        provider: AuthProvider.GOOGLE,
-      },
-      [AuthProvider.MICROSOFT]: {
-        id: 'microsoft-demo-user',
-        name: 'Usuario Microsoft',
-        email: 'usuario.microsoft@demo.com',
-        provider: AuthProvider.MICROSOFT,
-      },
-      [AuthProvider.GITHUB]: {
-        id: 'github-demo-user',
-        name: 'Usuario GitHub',
-        email: 'usuario.github@demo.com',
-        provider: AuthProvider.GITHUB,
-      },
-    };
+  private getFirebaseProvider(provider: AuthProvider) {
+    switch (provider) {
+      case AuthProvider.GOOGLE:
+        return new GoogleAuthProvider();
 
-    return users[provider];
+      case AuthProvider.GITHUB:
+        return new GithubAuthProvider();
+
+      case AuthProvider.MICROSOFT:
+        throw new Error('Microsoft todavía no está configurado en Firebase.');
+
+      default:
+        throw new Error('Proveedor de autenticación no soportado.');
+    }
+  }
+
+  private mapFirebaseUserToAuthUser(
+    firebaseUser: User,
+    provider: AuthProvider,
+  ): AuthUser {
+    return {
+      id: firebaseUser.uid,
+      name: firebaseUser.displayName ?? 'Usuario',
+      email: firebaseUser.email ?? '',
+      provider,
+      avatarUrl: firebaseUser.photoURL ?? undefined,
+    };
   }
 }

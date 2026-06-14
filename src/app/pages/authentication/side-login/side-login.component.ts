@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
-import { Router } from '@angular/router';
-import { RouterModule } from '@angular/router';
+import { Router, RouterModule } from '@angular/router';
+
+import { FirebaseError } from 'firebase/app';
 
 import { MaterialModule } from 'src/app/material.module';
 import { AuthProvider } from '../../../models/auth-provider.enum';
@@ -31,14 +32,36 @@ export class AppSideLoginComponent {
         this.loadingProvider = null;
         this.router.navigate(['/dashboard']);
       },
-      error: () => {
+      error: (error: unknown) => {
         this.loadingProvider = null;
-        this.error = 'No se pudo iniciar sesión. Intenta nuevamente.';
+        this.error = this.getLoginErrorMessage(error);
       },
     });
   }
 
   isLoading(provider: AuthProvider): boolean {
     return this.loadingProvider === provider;
+  }
+
+  private getLoginErrorMessage(error: unknown): string {
+    if (error instanceof FirebaseError) {
+      if (error.code === 'auth/popup-closed-by-user') {
+        return 'Cerraste la ventana de inicio de sesión antes de finalizar.';
+      }
+
+      if (error.code === 'auth/account-exists-with-different-credential') {
+        return 'Ya existe una cuenta con este correo usando otro proveedor.';
+      }
+
+      if (error.code === 'auth/unauthorized-domain') {
+        return 'El dominio actual no está autorizado en Firebase Authentication.';
+      }
+
+      if (error.code === 'auth/popup-blocked') {
+        return 'El navegador bloqueó la ventana emergente de inicio de sesión.';
+      }
+    }
+
+    return 'No se pudo iniciar sesión. Intenta nuevamente.';
   }
 }

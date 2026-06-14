@@ -1,6 +1,14 @@
 export const environment = {
-  production: true,
+  production: false,
   apiUrl: 'http://127.0.0.1:5000',
-  // URL WebSocket para producción si aplica
-  wsUrl: 'ws://127.0.0.1:5000'
+  // Optional: especificar la URL WebSocket directamente
+  wsUrl: 'ws://127.0.0.1:5000',
+  firebase: {
+    apiKey: '...',
+    authDomain: '...',
+    projectId: '...',
+    storageBucket: '...',
+    messagingSenderId: '...',
+    appId: '...',
+  },
 };
