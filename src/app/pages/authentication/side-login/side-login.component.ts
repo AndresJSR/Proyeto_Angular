@@ -1,29 +1,44 @@
 import { Component } from '@angular/core';
-import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { RouterModule } from '@angular/router';
+
 import { MaterialModule } from 'src/app/material.module';
-import { FormsModule } from '@angular/forms';
-import { ReactiveFormsModule } from '@angular/forms';
+import { AuthProvider } from '../../../models/auth-provider.enum';
+import { AuthService } from '../../../services/auth.service';
 
 @Component({
   selector: 'app-side-login',
-  imports: [RouterModule, MaterialModule, FormsModule, ReactiveFormsModule],
+  imports: [RouterModule, MaterialModule],
   templateUrl: './side-login.component.html',
 })
 export class AppSideLoginComponent {
-  constructor(private router: Router) {}
+  readonly authProvider = AuthProvider;
 
-  form = new FormGroup({
-    uname: new FormControl('', [Validators.required, Validators.minLength(6)]),
-    password: new FormControl('', [Validators.required]),
-  });
+  loadingProvider: AuthProvider | null = null;
+  error: string | null = null;
 
-  get f() {
-    return this.form.controls;
+  constructor(
+    private readonly router: Router,
+    private readonly authService: AuthService,
+  ) {}
+
+  loginWithProvider(provider: AuthProvider): void {
+    this.error = null;
+    this.loadingProvider = provider;
+
+    this.authService.loginWithProvider(provider).subscribe({
+      next: () => {
+        this.loadingProvider = null;
+        this.router.navigate(['/dashboard']);
+      },
+      error: () => {
+        this.loadingProvider = null;
+        this.error = 'No se pudo iniciar sesión. Intenta nuevamente.';
+      },
+    });
   }
 
-  submit() {
-    this.router.navigate(['']);
+  isLoading(provider: AuthProvider): boolean {
+    return this.loadingProvider === provider;
   }
 }

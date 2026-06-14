@@ -1,11 +1,15 @@
 import { Routes } from '@angular/router';
+
 import { BlankComponent } from './layouts/blank/blank.component';
 import { FullComponent } from './layouts/full/full.component';
+import { AuthenticatedGuard } from './guards/authenticated.guard';
+import { NoAuthenticatedGuard } from './guards/no-authenticated.guard';
 
 export const routes: Routes = [
   {
     path: '',
     component: FullComponent,
+    canActivateChild: [AuthenticatedGuard],
     children: [
       {
         path: '',
@@ -20,26 +24,33 @@ export const routes: Routes = [
       {
         path: 'mapa',
         loadChildren: () =>
-          import('./pages/mapa-territorial/mapa-territorial.routes')
-            .then((m) => m.MapaTerritorialRoutes),
+          import('./pages/mapa-territorial/mapa-territorial.routes').then(
+            (m) => m.MapaTerritorialRoutes,
+          ),
+      },
+      {
+        path: 'cuenta',
+        loadChildren: () =>
+          import('./pages/cuenta/cuenta.routes').then((m) => m.CuentaRoutes),
       },
     ],
   },
   {
     path: '',
     component: BlankComponent,
+    canActivateChild: [NoAuthenticatedGuard],
     children: [
       {
         path: 'authentication',
         loadChildren: () =>
           import('./pages/authentication/authentication.routes').then(
-            (m) => m.AuthenticationRoutes
+            (m) => m.AuthenticationRoutes,
           ),
       },
     ],
   },
   {
     path: '**',
-    redirectTo: 'authentication/error',
+    redirectTo: 'authentication/login',
   },
 ];

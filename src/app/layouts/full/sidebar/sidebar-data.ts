@@ -90,7 +90,7 @@ export const navItems: NavItem[] = [
     route: '/cuenta/configuracion',
   },
   {
-    displayName: 'Logout',
+    displayName: 'Cerrar sesión',
     iconName: 'solar:logout-1-line-duotone',
     route: '/cuenta/logout',
   },

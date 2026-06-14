@@ -3,38 +3,76 @@
     <div class="grid grid-cols-12 gap-6">
       <div class="lg:col-span-6 col-span-12 flex items-stretch">
         <div class="w-full p-10 flex flex-col justify-center aling-center">
-          <div class="text-center">Your Social Campaigns</div>
+          <div class="text-center mb-8">
+            <h2 class="text-2xl font-semibold mb-2">Iniciar sesión</h2>
+            <p class="text-sm text-gray-500">
+              Sistema de valoración territorial
+            </p>
+          </div>
 
-          <form class="mt-8">
-            <mat-label class="mat-subtitle-2 text-sm font-semibold mb-3 block text-start">Username</mat-label>
-            <mat-form-field appearance="outline" class="w-full" color="primary">
-              <input matInput />
-            </mat-form-field>
-
-            <mat-label class="mat-subtitle-2 text-sm font-semibold mb-3 block text-start">Password</mat-label>
-            <mat-form-field appearance="outline" class="w-full" color="primary">
-              <input matInput type="password" />
-            </mat-form-field>
-
-            <div class="flex items-center justify-between mb-3">
-              <mat-checkbox color="primary">Remember this Device</mat-checkbox>
-              <a [routerLink]="['/']" class="text-primary font-semibold no-underline text-sm">Forgot Password
-                ?</a>
+          @if (error) {
+            <div class="text-red-600 text-sm mb-4 text-center">
+              {{ error }}
             </div>
-            <a [routerLink]="['/']" mat-flat-button color="primary" class="w-full">
-              Sign In
-            </a>
+          }
 
-          </form>
-          <span class="block font-medium text-center mt-6">New to Modernize?
-            <a [routerLink]="['/authentication/register']" class="no-underline text-primary font-medium text-sm">
-              Create an account</a>
+          <div class="flex flex-col gap-3">
+            <button
+              type="button"
+              mat-stroked-button
+              class="w-full"
+              [disabled]="loadingProvider !== null"
+              (click)="loginWithProvider(authProvider.GOOGLE)"
+            >
+              @if (isLoading(authProvider.GOOGLE)) {
+                Ingresando con Google...
+              } @else {
+                Continuar con Google
+              }
+            </button>
+
+            <button
+              type="button"
+              mat-stroked-button
+              class="w-full"
+              [disabled]="loadingProvider !== null"
+              (click)="loginWithProvider(authProvider.MICROSOFT)"
+            >
+              @if (isLoading(authProvider.MICROSOFT)) {
+                Ingresando con Microsoft...
+              } @else {
+                Continuar con Microsoft
+              }
+            </button>
+
+            <button
+              type="button"
+              mat-stroked-button
+              class="w-full"
+              [disabled]="loadingProvider !== null"
+              (click)="loginWithProvider(authProvider.GITHUB)"
+            >
+              @if (isLoading(authProvider.GITHUB)) {
+                Ingresando con GitHub...
+              } @else {
+                Continuar con GitHub
+              }
+            </button>
+          </div>
+
+          <span class="block font-medium text-center mt-6 text-sm text-gray-500">
+            Acceso académico simulado sin backend de autenticación
           </span>
         </div>
       </div>
+
       <div class="lg:col-span-6 col-span-12 relative hidden lg:flex justify-center items-stretch bg-light p-5">
         <div class="flex items-center justify-center w-full">
-          <img src="/assets/images/backgrounds/login-bg.svg" alt="login" class="img-fluid object-cover" />
+          <img
+            src="/assets/images/backgrounds/login-bg.svg"
+            alt="login"
+            class="img-fluid object-cover"
+          />
         </div>
       </div>
     </div>
