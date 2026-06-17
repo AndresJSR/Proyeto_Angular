@@ -1,0 +1,88 @@
+<div class="p-6 max-w-2xl mx-auto">
+  <h1 class="text-2xl font-bold mb-6">
+    {{ editId() ? 'Editar' : 'Nueva' }} categoría
+  </h1>
+
+  <mat-card class="cardWithShadow">
+    <mat-card-content>
+      <form [formGroup]="form" (ngSubmit)="submit()" class="flex flex-col gap-4">
+
+        <!-- Imagen - REQUERIDA solo si no tiene padre -->
+        @if (!form.value.id_parent_category) {
+          <div class="flex items-center gap-4 p-4 border-2 border-dashed border-blue-300 rounded-lg bg-blue-50">
+            @if (preview()) {
+              <img [src]="preview()" class="w-24 h-24 object-contain rounded border-2 border-blue-400" />
+            } @else {
+              <div class="w-24 h-24 bg-blue-100 flex items-center justify-center rounded border-2 border-blue-300">
+                <mat-icon class="text-blue-400" style="font-size: 48px; width: 48px; height: 48px;">image</mat-icon>
+              </div>
+            }
+            <div class="flex flex-col gap-2">
+              <label class="flex items-center gap-2">
+                <input type="file" accept="image/png,image/jpg,image/jpeg,image/webp" hidden (change)="onFile($event)" />
+                <button mat-raised-button color="primary" type="button"
+                  onclick="this.previousElementSibling.click()">
+                  <mat-icon>upload</mat-icon> Seleccionar Imagen
+                </button>
+              </label>
+              @if (fileError()) {
+                <span class="text-sm text-red-600 font-semibold">❌ {{ fileError() }}</span>
+              } @else if (preview()) {
+                <span class="text-sm text-green-600 font-semibold">✅ Imagen seleccionada</span>
+              } @else {
+                <span class="text-sm text-red-600 font-semibold">⚠️ Imagen requerida *</span>
+              }
+              <span class="text-xs text-gray-600">PNG, JPG, JPEG, WEBP (máx. 5MB)</span>
+            </div>
+          </div>
+        }
+
+        <!-- Categoría padre (opcional) -->
+        <mat-form-field appearance="outline">
+          <mat-label>Categoría padre (opcional)</mat-label>
+          <mat-select formControlName="id_parent_category">
+            <mat-option [value]="null">— Sin categoría padre (crear como raíz) —</mat-option>
+            @for (r of roots(); track r.id_category) {
+              <mat-option [value]="r.id_category" [disabled]="!canSelectAsParent(r.id_category)">
+                {{ r.name }}
+              </mat-option>
+            }
+          </mat-select>
+          <mat-hint>
+            @if (editId()) {
+              Puedes cambiar la categoría padre o dejarla vacía para hacerla raíz.
+            } @else {
+              Si seleccionas una categoría padre, se creará como subcategoría.
+            }
+          </mat-hint>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label>Nombre *</mat-label>
+          <input matInput formControlName="name" />
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label>Descripción</mat-label>
+          <textarea matInput formControlName="description" rows="3"></textarea>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label>Estado</mat-label>
+          <mat-select formControlName="status">
+            <mat-option value="active">Activo</mat-option>
+            <mat-option value="inactive">Inactivo</mat-option>
+          </mat-select>
+        </mat-form-field>
+
+        <div class="flex justify-end gap-3">
+          <a mat-stroked-button [routerLink]="backRoute">Cancelar</a>
+          <button mat-flat-button color="primary" type="submit"
+            [disabled]="form.invalid || saving() || (!editId() && !form.value.id_parent_category && !preview())">
+            {{ saving() ? 'Guardando...' : 'Guardar' }}
+          </button>
+        </div>
+      </form>
+    </mat-card-content>
+  </mat-card>
+</div>

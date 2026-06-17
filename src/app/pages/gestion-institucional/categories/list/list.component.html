@@ -1,0 +1,124 @@
+<div class="p-6">
+  <div class="flex items-center justify-between mb-6">
+    <div>
+      <h1 class="text-2xl font-bold">Gestión de Categorías y Subcategorías</h1>
+      <p class="text-sm text-muted">Administra las categorías que se utilizan para clasificar las anotaciones en el sistema.</p>
+    </div>
+    <a mat-flat-button color="primary" routerLink="nueva">
+      <mat-icon>add</mat-icon> Nueva categoría
+    </a>
+  </div>
+
+  @if (loading()) {
+    <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+  }
+
+  <!-- Barra de búsqueda y filtros -->
+  <div class="flex gap-3 mb-6 items-end">
+    <mat-form-field class="flex-1" appearance="outline">
+      <mat-label>Buscar categoría...</mat-label>
+      <mat-icon matPrefix>search</mat-icon>
+      <input matInput [(ngModel)]="searchText" placeholder="Buscar por nombre">
+    </mat-form-field>
+    <button mat-icon-button matTooltip="Filtros">
+      <mat-icon>tune</mat-icon>
+    </button>
+  </div>
+
+  <mat-card class="cardWithShadow">
+    <mat-card-content class="overflow-auto">
+      <table mat-table [dataSource]="displayedData()" class="w-full">
+
+        <!-- Nombre + subcategorías expandibles -->
+        <ng-container matColumnDef="name">
+          <th mat-header-cell *matHeaderCellDef>Categoría / Subcategoría</th>
+          <td mat-cell *matCellDef="let c">
+            <div class="flex items-center gap-2" [class.ml-8]="c.isChild">
+              @if (!c.isChild && hasSubcategories(c.id_category)) {
+                <button mat-icon-button type="button"
+                  (click)="toggleExpand(c.id_category)"
+                  style="width:28px;height:28px;line-height:28px;">
+                  <mat-icon style="font-size:18px">
+                    {{ expanded().has(c.id_category) ? 'expand_less' : 'expand_more' }}
+                  </mat-icon>
+                </button>
+              } @else {
+                <span style="width:28px;display:inline-block"></span>
+              }
+              @if (imageUrl(c.image_url)) {
+                <img [src]="imageUrl(c.image_url)" class="w-8 h-8 object-contain rounded" />
+              } @else {
+                <mat-icon class="text-muted">category</mat-icon>
+              }
+              <span [class.font-semibold]="!c.isChild" [class.text-muted]="c.isChild">
+                {{ c.name }}
+              </span>
+              @if (c.isChild) {
+                <mat-icon style="font-size:14px;color:#9ca3af">subdirectory_arrow_right</mat-icon>
+              }
+            </div>
+          </td>
+        </ng-container>
+
+        <!-- Tipo -->
+        <ng-container matColumnDef="type">
+          <th mat-header-cell *matHeaderCellDef>Tipo</th>
+          <td mat-cell *matCellDef="let c">
+            <span class="px-2 py-1 rounded-full text-xs font-bold"
+              [class.bg-light-primary]="getCategoryType(c) === 'Categoría'"
+              [class.text-primary]="getCategoryType(c) === 'Categoría'"
+              [class.bg-purple-200]="getCategoryType(c) === 'Subcategoría'"
+              [class.text-purple-700]="getCategoryType(c) === 'Subcategoría'">
+              {{ getCategoryType(c) }}
+            </span>
+          </td>
+        </ng-container>
+
+        <!-- Categoría padre -->
+        <ng-container matColumnDef="parent">
+          <th mat-header-cell *matHeaderCellDef>Categoría padre</th>
+          <td mat-cell *matCellDef="let c">
+            {{ parentName(c.id_parent_category) }}
+          </td>
+        </ng-container>
+
+        <!-- Estado -->
+        <ng-container matColumnDef="status">
+          <th mat-header-cell *matHeaderCellDef>Estado</th>
+          <td mat-cell *matCellDef="let c">
+            <span class="px-2 py-1 rounded-full text-xs font-bold"
+              [class.bg-light-success]="c.status==='active'"
+              [class.text-success]="c.status==='active'"
+              [class.bg-light-error]="c.status!=='active'"
+              [class.text-error]="c.status!=='active'">
+              {{ c.status }}
+            </span>
+          </td>
+        </ng-container>
+
+        <!-- Acciones -->
+        <ng-container matColumnDef="actions">
+          <th mat-header-cell *matHeaderCellDef>Acciones</th>
+          <td mat-cell *matCellDef="let c">
+            <div class="flex items-center gap-1">
+              <a mat-icon-button [routerLink]="[c.id_category, 'editar']" matTooltip="Editar">
+                <mat-icon style="font-size:18px">edit</mat-icon>
+              </a>
+              <button mat-icon-button color="warn" 
+                (click)="openDelete(c)" 
+                matTooltip="Eliminar">
+                <mat-icon style="font-size:18px">delete</mat-icon>
+              </button>
+            </div>
+          </td>
+        </ng-container>
+
+        <tr mat-header-row *matHeaderRowDef="columns"></tr>
+        <tr mat-row *matRowDef="let row; columns: columns" [class.bg-gray-50]="row.isChild"></tr>
+      </table>
+      @if (!loading() && !displayedData().length) {
+        <p class="text-center text-muted py-8">No hay categorías registradas.</p>
+      }
+    </mat-card-content>
+  </mat-card>
+</div>

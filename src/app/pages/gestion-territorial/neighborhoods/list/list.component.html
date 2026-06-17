@@ -1,0 +1,147 @@
+<div class="p-6 w-full max-w-none">
+  <!-- Header -->
+  <div class="flex items-center justify-between mb-6">
+    <div>
+      <h1 class="text-2xl font-bold">Gestión de Barrios</h1>
+      <p class="text-sm text-muted">Administra los barrios del municipio de Manizales.</p>
+    </div>
+    <button mat-flat-button color="primary" (click)="newNeighborhood()">
+      <mat-icon>add</mat-icon> Nuevo barrio
+    </button>
+  </div>
+
+  <!-- Filtros -->
+  <mat-card class="cardWithShadow mb-4 w-full">
+    <mat-card-content>
+      <div class="flex gap-4 flex-wrap items-center">
+        <mat-form-field appearance="outline" class="min-w-[160px]">
+          <mat-label>Comuna</mat-label>
+          <mat-select [value]="filterCommune()" (valueChange)="onCommuneChange($event)">
+            <mat-option [value]="null">Todas las comunas</mat-option>
+            @for (c of communesForFilter(); track c.id_commune) {
+              <mat-option [value]="c.id_commune">{{ c.name }}</mat-option>
+            }
+          </mat-select>
+          @if (filterCommune()) {
+            <button matSuffix mat-icon-button (click)="onCommuneChange(null)">
+              <mat-icon>close</mat-icon>
+            </button>
+          }
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="flex-1 min-w-[200px]">
+          <mat-label>Buscar barrio...</mat-label>
+          <mat-icon matPrefix>search</mat-icon>
+          <input matInput [value]="searchText()" (input)="searchText.set($any($event.target).value)" />
+        </mat-form-field>
+      </div>
+    </mat-card-content>
+  </mat-card>
+
+  @if (loading()) {
+    <mat-progress-bar mode="indeterminate" class="mb-2"></mat-progress-bar>
+  }
+
+  <!-- Tabla -->
+  <mat-card class="cardWithShadow w-full">
+    <mat-card-content>
+      <p class="text-sm text-muted mb-3">Barrios registrados</p>
+      <div class="overflow-auto w-full">
+        <table mat-table [dataSource]="filtered()" class="w-full">
+
+          <ng-container matColumnDef="barrio">
+            <th mat-header-cell *matHeaderCellDef>Barrio</th>
+            <td mat-cell *matCellDef="let n">
+              <div class="flex items-center gap-2">
+                <div class="w-8 h-8 rounded-full flex items-center justify-center font-bold text-xs bg-light-primary text-primary">
+                  {{ n.name?.charAt(0)?.toUpperCase() }}
+                </div>
+                <span class="font-semibold">{{ n.name }}</span>
+              </div>
+            </td>
+          </ng-container>
+
+          <ng-container matColumnDef="comuna">
+            <th mat-header-cell *matHeaderCellDef>Comuna</th>
+            <td mat-cell *matCellDef="let n">{{ n.communeName }}</td>
+          </ng-container>
+
+          <ng-container matColumnDef="puntos">
+            <th mat-header-cell *matHeaderCellDef>Puntos</th>
+            <td mat-cell *matCellDef="let n">
+              <span class="px-2 py-1 rounded-full text-xs font-bold bg-light-primary text-primary">
+                {{ pointsCount(n.id_neighborhood) }}
+              </span>
+            </td>
+          </ng-container>
+
+          <ng-container matColumnDef="anotaciones">
+            <th mat-header-cell *matHeaderCellDef>Anotaciones</th>
+            <td mat-cell *matCellDef="let n">
+              <span class="px-2 py-1 rounded-full text-xs font-bold bg-light-primary text-primary">
+                {{ annotationsCount(n.id_neighborhood) }}
+              </span>
+            </td>
+          </ng-container>
+
+          <ng-container matColumnDef="status">
+            <th mat-header-cell *matHeaderCellDef>Estado</th>
+            <td mat-cell *matCellDef="let n">
+              <span class="px-2 py-1 rounded-full text-xs font-bold"
+                [class.bg-light-success]="n.status==='active'"
+                [class.text-success]="n.status==='active'"
+                [class.bg-light-error]="n.status!=='active'"
+                [class.text-error]="n.status!=='active'">
+                {{ n.status === 'active' ? 'Activo' : 'Inactivo' }}
+              </span>
+            </td>
+          </ng-container>
+
+          <ng-container matColumnDef="actions">
+            <th mat-header-cell *matHeaderCellDef></th>
+            <td mat-cell *matCellDef="let n">
+              <button mat-icon-button matTooltip="Editar" (click)="selectNeighborhood(n)">
+                <mat-icon>edit</mat-icon>
+              </button>
+              <button mat-icon-button color="warn" (click)="openDelete(n)" matTooltip="Eliminar">
+                <mat-icon>delete</mat-icon>
+              </button>
+            </td>
+          </ng-container>
+
+          <tr mat-header-row *matHeaderRowDef="columns"></tr>
+          <tr mat-row *matRowDef="let row; columns: columns"></tr>
+        </table>
+
+        @if (!loading() && !filtered().length) {
+          <p class="text-center text-muted py-8">No hay barrios registrados.</p>
+        }
+
+        <p class="text-sm text-muted mt-3">
+          Mostrando 1 a {{ filtered().length }} de {{ filtered().length }} barrios
+        </p>
+      </div>
+    </mat-card-content>
+  </mat-card>
+
+  <!-- Formulario Modal -->
+  @if (selectedNeighborhood() !== null) {
+    <div class="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+      <mat-card class="w-full max-w-md max-h-[90vh] overflow-y-auto">
+        <mat-card-header class="flex justify-between items-center mb-4 p-6 border-b">
+          <h2 class="text-lg font-bold">{{ selectedNeighborhood()?.id_neighborhood ? 'Editar barrio' : 'Crear nuevo barrio' }}</h2>
+          <button mat-icon-button (click)="clearSelection()">
+            <mat-icon>close</mat-icon>
+          </button>
+        </mat-card-header>
+        <mat-card-content class="p-6">
+          <app-neighborhoods-form 
+            [selectedNeighborhood]="selectedNeighborhood()"
+            (onSaved)="onFormSaved()"
+            (onCancel)="clearSelection()">
+          </app-neighborhoods-form>
+        </mat-card-content>
+      </mat-card>
+    </div>
+  }
+</div>
