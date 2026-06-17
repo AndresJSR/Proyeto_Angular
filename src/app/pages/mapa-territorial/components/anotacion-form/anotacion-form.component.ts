@@ -1,4 +1,4 @@
-import {
+﻿import {
   ChangeDetectionStrategy,
   Component,
   DestroyRef,
@@ -15,9 +15,8 @@ import { MaterialModule } from 'src/app/material.module';
 import { CategoriesService } from '../../services/categories.service';
 import { EntitiesService } from '../../services/entities.service';
 import { AnotacionFormService } from '../../services/anotacion-form.service';
-import { Category } from '../../models/category.model';
-import { Entity } from '../../models/entity.model';
-import { NeighborhoodSearchResult } from '../../models/annotation.model';
+import { Category } from '../../../../models/category.model';
+import { Entity } from '../../../../models/entity.model';
 import { environment } from 'src/environments/environment';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
@@ -36,6 +35,8 @@ export class AnotacionFormComponent implements OnInit {
   private readonly entSvc = inject(EntitiesService);
 
   coords = input<[number, number] | null>(null);
+  neighborhoodId = input<number | null>(null);
+  barrioName = input<string | null>(null);
   closed = output<void>();
   saved = output<number>();
 
@@ -55,7 +56,6 @@ export class AnotacionFormComponent implements OnInit {
   selectedEntityIds = signal<number[]>([]);
   files = signal<File[]>([]);
   saving = signal(false);
-  outOfBoundsNeighborhood = signal<NeighborhoodSearchResult | null>(null);
 
   description = '';
   id_citizen = 1;
@@ -70,17 +70,6 @@ export class AnotacionFormComponent implements OnInit {
       .getAll()
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe(e => this.entities.set(e));
-
-    const c = this.coords();
-    if (c) {
-      this.anotacionFormService
-        .searchNeighborhood(c[0], c[1])
-        .pipe(takeUntilDestroyed(this.destroyRef))
-        .subscribe({
-          next: res => this.outOfBoundsNeighborhood.set(res?.length ? res[0] : null),
-          error: () => this.outOfBoundsNeighborhood.set(null),
-        });
-    }
   }
 
   toggleCat(id: number) {
@@ -174,7 +163,8 @@ export class AnotacionFormComponent implements OnInit {
 
   save() {
     const c = this.coords();
-    if (!c || !this.description.trim()) {
+    const neighborhoodId = this.neighborhoodId();
+    if (!c || !this.description.trim() || !neighborhoodId) {
       return;
     }
 
@@ -184,7 +174,7 @@ export class AnotacionFormComponent implements OnInit {
       .saveAll(
         c,
         {
-          id_neighborhood: 1,
+          id_neighborhood: neighborhoodId,
           id_citizen: this.id_citizen,
           description: this.description.trim(),
           latitude: c[0],

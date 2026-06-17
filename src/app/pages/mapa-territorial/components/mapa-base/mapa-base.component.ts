@@ -1,4 +1,4 @@
-import {
+﻿import {
   AfterViewInit,
   ChangeDetectionStrategy,
   Component,
@@ -16,7 +16,7 @@ import {
 import { CommonModule } from '@angular/common';
 import * as L from 'leaflet';
 import { MAPA_BASE_LAYERS } from './mapa-base-layers';
-import { MapaBaseLayer } from './mapa-base-layer.model';
+import { MapaBaseLayer } from '../../../../models/mapa-base-layer.model';
 
 @Component({
   selector: 'app-mapa-base',

@@ -1,6 +1,6 @@
-import { Injectable, inject } from '@angular/core';
+﻿import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { AnnotationCategory } from '../models/annotation-category.model';
+import { AnnotationCategory } from '../../../models/annotation-category.model';
 import { environment } from '../../../../environments/environment';
 
 @Injectable({ providedIn: 'root' })

@@ -5,7 +5,9 @@ export interface Category {
   description: string;
   image_url: string | null;
   status: string;
-  // construido en frontend
+  subcategories_count?: number;
+  anotaciones_count?: number;
+  can_delete?: boolean;
   children?: Category[];
   conteo?: number;
 }

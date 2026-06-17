@@ -3,7 +3,7 @@
 
   <div class="map-topbar" (click)="$event.stopPropagation()">
     <div class="layer-switcher">
-      <button class="layer-toggle-btn" (click)="toggleLayerPanel()">
+      <button type="button" class="layer-toggle-btn" (click)="toggleLayerPanel()">
         <span class="layer-emoji">{{ activeLayer().emoji }}</span>
         <span class="layer-name">{{ activeLayer().label }}</span>
         <svg class="chevron" [class.open]="layerPanelOpen()" viewBox="0 0 16 16">
@@ -17,6 +17,7 @@
           <div class="layer-grid">
             @for (layer of layers(); track layer.id) {
               <button
+                type="button"
                 class="layer-item"
                 [class.active]="activeLayer().id === layer.id"
                 (click)="setLayer(layer)">
@@ -41,20 +42,20 @@
 
   <div class="map-controls">
     <div class="ctrl-group">
-      <button class="ctrl-btn" (click)="zoomIn()" title="Acercar">
+      <button type="button" class="ctrl-btn" (click)="zoomIn()" title="Acercar">
         <svg viewBox="0 0 20 20" fill="currentColor"><path d="M10 4a1 1 0 011 1v4h4a1 1 0 110 2h-4v4a1 1 0 11-2 0v-4H5a1 1 0 110-2h4V5a1 1 0 011-1z"/></svg>
       </button>
       <div class="zoom-track">
         <div class="zoom-fill" [style.height.%]="zoomPercent()"></div>
       </div>
-      <button class="ctrl-btn" (click)="zoomOut()" title="Alejar">
+      <button type="button" class="ctrl-btn" (click)="zoomOut()" title="Alejar">
         <svg viewBox="0 0 20 20" fill="currentColor"><path d="M4 10a1 1 0 011-1h10a1 1 0 110 2H5a1 1 0 01-1-1z"/></svg>
       </button>
     </div>
 
     @if (showLocateControl()) {
       <div class="ctrl-group">
-        <button class="ctrl-btn" [class.active]="locating()" (click)="locateMe()" title="Mi ubicación">
+        <button type="button" class="ctrl-btn" [class.active]="locating()" (click)="locateMe()" title="Mi ubicación">
           @if (locating()) {
             <svg class="spin" viewBox="0 0 20 20" fill="currentColor"><path d="M10 2a8 8 0 100 16A8 8 0 0010 2zm0 2a6 6 0 010 12A6 6 0 0110 4z" opacity=".3"/><path d="M10 2a8 8 0 018 8h-2a6 6 0 00-6-6V2z"/></svg>
           } @else {
@@ -65,7 +66,7 @@
     }
 
     <div class="ctrl-group">
-      <button class="ctrl-btn" (click)="toggleFullscreen()" [title]="isFullscreen() ? 'Salir de pantalla completa' : 'Pantalla completa'">
+      <button type="button" class="ctrl-btn" (click)="toggleFullscreen()" [title]="isFullscreen() ? 'Salir de pantalla completa' : 'Pantalla completa'">
         @if (isFullscreen()) {
           <svg viewBox="0 0 20 20" fill="currentColor"><path d="M4 8V4h4V2H2v6h2zm0 4H2v6h6v-2H4v-4zm12-4h2V2h-6v2h4v4zm0 4v4h-4v2h6v-6h-2z"/></svg>
         } @else {

@@ -74,6 +74,29 @@
   }
 }
 
+/* ── Hint ── */
+.map-hint {
+  position: absolute;
+  bottom: 24px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(15, 23, 42, 0.80);
+  color: #fff;
+  padding: 9px 20px;
+  border-radius: 999px;
+  font-size: .82rem;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  z-index: 800;
+  pointer-events: none;
+  backdrop-filter: blur(4px);
+  white-space: nowrap;
+
+  mat-icon { font-size: 18px; width: 18px; height: 18px; }
+}
+
 /* ── Side panels ── */
 .side-panel {
   width: 380px;

@@ -40,6 +40,18 @@ export const routes: Routes = [
             (m) => m.ReportesRoutes,
           ),
       },
+      {
+        path: 'gestion-institucional',
+        loadChildren: () =>
+          import('./pages/gestion-institucional/gestion-institucional.routes')
+            .then(m => m.GestionInstitucionalRoutes),
+      },
+      {
+        path: 'gestion-territorial',
+        loadChildren: () =>
+          import('./pages/gestion-territorial/gestion-territorial.routes')
+            .then(m => m.GestionTerritorialRoutes),
+      },
     ],
   },
   {

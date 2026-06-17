@@ -1,7 +1,7 @@
-import { ChangeDetectionStrategy, Component, computed, input, output } from '@angular/core';
+﻿import { ChangeDetectionStrategy, Component, computed, input, output } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MaterialModule } from 'src/app/material.module';
-import { Category } from '../../../models/category.model';
+import { Category } from '../../../../../models/category.model';
 
 @Component({
   selector: 'app-anotar-filters-bar',

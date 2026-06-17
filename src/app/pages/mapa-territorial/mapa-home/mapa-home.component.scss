@@ -24,98 +24,182 @@
 .mapa-home-grid {
   display: grid;
   gap: 1.25rem;
-  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
 }
 
+/* ── Variables del efecto glow ───────────────────────────────────── */
+.mapa-card[data-accent="primary"]   { --base: 220; --spread: 180; }
+.mapa-card[data-accent="secondary"] { --base: 280; --spread: 200; }
+.mapa-card[data-accent="tertiary"]  { --base: 150; --spread: 160; }
+.mapa-card[data-accent="error"]     { --base: 0;   --spread: 140; }
+.mapa-card[data-accent="surface"]   { --base: 200; --spread: 100; }
+
+/* ── Card base ───────────────────────────────────────────────────── */
 .mapa-card {
+  --border: 2;
+  --radius: 20;
+  --size: 240;
+  --outer: 1;
+
   display: flex;
   flex-direction: column;
-  gap: 1rem;
-  text-decoration: none;
   background: var(--mat-sys-surface-container-low);
-  border: 1px solid var(--mat-sys-outline-variant);
   border-radius: 20px;
-  padding: 1.5rem;
-  min-height: 220px;
+  overflow: hidden;
   cursor: pointer;
-  transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+  position: relative;
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
 
   &:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 16px 48px rgba(0, 0, 0, 0.12);
-    border-color: var(--mat-sys-primary);
+    transform: translateY(-6px);
+    box-shadow: 0 20px 56px rgba(0, 0, 0, 0.15);
 
-    .card-arrow { opacity: 1; transform: translateX(0); }
-    .icon-circle { transform: scale(1.08); }
+    .card-header-bg { opacity: 0.18; }
+    .card-icon-wrap  { transform: scale(1.1) rotate(-4deg); }
+    .card-cta tabler-icon { transform: translateX(4px); }
   }
 }
 
-/* Accent variants — icon circle */
-@each $accent, $bg, $fg in
-  (primary, var(--mat-sys-primary-container), var(--mat-sys-on-primary-container)),
-  (secondary, var(--mat-sys-secondary-container), var(--mat-sys-on-secondary-container)),
-  (tertiary, var(--mat-sys-tertiary-container), var(--mat-sys-on-tertiary-container)),
-  (error, var(--mat-sys-error-container), var(--mat-sys-on-error-container)),
-  (surface, var(--mat-sys-surface-container-highest), var(--mat-sys-on-surface)) {
-
-  .mapa-card[data-accent="#{$accent}"] {
-    .icon-circle { background: $bg; color: $fg; }
-    .card-tag    { background: $bg; color: $fg; }
-  }
-}
-
-.card-top {
+/* ── Header con gradiente ────────────────────────────────────────── */
+.card-header {
+  position: relative;
+  padding: 1.5rem 1.5rem 1.25rem;
   display: flex;
   align-items: flex-start;
   justify-content: space-between;
+  overflow: hidden;
 }
 
-.icon-circle {
-  width: 60px;
-  height: 60px;
-  border-radius: 16px;
+.card-header-bg {
+  position: absolute;
+  inset: 0;
+  opacity: 0.1;
+  transition: opacity 0.25s ease;
+}
+
+/* Color del fondo del header según acento */
+.mapa-card[data-accent="primary"]   .card-header-bg { background: var(--mat-sys-primary); }
+.mapa-card[data-accent="secondary"] .card-header-bg { background: var(--mat-sys-secondary); }
+.mapa-card[data-accent="tertiary"]  .card-header-bg { background: var(--mat-sys-tertiary); }
+.mapa-card[data-accent="error"]     .card-header-bg { background: var(--mat-sys-error); }
+.mapa-card[data-accent="surface"]   .card-header-bg { background: var(--mat-sys-outline); }
+
+.card-icon-wrap {
+  width: 52px;
+  height: 52px;
+  border-radius: 14px;
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: transform 0.2s ease;
+  transition: transform 0.25s ease;
+  position: relative;
+  z-index: 1;
 }
 
-.card-arrow {
-  font-size: 1.25rem;
-  color: var(--mat-sys-on-surface-variant);
-  opacity: 0;
-  transform: translateX(-6px);
-  transition: opacity 0.2s ease, transform 0.2s ease;
+.mapa-card[data-accent="primary"]   .card-icon-wrap { background: var(--mat-sys-primary-container);   color: var(--mat-sys-on-primary-container); }
+.mapa-card[data-accent="secondary"] .card-icon-wrap { background: var(--mat-sys-secondary-container); color: var(--mat-sys-on-secondary-container); }
+.mapa-card[data-accent="tertiary"]  .card-icon-wrap { background: var(--mat-sys-tertiary-container);  color: var(--mat-sys-on-tertiary-container); }
+.mapa-card[data-accent="error"]     .card-icon-wrap { background: var(--mat-sys-error-container);     color: var(--mat-sys-on-error-container); }
+.mapa-card[data-accent="surface"]   .card-icon-wrap { background: var(--mat-sys-surface-container-highest); color: var(--mat-sys-on-surface); }
+
+.card-tag {
+  font-size: 0.68rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+  padding: 4px 10px;
+  border-radius: 20px;
+  position: relative;
+  z-index: 1;
 }
 
+.mapa-card[data-accent="primary"]   .card-tag { background: var(--mat-sys-primary-container);   color: var(--mat-sys-on-primary-container); }
+.mapa-card[data-accent="secondary"] .card-tag { background: var(--mat-sys-secondary-container); color: var(--mat-sys-on-secondary-container); }
+.mapa-card[data-accent="tertiary"]  .card-tag { background: var(--mat-sys-tertiary-container);  color: var(--mat-sys-on-tertiary-container); }
+.mapa-card[data-accent="error"]     .card-tag { background: var(--mat-sys-error-container);     color: var(--mat-sys-on-error-container); }
+.mapa-card[data-accent="surface"]   .card-tag { background: var(--mat-sys-surface-container-highest); color: var(--mat-sys-on-surface); }
+
+/* ── Separador ───────────────────────────────────────────────────── */
+.card-divider {
+  height: 1px;
+  background: var(--mat-sys-outline-variant);
+  margin: 0 1.5rem;
+  opacity: 0.5;
+}
+
+/* ── Cuerpo ──────────────────────────────────────────────────────── */
 .card-body {
   flex: 1;
+  padding: 1.25rem 1.5rem 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
 }
 
 .card-title {
-  font-size: 1.1rem;
+  font-size: 1.05rem;
   font-weight: 700;
   color: var(--mat-sys-on-surface);
-  margin: 0 0 8px;
+  margin: 0;
   letter-spacing: -0.01em;
 }
 
 .card-desc {
-  font-size: 0.82rem;
+  font-size: 0.8rem;
   color: var(--mat-sys-on-surface-variant);
   margin: 0;
-  line-height: 1.5;
+  line-height: 1.55;
 }
 
-.card-footer {
+.card-features {
+  list-style: none;
+  padding: 0;
+  margin: 0.5rem 0 0;
   display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+
+  li {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    font-size: 0.76rem;
+    color: var(--mat-sys-on-surface-variant);
+
+    tabler-icon {
+      flex-shrink: 0;
+      opacity: 0.7;
+    }
+  }
 }
 
-.card-tag {
-  font-size: 0.7rem;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.06em;
-  padding: 4px 10px;
-  border-radius: 20px;
+.mapa-card[data-accent="primary"]   .card-features tabler-icon { color: var(--mat-sys-primary); }
+.mapa-card[data-accent="secondary"] .card-features tabler-icon { color: var(--mat-sys-secondary); }
+.mapa-card[data-accent="tertiary"]  .card-features tabler-icon { color: var(--mat-sys-tertiary); }
+.mapa-card[data-accent="error"]     .card-features tabler-icon { color: var(--mat-sys-error); }
+.mapa-card[data-accent="surface"]   .card-features tabler-icon { color: var(--mat-sys-outline); }
+
+/* ── Footer ──────────────────────────────────────────────────────── */
+.card-footer {
+  padding: 0.9rem 1.5rem;
+  border-top: 1px solid var(--mat-sys-outline-variant);
+  margin-top: auto;
 }
+
+.card-cta {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--mat-sys-on-surface-variant);
+
+  tabler-icon {
+    transition: transform 0.2s ease;
+  }
+}
+
+.mapa-card[data-accent="primary"]   .card-cta { color: var(--mat-sys-primary); }
+.mapa-card[data-accent="secondary"] .card-cta { color: var(--mat-sys-secondary); }
+.mapa-card[data-accent="tertiary"]  .card-cta { color: var(--mat-sys-tertiary); }
+.mapa-card[data-accent="error"]     .card-cta { color: var(--mat-sys-error); }

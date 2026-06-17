@@ -41,11 +41,6 @@ export const navItems: NavItem[] = [
     route: '/gestion-institucional/categorias',
   },
   {
-    displayName: 'Subcategorías',
-    iconName: 'solar:layers-triple-line-duotone',
-    route: '/gestion-institucional/subcategorias',
-  },
-  {
     navCap: 'Gestión Territorial',
   },
   {

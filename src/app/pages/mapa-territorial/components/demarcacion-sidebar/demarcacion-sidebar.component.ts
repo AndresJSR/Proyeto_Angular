@@ -1,10 +1,11 @@
 import { CommonModule } from '@angular/common';
 import { Component, input, output } from '@angular/core';
+import { TablerIconsModule } from 'angular-tabler-icons';
 
 @Component({
   selector: 'app-demarcacion-sidebar',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, TablerIconsModule],
   templateUrl: './demarcacion-sidebar.component.html',
   styleUrls: ['./demarcacion-sidebar.component.scss'],
 })

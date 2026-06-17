@@ -1,37 +1,52 @@
 <div class="demarcacion-panel">
+
   <div class="panel-header">
-    <div class="header-title">
-      <span class="header-icon">🗺</span>
-      <span class="panel-title">
-        {{ tienePoligono() ? 'Editar polígono' : 'Demarcar barrio' }}
-      </span>
+    <div class="header-icon-wrap">
+      <tabler-icon [name]="tienePoligono() ? 'pencil' : 'map-2'" size="18"></tabler-icon>
+    </div>
+    <div class="header-text">
+      <span class="panel-title">{{ tienePoligono() ? 'Editar polígono' : 'Demarcar barrio' }}</span>
+      <span class="panel-sub">Selecciona un barrio del listado</span>
     </div>
   </div>
 
   <div class="panel-body">
-    <p class="section-hint">Selecciona un barrio para demarcar</p>
-
     <div class="barrios-list">
-      <mat-selection-list [multiple]="false">
-        @for (b of barrios(); track b.id_neighborhood) {
-          <mat-list-option
-            [value]="b"
-            [selected]="selected()?.id_neighborhood === b.id_neighborhood"
-            (click)="select(b)"
-            class="barrio-option">
+      @for (b of barrios(); track b.id_neighborhood) {
+        <button
+          class="barrio-item"
+          [class.active]="selected()?.id_neighborhood === b.id_neighborhood"
+          (click)="select(b)">
+          <div class="barrio-icon-wrap">
+            <tabler-icon name="building-community" size="16"></tabler-icon>
+          </div>
+          <div class="barrio-info">
+            <span class="barrio-label">Barrio</span>
             <span class="barrio-name">{{ b.name }}</span>
-          </mat-list-option>
-        }
-      </mat-selection-list>
+          </div>
+          @if (selected()?.id_neighborhood === b.id_neighborhood) {
+            <tabler-icon name="check" size="14" class="barrio-check"></tabler-icon>
+          }
+        </button>
+      }
+      @if (!barrios().length) {
+        <div class="barrios-empty">
+          <tabler-icon name="building-community" size="24"></tabler-icon>
+          <span>Sin barrios registrados</span>
+        </div>
+      }
     </div>
 
     @if (selected()) {
-      <div class="hint-box">
-        <span class="hint-icon">{{ tienePoligono() ? '✏️' : '👆' }}</span>
+      <div class="hint-box" [class.has-polygon]="tienePoligono()">
+        <tabler-icon [name]="tienePoligono() ? 'pencil-minus' : 'hand-click'" size="16"></tabler-icon>
         <p class="hint">
-          {{ tienePoligono() ? 'Modifica los puntos del polígono existente.' : 'Haz clic en el mapa para agregar puntos.' }}
+          {{ tienePoligono()
+            ? 'Modifica los puntos del polígono existente arrastrando los vértices.'
+            : 'Haz clic en el mapa para agregar puntos al polígono.' }}
         </p>
       </div>
     }
   </div>
+
 </div>

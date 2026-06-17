@@ -1,15 +1,15 @@
-import { Component, inject, input, OnChanges, signal } from '@angular/core';
+﻿import { Component, inject, input, OnChanges, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { MaterialModule } from 'src/app/material.module';
-import { Annotation } from '../../models/annotation.model';
+import { Annotation } from '../../../../models/annotation.model';
 import { VotesService } from '../../services/votes.service';
-import { Vote } from '../../models/vote.model';
+import { Vote } from '../../../../models/vote.model';
 import { EvidencesService } from '../../services/evidences.service';
-import { Evidence } from '../../models/evidence.model';
+import { Evidence } from '../../../../models/evidence.model';
 import { AnnotationCategoriesService } from '../../services/annotation-categories.service';
 import { CategoriesService } from '../../services/categories.service';
-import { Category } from '../../models/category.model';
+import { Category } from '../../../../models/category.model';
 
 @Component({
   selector: 'app-anotacion-detalle',

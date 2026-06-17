@@ -5,4 +5,5 @@ export interface MapaHomeOption {
   route: string;
   accent: 'primary' | 'secondary' | 'tertiary' | 'error' | 'surface';
   tag: string;
+  features: string[];
 }

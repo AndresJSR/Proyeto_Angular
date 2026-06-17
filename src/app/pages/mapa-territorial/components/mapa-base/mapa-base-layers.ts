@@ -1,5 +1,5 @@
-import * as L from 'leaflet';
-import { MapaBaseLayer } from './mapa-base-layer.model';
+﻿import * as L from 'leaflet';
+import { MapaBaseLayer } from '../../../../models/mapa-base-layer.model';
 
 export const MAPA_BASE_LAYERS: MapaBaseLayer[] = [
   {

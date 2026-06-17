@@ -59,6 +59,25 @@
   }
 }
 
+.back-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: var(--mat-sys-on-surface-variant);
+  text-decoration: none;
+  margin-bottom: 10px;
+  padding: 4px 8px 4px 4px;
+  border-radius: 8px;
+  transition: background 0.15s ease, color 0.15s ease;
+
+  &:hover {
+    background: var(--mat-sys-secondary-container);
+    color: var(--mat-sys-on-secondary-container);
+  }
+}
+
 @media (max-width: 1180px) {
   :host {
     height: auto;

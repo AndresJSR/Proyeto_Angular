@@ -1,7 +1,7 @@
-import { Injectable, inject } from '@angular/core';
+﻿import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable, forkJoin, map, of, switchMap } from 'rxjs';
-import { NeighborhoodSearchResult } from '../models/annotation.model';
+import { NeighborhoodSearchResult } from '../../../models/annotation.model';
 import { EvidencesService } from './evidences.service';
 import { InterestedPartiesService } from './interested-parties.service';
 import { AnnotationsService } from './annotations.service';
