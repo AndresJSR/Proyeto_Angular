@@ -6,11 +6,12 @@ import { MatDialog } from '@angular/material/dialog';
 import { CitizensService } from '../citizens.service';
 import { Citizen } from '../../../../models/citizen.model';
 import { DeleteCitizenDialogComponent } from '../delete-dialog/delete-dialog.component';
+import { SkeletonTableComponent } from 'src/app/components/skeleton-table/skeleton-table.component';
 
 @Component({
   selector: 'app-citizens-list',
   standalone: true,
-  imports: [CommonModule, MaterialModule, RouterModule],
+  imports: [CommonModule, MaterialModule, RouterModule, SkeletonTableComponent],
   templateUrl: './list.component.html',
 })
 export class CitizensListComponent implements OnInit {

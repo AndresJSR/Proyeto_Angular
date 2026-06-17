@@ -8,11 +8,12 @@ import { EntitiesAdminService } from '../../entities/entities.service';
 import { Official } from '../../../../models/official.model';
 import { Entity } from '../../../../models/entity.model';
 import { DeleteOfficialDialogComponent } from '../delete-dialog/delete-dialog.component';
+import { SkeletonTableComponent } from 'src/app/components/skeleton-table/skeleton-table.component';
 
 @Component({
   selector: 'app-officials-list',
   standalone: true,
-  imports: [CommonModule, MaterialModule, RouterModule],
+  imports: [CommonModule, MaterialModule, RouterModule, SkeletonTableComponent],
   templateUrl: './list.component.html',
 })
 export class OfficialsListComponent implements OnInit {

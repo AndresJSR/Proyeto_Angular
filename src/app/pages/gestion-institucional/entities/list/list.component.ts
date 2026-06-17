@@ -8,11 +8,12 @@ import { MatDialog } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { DeleteDialogComponent } from '../delete-dialog/delete-dialog.component';
 import { environment } from 'src/environments/environment';
+import { SkeletonTableComponent } from 'src/app/components/skeleton-table/skeleton-table.component';
 
 @Component({
   selector: 'app-entities-list',
   standalone: true,
-  imports: [CommonModule, MaterialModule, RouterModule],
+  imports: [CommonModule, MaterialModule, RouterModule, SkeletonTableComponent],
   templateUrl: './list.component.html',
 })
 export class EntitiesListComponent implements OnInit {

@@ -11,17 +11,30 @@ import { Citizen } from '../../../../models/citizen.model';
   standalone: true,
   imports: [CommonModule, MaterialModule],
   template: `
-    <h2 mat-dialog-title>Eliminar ciudadano</h2>
-    <mat-dialog-content>
-      ¿Eliminar a <strong>{{ data.name }}</strong>? Esta acción no se puede deshacer.
-    </mat-dialog-content>
-    <mat-dialog-actions align="end">
-      <button mat-stroked-button mat-dialog-close>Cancelar</button>
-      <button mat-flat-button color="warn" [disabled]="deleting" (click)="confirm()">
-        {{ deleting ? 'Eliminando...' : 'Eliminar' }}
-      </button>
-    </mat-dialog-actions>
+    <div class="delete-dialog">
+      <div class="delete-icon"><mat-icon>delete_outline</mat-icon></div>
+      <h2 class="delete-title">¿Eliminar ciudadano?</h2>
+      <p class="delete-body">
+        Estás a punto de eliminar a <strong>{{ data.name }}</strong>.<br/>
+        Esta acción no se puede deshacer.
+      </p>
+      <div class="delete-actions">
+        <button mat-stroked-button mat-dialog-close class="w-full">Cancelar</button>
+        <button mat-flat-button color="warn" class="w-full" [disabled]="deleting" (click)="confirm()">
+          <mat-icon>{{ deleting ? 'hourglass_empty' : 'delete' }}</mat-icon>
+          {{ deleting ? 'Eliminando...' : 'Sí, eliminar' }}
+        </button>
+      </div>
+    </div>
   `,
+  styles: [\`
+    .delete-dialog { padding: 8px 4px 4px; text-align: center; }
+    .delete-icon { display:flex; justify-content:center; margin-bottom:12px;
+      mat-icon { font-size:44px; width:44px; height:44px; color:#ef4444; } }
+    .delete-title { font-size:18px; font-weight:700; color:#0f172a; margin:0 0 10px; }
+    .delete-body  { font-size:14px; color:#64748b; margin:0 0 24px; line-height:1.5; }
+    .delete-actions { display:flex; flex-direction:column; gap:10px; }
+  \`],
 })
 export class DeleteCitizenDialogComponent {
   data     = inject<Citizen>(MAT_DIALOG_DATA);

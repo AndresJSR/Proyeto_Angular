@@ -7,32 +7,41 @@
 
         <mat-form-field appearance="outline">
           <mat-label>Nombre completo *</mat-label>
-          <input matInput formControlName="name" />
+          <mat-icon matPrefix class="mr-2">person</mat-icon>
+          <input matInput formControlName="name" placeholder="Ej: María García López" />
+          <mat-error *ngIf="form.get('name')?.hasError('required')">El nombre es requerido</mat-error>
         </mat-form-field>
 
         <div class="grid grid-cols-2 gap-4">
           <mat-form-field appearance="outline">
             <mat-label>Correo *</mat-label>
-            <input matInput formControlName="email" type="email" />
+            <mat-icon matPrefix class="mr-2">email</mat-icon>
+            <input matInput formControlName="email" type="email" placeholder="correo@ejemplo.com" />
+            <mat-error *ngIf="form.get('email')?.hasError('required')">El correo es requerido</mat-error>
+            <mat-error *ngIf="form.get('email')?.hasError('email')">Formato de correo inválido</mat-error>
           </mat-form-field>
 
           <mat-form-field appearance="outline">
             <mat-label>Celular</mat-label>
-            <input matInput formControlName="phone" />
+            <mat-icon matPrefix class="mr-2">phone</mat-icon>
+            <input matInput formControlName="phone" placeholder="Ej: 300 123 4567" />
           </mat-form-field>
         </div>
 
         <mat-form-field appearance="outline">
           <mat-label>Dirección</mat-label>
-          <input matInput formControlName="address" />
+          <mat-icon matPrefix class="mr-2">location_on</mat-icon>
+          <input matInput formControlName="address" placeholder="Ej: Calle 10 #5-23" />
         </mat-form-field>
 
         <mat-form-field appearance="outline">
-          <mat-label>Estado</mat-label>
+          <mat-label>Estado *</mat-label>
+          <mat-icon matPrefix class="mr-2">toggle_on</mat-icon>
           <mat-select formControlName="status">
             <mat-option value="active">Activo</mat-option>
             <mat-option value="inactive">Inactivo</mat-option>
           </mat-select>
+          <mat-error *ngIf="form.get('status')?.hasError('required')">El estado es requerido</mat-error>
         </mat-form-field>
 
         <!-- Mapa -->
