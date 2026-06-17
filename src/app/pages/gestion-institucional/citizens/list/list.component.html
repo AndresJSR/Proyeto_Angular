@@ -9,13 +9,25 @@
     </a>
   </div>
 
+  <!-- Buscador -->
+  <mat-form-field appearance="outline" class="w-full mb-4">
+    <mat-label>Buscar ciudadano</mat-label>
+    <mat-icon matPrefix>search</mat-icon>
+    <input matInput [value]="search()" (input)="search.set($any($event.target).value)" placeholder="Nombre, correo, teléfono o dirección…" />
+    @if (search()) {
+      <button matSuffix mat-icon-button aria-label="Limpiar" (click)="search.set('')">
+        <mat-icon>close</mat-icon>
+      </button>
+    }
+  </mat-form-field>
+
   @if (loading()) {
     <mat-progress-bar mode="indeterminate"></mat-progress-bar>
   }
 
   <mat-card class="cardWithShadow">
     <mat-card-content class="overflow-auto">
-      <table mat-table [dataSource]="citizens()" class="w-full">
+      <table mat-table [dataSource]="filtered()" class="w-full">
 
         <ng-container matColumnDef="name">
           <th mat-header-cell *matHeaderCellDef>Nombre</th>
@@ -66,8 +78,10 @@
         <tr mat-row *matRowDef="let row; columns: columns"></tr>
       </table>
 
-      @if (!loading() && !citizens().length) {
-        <p class="text-center text-muted py-8">No hay ciudadanos registrados.</p>
+      @if (!loading() && !filtered().length) {
+        <p class="text-center text-muted py-8">
+          {{ search() ? 'Sin resultados para "' + search() + '"' : 'No hay ciudadanos registrados.' }}
+        </p>
       }
     </mat-card-content>
   </mat-card>

@@ -1,19 +1,20 @@
-import { Component, inject, OnInit, signal, AfterViewInit, OnDestroy } from '@angular/core';
+import { Component, inject, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, Validators } from '@angular/forms';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { MaterialModule } from 'src/app/material.module';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { CitizensService } from '../citizens.service';
+import { MapaBaseComponent } from '../../../mapa-territorial/components/mapa-base/mapa-base.component';
 import * as L from 'leaflet';
 
 @Component({
   selector: 'app-citizens-form',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, MaterialModule, RouterModule],
+  imports: [CommonModule, ReactiveFormsModule, MaterialModule, RouterModule, MapaBaseComponent],
   templateUrl: './form.component.html',
 })
-export class CitizensFormComponent implements OnInit, AfterViewInit, OnDestroy {
+export class CitizensFormComponent implements OnInit {
   private fb     = inject(FormBuilder);
   private svc    = inject(CitizensService);
   private route  = inject(ActivatedRoute);
@@ -23,8 +24,8 @@ export class CitizensFormComponent implements OnInit, AfterViewInit, OnDestroy {
   saving = signal(false);
   editId = signal<number | null>(null);
 
-  private map!: L.Map;
-  private marker?: L.Marker;
+  private map?: L.Map;
+  private marker?: L.CircleMarker;
 
   form = this.fb.group({
     name:      ['', Validators.required],
@@ -42,39 +43,40 @@ export class CitizensFormComponent implements OnInit, AfterViewInit, OnDestroy {
       this.editId.set(+id);
       this.svc.getById(+id).subscribe(c => {
         this.form.patchValue(c);
+        if (this.map && c.latitude && c.longitude) {
+          this.map.flyTo([c.latitude, c.longitude], 15, { duration: 0.8 });
+          this.placeMarker(c.latitude, c.longitude);
+        }
       });
     }
   }
 
-  ngAfterViewInit() {
-    this.initMap();
-  }
-
-  private initMap() {
-    const lat = this.form.value.latitude ?? 5.095;
-    const lng = this.form.value.longitude ?? -75.514;
-
-    this.map = L.map('citizen-map').setView([lat, lng], 13);
-    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-      attribution: '© OpenStreetMap'
-    }).addTo(this.map);
-
-    if (this.editId()) {
-      this.marker = L.marker([lat, lng]).addTo(this.map);
+  onMapReady(map: L.Map): void {
+    this.map = map;
+    const lat = this.form.value.latitude;
+    const lng = this.form.value.longitude;
+    if (lat && lng && this.editId()) {
+      map.setView([lat, lng], 15);
+      this.placeMarker(lat, lng);
     }
-
-    this.map.on('click', (e: L.LeafletMouseEvent) => {
-      const { lat, lng } = e.latlng;
-      this.form.patchValue({ latitude: lat, longitude: lng });
-      if (this.marker) this.map.removeLayer(this.marker);
-      this.marker = L.marker([lat, lng]).addTo(this.map);
-    });
-
-    setTimeout(() => this.map.invalidateSize(), 200);
   }
 
-  ngOnDestroy() {
-    this.map?.remove();
+  onMapClick(e: L.LeafletMouseEvent): void {
+    const { lat, lng } = e.latlng;
+    this.form.patchValue({ latitude: lat, longitude: lng });
+    this.placeMarker(lat, lng);
+  }
+
+  private placeMarker(lat: number, lng: number): void {
+    if (!this.map) return;
+    if (this.marker) this.map.removeLayer(this.marker);
+    this.marker = L.circleMarker([lat, lng], {
+      radius: 10,
+      fillColor: '#4f46e5',
+      color: '#fff',
+      weight: 3,
+      fillOpacity: 1,
+    }).bindPopup('Ubicación del ciudadano').addTo(this.map);
   }
 
   submit() {

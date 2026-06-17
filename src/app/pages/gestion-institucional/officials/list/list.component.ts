@@ -25,12 +25,23 @@ export class OfficialsListComponent implements OnInit {
   entities     = signal<Entity[]>([]);
   loading      = signal(false);
   entityFilter = signal<number | null>(null);
+  search       = signal('');
+  statusFilter = signal<'all' | 'active' | 'inactive'>('all');
   columns      = ['name', 'email', 'phone', 'role', 'status', 'gps', 'actions'];
 
   filtered = computed(() => {
-    const f = this.entityFilter();
-    if (!f) return this.officials();
-    return this.officials().filter(o => o.id_entity === f);
+    const entity = this.entityFilter();
+    const q      = this.search().toLowerCase().trim();
+    const status = this.statusFilter();
+
+    return this.officials().filter(o => {
+      if (entity && o.id_entity !== entity) return false;
+      if (status !== 'all' && o.status !== status) return false;
+      if (q && !o.name?.toLowerCase().includes(q) &&
+               !o.email?.toLowerCase().includes(q) &&
+               !o.role?.toLowerCase().includes(q)) return false;
+      return true;
+    });
   });
 
   entityName = computed(() => {

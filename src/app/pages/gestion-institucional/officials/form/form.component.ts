@@ -21,6 +21,7 @@ const floatValidator = (control: AbstractControl) => {
   standalone: true,
   imports: [CommonModule, ReactiveFormsModule, MaterialModule, RouterModule],
   templateUrl: './form.component.html',
+  styleUrls: ['./form.component.scss'],
 })
 export class OfficialsFormComponent implements OnInit {
   private fb      = inject(FormBuilder);

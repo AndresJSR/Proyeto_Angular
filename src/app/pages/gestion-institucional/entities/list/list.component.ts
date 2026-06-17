@@ -1,4 +1,4 @@
-﻿import { Component, inject, OnInit, signal } from '@angular/core';
+﻿import { Component, computed, inject, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { MaterialModule } from 'src/app/material.module';
@@ -22,7 +22,18 @@ export class EntitiesListComponent implements OnInit {
 
   entities  = signal<Entity[]>([]);
   loading   = signal(false);
+  search    = signal('');
   columns   = ['logo', 'name', 'nit', 'email', 'phone', 'status', 'actions'];
+
+  filtered = computed(() => {
+    const q = this.search().toLowerCase().trim();
+    if (!q) return this.entities();
+    return this.entities().filter(e =>
+      e.name?.toLowerCase().includes(q) ||
+      e.nit?.toLowerCase().includes(q) ||
+      e.email?.toLowerCase().includes(q)
+    );
+  });
 
   ngOnInit() { this.load(); }
 

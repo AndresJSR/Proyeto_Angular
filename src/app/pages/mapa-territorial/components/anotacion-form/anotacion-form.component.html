@@ -12,6 +12,12 @@
   <div class="form-body">
     <section class="form-section">
       <h3 class="section-title">1. Ubicación *</h3>
+      @if (barrioName()) {
+        <div class="barrio-badge">
+          <mat-icon>location_on</mat-icon>
+          <span>{{ barrioName() }}</span>
+        </div>
+      }
       <div class="location-grid">
         <mat-form-field appearance="outline">
           <mat-label>Latitud</mat-label>
@@ -126,12 +132,6 @@
   </div>
 
   <footer class="form-footer">
-    @if (outOfBoundsNeighborhood()) {
-      <div class="alert-warning">
-        El punto seleccionado no coincide con un barrio demarcado reconocido. Se guardará como referencia general.
-      </div>
-    }
-
     <div class="footer-actions">
       <button mat-stroked-button type="button" (click)="closed.emit()">Cancelar</button>
       <button

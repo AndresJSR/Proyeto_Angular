@@ -18,6 +18,29 @@
     </a>
   </div>
 
+  <!-- Barra de búsqueda y filtros -->
+  <div class="flex flex-col sm:flex-row gap-3 mb-4">
+    <mat-form-field appearance="outline" class="flex-1">
+      <mat-label>Buscar funcionario</mat-label>
+      <mat-icon matPrefix>search</mat-icon>
+      <input matInput [value]="search()" (input)="search.set($any($event.target).value)" placeholder="Nombre, correo o cargo…" />
+      @if (search()) {
+        <button matSuffix mat-icon-button aria-label="Limpiar" (click)="search.set('')">
+          <mat-icon>close</mat-icon>
+        </button>
+      }
+    </mat-form-field>
+
+    <mat-button-toggle-group
+      [value]="statusFilter()"
+      (change)="statusFilter.set($event.value)"
+      class="h-14 self-start">
+      <mat-button-toggle value="all">Todos</mat-button-toggle>
+      <mat-button-toggle value="active">Activos</mat-button-toggle>
+      <mat-button-toggle value="inactive">Inactivos</mat-button-toggle>
+    </mat-button-toggle-group>
+  </div>
+
   @if (loading()) {
     <mat-progress-bar mode="indeterminate"></mat-progress-bar>
   }

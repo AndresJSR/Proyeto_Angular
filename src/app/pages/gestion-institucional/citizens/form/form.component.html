@@ -37,17 +37,22 @@
 
         <!-- Mapa -->
         <div>
-          <p class="text-sm font-semibold mb-2">
-            Ubicación — haz clic en el mapa para seleccionar
-          </p>
-          <div id="citizen-map" style="height:300px;border-radius:8px;border:1px solid #e0e0e0;"></div>
-          <div class="flex gap-4 mt-2">
+          <p class="text-sm font-semibold mb-1">Ubicación</p>
+          <p class="text-xs text-muted mb-2">Haz clic en el mapa para fijar la posición, o usa el botón de ubicación actual.</p>
+          <div style="height:380px;border-radius:8px;overflow:hidden;border:1px solid var(--mat-sys-outline-variant);">
+            <app-mapa-base
+              (mapReady)="onMapReady($event)"
+              (mapClick)="onMapClick($event)" />
+          </div>
+          <div class="flex gap-4 mt-3">
             <mat-form-field appearance="outline" class="flex-1">
               <mat-label>Latitud</mat-label>
+              <mat-icon matPrefix>place</mat-icon>
               <input matInput formControlName="latitude" readonly />
             </mat-form-field>
             <mat-form-field appearance="outline" class="flex-1">
               <mat-label>Longitud</mat-label>
+              <mat-icon matPrefix>place</mat-icon>
               <input matInput formControlName="longitude" readonly />
             </mat-form-field>
           </div>

@@ -50,11 +50,21 @@
       }
     </div>
 
+    <!-- HINT: seleccionar barrio -->
+    @if (!barrioSeleccionado() && !sidebarOpen()) {
+      <div class="map-hint">
+        <mat-icon>touch_app</mat-icon>
+        Haz clic en un barrio para crear una anotación
+      </div>
+    }
+
     <!-- SIDEBAR FORM -->
-    @if (showForm() && formCoords()) {
+    @if (showForm() && formCoords() && barrioSeleccionado()) {
       <aside class="side-panel side-panel--form">
         <app-anotacion-form
           [coords]="formCoords()"
+          [neighborhoodId]="barrioSeleccionado()!.id_neighborhood"
+          [barrioName]="barrioSeleccionado()!.name"
           (saved)="onFormSaved($event)"
           (closed)="onFormClosed()" />
       </aside>

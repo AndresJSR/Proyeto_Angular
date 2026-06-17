@@ -12,6 +12,7 @@ import { environment } from 'src/environments/environment';
   standalone: true,
   imports: [CommonModule, ReactiveFormsModule, MaterialModule, RouterModule],
   templateUrl: './form.component.html',
+  styleUrls: ['./form.component.scss'],
 })
 export class EntitiesFormComponent implements OnInit {
   private fb     = inject(FormBuilder);

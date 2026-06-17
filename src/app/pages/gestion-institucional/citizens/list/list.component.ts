@@ -1,4 +1,4 @@
-﻿import { Component, inject, OnInit, signal } from '@angular/core';
+﻿import { Component, computed, inject, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { MaterialModule } from 'src/app/material.module';
@@ -19,7 +19,19 @@ export class CitizensListComponent implements OnInit {
 
   citizens = signal<Citizen[]>([]);
   loading  = signal(false);
+  search   = signal('');
   columns  = ['name', 'email', 'phone', 'address', 'status', 'actions'];
+
+  filtered = computed(() => {
+    const q = this.search().toLowerCase().trim();
+    if (!q) return this.citizens();
+    return this.citizens().filter(c =>
+      c.name?.toLowerCase().includes(q) ||
+      c.email?.toLowerCase().includes(q) ||
+      c.phone?.toLowerCase().includes(q) ||
+      c.address?.toLowerCase().includes(q)
+    );
+  });
 
   ngOnInit() { this.load(); }
 

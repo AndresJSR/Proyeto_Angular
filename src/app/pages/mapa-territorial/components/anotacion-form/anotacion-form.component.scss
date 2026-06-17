@@ -1,3 +1,18 @@
+.barrio-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: var(--mat-sys-primary-container);
+  color: var(--mat-sys-on-primary-container);
+  border-radius: 8px;
+  padding: 6px 12px;
+  font-size: .82rem;
+  font-weight: 600;
+  margin-bottom: 12px;
+
+  mat-icon { font-size: 16px; width: 16px; height: 16px; }
+}
+
 .form-container {
 	display: flex;
 	flex-direction: column;
