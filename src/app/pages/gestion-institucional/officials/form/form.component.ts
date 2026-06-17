@@ -1,12 +1,12 @@
-import { CommonModule } from '@angular/common';
+﻿import { CommonModule } from '@angular/common';
 import { Component, inject, OnInit, signal } from '@angular/core';
 import { AbstractControl, FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { MaterialModule } from 'src/app/material.module';
 import { EntitiesAdminService } from '../../entities/entities.service';
-import { Entity } from '../../entities/entity.model';
-import { Official } from '../official.model';
+import { Entity } from '../../../../models/entity.model';
+import { Official } from '../../../../models/official.model';
 import { OfficialsAdminService } from '../officials.service';
 
 // Custom validator for float numbers

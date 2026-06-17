@@ -1,10 +1,10 @@
-import { Component, inject, OnInit, output } from '@angular/core';
+﻿import { Component, inject, OnInit, output } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { CategoriesService } from '../../services/categories.service';
 import { AnnotationCategoriesService } from '../../services/annotation-categories.service';
 import { AnnotationsService } from '../../services/annotations.service';
-import { Category } from '../../models/category.model';
-import { AnnotationCategory } from '../../models/annotation-category.model';
+import { Category } from '../../../../models/category.model';
+import { AnnotationCategory } from '../../../../models/annotation-category.model';
 
 @Component({
   selector: 'app-filtros-panel',

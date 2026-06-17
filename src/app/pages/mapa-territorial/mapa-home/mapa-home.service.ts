@@ -1,5 +1,5 @@
-import { Injectable } from '@angular/core';
-import { MapaHomeOption } from './mapa-home-option.model';
+﻿import { Injectable } from '@angular/core';
+import { MapaHomeOption } from '../../../models/mapa-home-option.model';
 
 @Injectable({ providedIn: 'root' })
 export class MapaHomeService {

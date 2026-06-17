@@ -1,4 +1,4 @@
-import {
+﻿import {
   ChangeDetectionStrategy,
   Component,
   DestroyRef,
@@ -15,9 +15,9 @@ import { MaterialModule } from 'src/app/material.module';
 import { CategoriesService } from '../../services/categories.service';
 import { EntitiesService } from '../../services/entities.service';
 import { AnotacionFormService } from '../../services/anotacion-form.service';
-import { Category } from '../../models/category.model';
-import { Entity } from '../../models/entity.model';
-import { NeighborhoodSearchResult } from '../../models/annotation.model';
+import { Category } from '../../../../models/category.model';
+import { Entity } from '../../../../models/entity.model';
+import { NeighborhoodSearchResult } from '../../../../models/annotation.model';
 import { environment } from 'src/environments/environment';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 

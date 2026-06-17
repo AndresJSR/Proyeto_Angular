@@ -1,7 +1,7 @@
-import { Injectable, inject } from '@angular/core';
+﻿import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { environment } from 'src/environments/environment';
-import { Category } from './category.model';
+import { Category } from '../../../models/category.model';
 
 @Injectable({ providedIn: 'root' })
 export class CategoriesAdminService {

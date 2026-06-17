@@ -1,10 +1,10 @@
-import { Component, inject, OnInit, signal } from '@angular/core';
+﻿import { Component, inject, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { MaterialModule } from 'src/app/material.module';
 import { MatDialog } from '@angular/material/dialog';
 import { CitizensService } from '../citizens.service';
-import { Citizen } from '../citizen.model';
+import { Citizen } from '../../../../models/citizen.model';
 import { DeleteCitizenDialogComponent } from '../delete-dialog/delete-dialog.component';
 
 @Component({

@@ -1,7 +1,7 @@
-import { HttpClient } from '@angular/common/http';
+﻿import { HttpClient } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
 import { environment } from 'src/environments/environment';
-import { Entity } from './entity.model';
+import { Entity } from '../../../models/entity.model';
 
 @Injectable({ providedIn: 'root' })
 export class EntitiesAdminService {

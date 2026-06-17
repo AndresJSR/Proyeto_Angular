@@ -1,4 +1,4 @@
-import { CommonModule } from '@angular/common';
+﻿import { CommonModule } from '@angular/common';
 import {
   ChangeDetectionStrategy,
   Component,
@@ -14,11 +14,11 @@ import { MaterialModule } from 'src/app/material.module';
 import { MapaBaseComponent } from '../components/mapa-base/mapa-base.component';
 import { AnotacionFormComponent } from '../components/anotacion-form/anotacion-form.component';
 import { AnnotationsService } from '../services/annotations.service';
-import { Annotation } from '../models/annotation.model';
+import { Annotation } from '../../../models/annotation.model';
 import { AnotacionDetalleComponent } from '../components/anotacion-detalle/anotacion-detalle.component';
 import { AnnotationCategoriesService } from '../services/annotation-categories.service';
 import { EvidencesService } from '../services/evidences.service';
-import { Evidence } from '../models/evidence.model';
+import { Evidence } from '../../../models/evidence.model';
 
 const DEFAULT_COLOR = '#e74c3c';
 

@@ -1,11 +1,11 @@
-import { Component, inject, signal, OnInit } from '@angular/core';
+﻿import { Component, inject, signal, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MaterialModule } from 'src/app/material.module';
 import { FormsModule } from '@angular/forms';
 import { AnnotationsService } from '../../mapa-territorial/services/annotations.service';
 import { EvidencesService } from '../../mapa-territorial/services/evidences.service';
-import { Annotation } from '../../mapa-territorial/models/annotation.model';
-import { Evidence } from '../../mapa-territorial/models/evidence.model';
+import { Annotation } from '../../../models/annotation.model';
+import { Evidence } from '../../../models/evidence.model';
 
 @Component({
   selector: 'app-evidencias',

@@ -1,10 +1,10 @@
-import { Component, inject } from '@angular/core';
+﻿import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { MaterialModule } from 'src/app/material.module';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { CitizensService } from '../citizens.service';
-import { Citizen } from '../citizen.model';
+import { Citizen } from '../../../../models/citizen.model';
 
 @Component({
   selector: 'app-delete-citizen-dialog',

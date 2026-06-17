@@ -1,11 +1,11 @@
-import { CommonModule } from '@angular/common';
+﻿import { CommonModule } from '@angular/common';
 import { Component, effect, inject, input, OnInit, output, signal } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { MaterialModule } from 'src/app/material.module';
-import { Commune } from '../../communes/commune.model';
+import { Commune } from '../../../../models/commune.model';
 import { CommunesService } from '../../communes/communes.service';
 import { NeighborhoodsService } from '../neighborhoods.service';
 

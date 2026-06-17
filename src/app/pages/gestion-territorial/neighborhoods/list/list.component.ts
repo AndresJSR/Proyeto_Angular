@@ -1,11 +1,11 @@
-import { CommonModule } from '@angular/common';
+﻿import { CommonModule } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
 import { Component, computed, inject, OnInit, signal, OnDestroy } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { RouterModule } from '@angular/router';
 import { MaterialModule } from 'src/app/material.module';
 import { environment } from 'src/environments/environment';
-import { Commune } from '../../communes/commune.model';
+import { Commune } from '../../../../models/commune.model';
 import { CommunesService } from '../../communes/communes.service';
 import { DeleteNeighborhoodDialogComponent } from '../delete-dialog/delete-dialog.component';
 import { NeighborhoodsFormComponent } from '../form/form.component';

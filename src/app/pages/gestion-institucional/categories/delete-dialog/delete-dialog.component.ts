@@ -1,10 +1,10 @@
-import { Component, inject, OnInit, signal } from '@angular/core';
+﻿import { Component, inject, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { MaterialModule } from 'src/app/material.module';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { CategoriesAdminService } from '../categories.service';
-import { Category } from '../category.model';
+import { Category } from '../../../../models/category.model';
 import { HttpClient } from '@angular/common/http';
 import { environment } from 'src/environments/environment';
 

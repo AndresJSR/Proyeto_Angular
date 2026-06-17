@@ -1,12 +1,12 @@
-import { Component, inject, OnInit, signal, computed } from '@angular/core';
+﻿import { Component, inject, OnInit, signal, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule, ActivatedRoute } from '@angular/router';
 import { MaterialModule } from 'src/app/material.module';
 import { MatDialog } from '@angular/material/dialog';
 import { OfficialsAdminService } from '../officials.service';
 import { EntitiesAdminService } from '../../entities/entities.service';
-import { Official } from '../official.model';
-import { Entity } from '../../entities/entity.model';
+import { Official } from '../../../../models/official.model';
+import { Entity } from '../../../../models/entity.model';
 import { DeleteOfficialDialogComponent } from '../delete-dialog/delete-dialog.component';
 
 @Component({

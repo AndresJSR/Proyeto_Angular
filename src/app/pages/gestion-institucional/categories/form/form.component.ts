@@ -1,11 +1,11 @@
-import { Component, inject, OnInit, signal } from '@angular/core';
+﻿import { Component, inject, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, Validators } from '@angular/forms';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { MaterialModule } from 'src/app/material.module';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { CategoriesAdminService } from '../categories.service';
-import { Category } from '../category.model';
+import { Category } from '../../../../models/category.model';
 
 @Component({
   selector: 'app-categories-form',

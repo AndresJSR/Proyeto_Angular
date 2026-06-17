@@ -8,4 +8,6 @@ export interface Category {
   subcategories_count?: number;
   anotaciones_count?: number;
   can_delete?: boolean;
+  children?: Category[];
+  conteo?: number;
 }

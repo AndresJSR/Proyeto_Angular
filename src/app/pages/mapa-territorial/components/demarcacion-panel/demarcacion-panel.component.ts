@@ -1,7 +1,7 @@
-import { Component, inject, input, OnInit, output, signal } from '@angular/core';
+﻿import { Component, inject, input, OnInit, output, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { BarriosService } from '../../services/barrios.service';
-import { Barrio } from '../../models/barrio.model';
+import { Barrio } from '../../../../models/barrio.model';
 import { MaterialModule } from 'src/app/material.module';
 import { TablerIconsModule } from 'angular-tabler-icons';
 import { forkJoin } from 'rxjs';

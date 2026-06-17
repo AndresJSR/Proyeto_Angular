@@ -1,7 +1,7 @@
-import { ChangeDetectionStrategy, Component, computed, effect, input, output, signal } from '@angular/core';
+﻿import { ChangeDetectionStrategy, Component, computed, effect, input, output, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MaterialModule } from 'src/app/material.module';
-import { Official } from '../../models/official.model';
+import { Official } from '../../../../models/official.model';
 
 @Component({
   selector: 'app-tracking-panel',

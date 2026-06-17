@@ -1,6 +1,6 @@
-import { Injectable } from '@angular/core';
+﻿import { Injectable } from '@angular/core';
 import * as L from 'leaflet';
-import { Official } from '../models/official.model';
+import { Official } from '../../../models/official.model';
 
 @Injectable({ providedIn: 'root' })
 export class OfficialMarkersService {

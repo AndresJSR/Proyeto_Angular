@@ -1,4 +1,4 @@
-import { CommonModule } from '@angular/common';
+﻿import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import {
   Component,
@@ -13,7 +13,7 @@ import { TablerIconsModule } from 'angular-tabler-icons';
 import { MapaBaseComponent } from '../../components/mapa-base/mapa-base.component';
 import { DemarcacionPanelComponent } from '../../components/demarcacion-panel/demarcacion-panel.component';
 import { DemarcacionSidebarComponent } from '../../components/demarcacion-sidebar/demarcacion-sidebar.component';
-import { Barrio } from '../../models/barrio.model';
+import { Barrio } from '../../../../models/barrio.model';
 import { BarriosService } from '../../services/barrios.service';
 
 @Component({

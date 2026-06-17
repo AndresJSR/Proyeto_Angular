@@ -1,4 +1,4 @@
-import { CommonModule } from '@angular/common';
+﻿import { CommonModule } from '@angular/common';
 import {
   ChangeDetectionStrategy,
   Component,
@@ -16,9 +16,9 @@ import { AnotacionDetalleComponent } from '../components/anotacion-detalle/anota
 import { FiltrosPanelComponent } from '../components/filtros-panel/filtros-panel.component';
 import { MapaBaseComponent } from '../components/mapa-base/mapa-base.component';
 import { MAPA_BASE_LAYERS } from '../components/mapa-base/mapa-base-layers';
-import { AnnotationCategory } from '../models/annotation-category.model';
-import { Annotation } from '../models/annotation.model';
-import { Category } from '../models/category.model';
+import { AnnotationCategory } from '../../../models/annotation-category.model';
+import { Annotation } from '../../../models/annotation.model';
+import { Category } from '../../../models/category.model';
 import { AnnotationCategoriesService } from '../services/annotation-categories.service';
 import { AnnotationsService } from '../services/annotations.service';
 import { CategoriesService } from '../services/categories.service';

@@ -1,4 +1,4 @@
-import { CommonModule } from '@angular/common';
+﻿import { CommonModule } from '@angular/common';
 import { Component, computed, inject, OnInit, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
@@ -6,7 +6,7 @@ import { RouterModule } from '@angular/router';
 import { MaterialModule } from 'src/app/material.module';
 import { environment } from 'src/environments/environment';
 import { CategoriesAdminService } from '../categories.service';
-import { Category } from '../category.model';
+import { Category } from '../../../../models/category.model';
 import { DeleteCategoryDialogComponent } from '../delete-dialog/delete-dialog.component';
 
 @Component({

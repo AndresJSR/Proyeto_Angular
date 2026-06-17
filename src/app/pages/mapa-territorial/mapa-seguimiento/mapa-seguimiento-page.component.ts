@@ -1,4 +1,4 @@
-import { CommonModule } from '@angular/common';
+﻿import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, Component, DestroyRef, OnDestroy, computed, inject, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import * as L from 'leaflet';
@@ -6,7 +6,7 @@ import { take, switchMap } from 'rxjs';
 import { MapaBaseComponent } from '../components/mapa-base/mapa-base.component';
 import { SeguimientoStatsBarComponent } from './components/seguimiento-stats-bar/seguimiento-stats-bar.component';
 import { TrackingPanelComponent } from '../components/tracking-panel/tracking-panel.component';
-import { Official } from '../models/official.model';
+import { Official } from '../../../models/official.model';
 import { OfficialsService } from '../services/officials.service';
 import { OfficialMarkersService } from '../services/official-markers.service';
 

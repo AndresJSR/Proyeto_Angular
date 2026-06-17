@@ -1,9 +1,9 @@
-import { Component, inject, OnInit, signal } from '@angular/core';
+﻿import { Component, inject, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { MaterialModule } from 'src/app/material.module';
 import { EntitiesAdminService } from '../entities.service';
-import { Entity } from '../entity.model';
+import { Entity } from '../../../../models/entity.model';
 import { MatDialog } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { DeleteDialogComponent } from '../delete-dialog/delete-dialog.component';

@@ -1,4 +1,4 @@
-import { Component, inject, OnInit, signal, computed } from '@angular/core';
+﻿import { Component, inject, OnInit, signal, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { ReactiveFormsModule, FormBuilder } from '@angular/forms';
@@ -7,7 +7,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { HttpClient } from '@angular/common/http';
 import { environment } from 'src/environments/environment';
 import { CommunesService } from '../communes.service';
-import { Commune } from '../commune.model';
+import { Commune } from '../../../../models/commune.model';
 import { DeleteCommuneDialogComponent } from '../delete-dialog/delete-dialog.component';
 
 @Component({

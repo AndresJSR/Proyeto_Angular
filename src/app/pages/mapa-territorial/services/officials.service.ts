@@ -1,8 +1,8 @@
-import { Injectable, inject } from '@angular/core';
+﻿import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable, shareReplay, switchMap, timer, map, Subject, fromEvent } from 'rxjs';
 import { io, Socket } from 'socket.io-client';
-import { Official } from '../models/official.model';
+import { Official } from '../../../models/official.model';
 import { environment } from '../../../../environments/environment';
 
 @Injectable({ providedIn: 'root' })

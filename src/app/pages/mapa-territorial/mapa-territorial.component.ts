@@ -1,4 +1,4 @@
-import {
+﻿import {
   Component, inject, OnInit, signal,
   AfterViewInit, viewChild
 } from '@angular/core';
@@ -7,7 +7,7 @@ import { CommonModule } from '@angular/common';
 import * as L from 'leaflet';
 import 'leaflet.markercluster';
 import { DemarcacionPanelComponent } from './components/demarcacion-panel/demarcacion-panel.component';
-import { Barrio } from './models/barrio.model';
+import { Barrio } from '../../models/barrio.model';
 import { BarriosService } from './services/barrios.service';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { MaterialModule } from '../../material.module';

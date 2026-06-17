@@ -1,9 +1,9 @@
-import { Component, inject, signal, AfterViewInit, OnInit, DestroyRef } from '@angular/core';
+﻿import { Component, inject, signal, AfterViewInit, OnInit, DestroyRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MaterialModule } from 'src/app/material.module';
 import { AnnotationsService } from '../../mapa-territorial/services/annotations.service';
 import { AnotacionDetalleComponent } from '../../mapa-territorial/components/anotacion-detalle/anotacion-detalle.component';
-import { Annotation } from '../../mapa-territorial/models/annotation.model';
+import { Annotation } from '../../../models/annotation.model';
 import { toObservable, takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import * as L from 'leaflet';
 import 'leaflet.markercluster';

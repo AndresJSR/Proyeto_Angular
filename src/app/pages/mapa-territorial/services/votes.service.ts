@@ -1,6 +1,6 @@
-import { Injectable, inject } from '@angular/core';
+﻿import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Vote } from '../models/vote.model';
+import { Vote } from '../../../models/vote.model';
 import { environment } from '../../../../environments/environment';
 
 @Injectable({ providedIn: 'root' })
