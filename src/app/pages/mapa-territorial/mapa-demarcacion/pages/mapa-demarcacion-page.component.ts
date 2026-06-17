@@ -1,4 +1,5 @@
 import { CommonModule } from '@angular/common';
+import { RouterModule } from '@angular/router';
 import {
   Component,
   OnDestroy,
@@ -8,6 +9,7 @@ import {
 } from '@angular/core';
 import * as L from 'leaflet';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { TablerIconsModule } from 'angular-tabler-icons';
 import { MapaBaseComponent } from '../../components/mapa-base/mapa-base.component';
 import { DemarcacionPanelComponent } from '../../components/demarcacion-panel/demarcacion-panel.component';
 import { DemarcacionSidebarComponent } from '../../components/demarcacion-sidebar/demarcacion-sidebar.component';
@@ -19,9 +21,11 @@ import { BarriosService } from '../../services/barrios.service';
   standalone: true,
   imports: [
     CommonModule,
+    RouterModule,
     MapaBaseComponent,
     DemarcacionPanelComponent,
     DemarcacionSidebarComponent,
+    TablerIconsModule,
   ],
   templateUrl: './mapa-demarcacion-page.component.html',
   styleUrls: ['./mapa-demarcacion-page.component.scss'],

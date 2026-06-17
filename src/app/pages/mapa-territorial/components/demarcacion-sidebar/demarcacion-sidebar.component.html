@@ -1,55 +1,89 @@
-<div class="panel-card tools-card">
-  <h3>Herramientas de edicion</h3>
-  <p class="tools-hint">
-    Click en el mapa para agregar puntos. Arrastra vertices para ajustar.
-    Click derecho sobre un vertice para eliminarlo.
-  </p>
+<div class="tools-card">
 
-  <div class="coords-header">
-    <span>Coordenadas</span>
-    <span class="badge">{{ coords().length }} puntos</span>
+  <!-- Header -->
+  <div class="tools-header">
+    <div class="tools-icon-wrap">
+      <tabler-icon name="tool" size="18"></tabler-icon>
+    </div>
+    <div class="tools-header-text">
+      <span class="tools-title">Herramientas</span>
+      <span class="tools-sub">Edición del polígono</span>
+    </div>
+    <div class="status-pill" [class.active]="isEditing()">
+      <span class="status-dot"></span>
+      {{ isEditing() ? 'Editando' : 'Sin cambios' }}
+    </div>
   </div>
 
-  <div class="coords-list" [class.empty]="!coords().length">
-    @if (!coords().length) {
-      <p>No hay puntos cargados.</p>
-    } @else {
-      @for (coord of coords(); track $index) {
-        <div class="coord-row">
-          <span class="idx">#{{ $index + 1 }}</span>
-          <span class="lat">{{ coord[0].toFixed(6) }}</span>
-          <span class="lng">{{ coord[1].toFixed(6) }}</span>
+  <!-- Instrucciones -->
+  <ul class="instructions">
+    <li>
+      <tabler-icon name="mouse" size="14"></tabler-icon>
+      Click en el mapa para agregar puntos
+    </li>
+    <li>
+      <tabler-icon name="drag-drop" size="14"></tabler-icon>
+      Arrastra vértices para ajustar posición
+    </li>
+    <li>
+      <tabler-icon name="mouse-2" size="14"></tabler-icon>
+      Click derecho en un vértice para eliminarlo
+    </li>
+  </ul>
+
+  <!-- Coordenadas -->
+  <div class="coords-section">
+    <div class="coords-header">
+      <div class="coords-label">
+        <tabler-icon name="list-numbers" size="14"></tabler-icon>
+        Coordenadas
+      </div>
+      <span class="badge">{{ coords().length }} pts</span>
+    </div>
+
+    <div class="coords-list" [class.empty]="!coords().length">
+      @if (!coords().length) {
+        <div class="coords-empty">
+          <tabler-icon name="map-pin-off" size="20"></tabler-icon>
+          <span>Sin puntos cargados</span>
         </div>
+      } @else {
+        @for (coord of coords(); track $index) {
+          <div class="coord-row">
+            <span class="idx">{{ $index + 1 }}</span>
+            <span class="coord-val">{{ coord[0].toFixed(5) }}</span>
+            <span class="coord-val">{{ coord[1].toFixed(5) }}</span>
+          </div>
+        }
       }
-    }
+    </div>
   </div>
 
-  <div class="status-pill" [class.active]="isEditing()">
-    @if (isEditing()) {
-      Editando poligono
-    } @else {
-      Sin edicion activa
-    }
-  </div>
-
-  <div class="actions-grid">
+  <!-- Acciones -->
+  <div class="actions">
     <button
       class="btn btn-primary"
       (click)="save.emit()"
       [disabled]="isSaving() || coords().length < 3 || !hasActiveNeighborhood()">
-      {{ isSaving() ? 'Guardando...' : 'Guardar' }}
+      <tabler-icon [name]="isSaving() ? 'loader-2' : 'device-floppy'" size="16"></tabler-icon>
+      {{ isSaving() ? 'Guardando…' : 'Guardar' }}
     </button>
-    <button
-      class="btn btn-secondary"
-      (click)="cancel.emit()"
-      [disabled]="isSaving() || !hasActiveNeighborhood()">
-      Cancelar
-    </button>
-    <button
-      class="btn btn-danger"
-      (click)="clear.emit()"
-      [disabled]="isSaving() || !coords().length">
-      Limpiar
-    </button>
+    <div class="btn-row">
+      <button
+        class="btn btn-secondary"
+        (click)="cancel.emit()"
+        [disabled]="isSaving() || !hasActiveNeighborhood()">
+        <tabler-icon name="arrow-back-up" size="15"></tabler-icon>
+        Cancelar
+      </button>
+      <button
+        class="btn btn-danger"
+        (click)="clear.emit()"
+        [disabled]="isSaving() || !coords().length">
+        <tabler-icon name="trash" size="15"></tabler-icon>
+        Limpiar
+      </button>
+    </div>
   </div>
+
 </div>

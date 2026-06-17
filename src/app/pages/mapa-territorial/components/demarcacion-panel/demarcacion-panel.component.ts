@@ -3,12 +3,13 @@ import { CommonModule } from '@angular/common';
 import { BarriosService } from '../../services/barrios.service';
 import { Barrio } from '../../models/barrio.model';
 import { MaterialModule } from 'src/app/material.module';
+import { TablerIconsModule } from 'angular-tabler-icons';
 import { forkJoin } from 'rxjs';
 
 @Component({
   selector: 'app-demarcacion-panel',
   standalone: true,
-  imports: [CommonModule, MaterialModule],
+  imports: [CommonModule, MaterialModule, TablerIconsModule],
   templateUrl: './demarcacion-panel.component.html',
 })
 export class DemarcacionPanelComponent implements OnInit {

@@ -7,23 +7,41 @@
   <div class="mapa-home-grid">
     <div
       *ngFor="let option of options"
+      appGlowCard
       class="mapa-card"
       [routerLink]="option.route"
       [attr.data-accent]="option.accent">
-      <div class="card-top">
-        <div class="icon-circle">
-          <tabler-icon [name]="option.icon" size="32"></tabler-icon>
+      <div data-glow></div>
+
+      <!-- Header con gradiente e ícono -->
+      <div class="card-header">
+        <div class="card-header-bg"></div>
+        <div class="card-icon-wrap">
+          <tabler-icon [name]="option.icon" size="28"></tabler-icon>
         </div>
-        <span class="card-arrow">→</span>
+        <span class="card-tag">{{ option.tag }}</span>
       </div>
+
+      <!-- Cuerpo -->
       <div class="card-body">
         <h2 class="card-title">{{ option.title }}</h2>
-        <span class="card-desc">{{ option.description }}</span>
+        <p class="card-desc">{{ option.description }}</p>
+
+        <ul class="card-features">
+          <li *ngFor="let f of option.features">
+            <tabler-icon name="circle-check" size="14"></tabler-icon>
+            {{ f }}
+          </li>
+        </ul>
       </div>
+
+      <!-- Footer -->
       <div class="card-footer">
-        <span class="card-tag">{{ option.tag }}</span>
+        <span class="card-cta">
+          Ir a {{ option.title }}
+          <tabler-icon name="arrow-right" size="16"></tabler-icon>
+        </span>
       </div>
     </div>
   </div>
 </div>
-

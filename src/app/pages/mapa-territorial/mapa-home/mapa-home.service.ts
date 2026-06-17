@@ -12,6 +12,7 @@ export class MapaHomeService {
         route: '/mapa/ver',
         accent: 'primary',
         tag: 'Explorar',
+        features: ['Capas de anotaciones', 'Navegación libre', 'Vista por barrio'],
       },
       {
         title: 'Demarcación',
@@ -20,6 +21,7 @@ export class MapaHomeService {
         route: '/mapa/demarcacion',
         accent: 'secondary',
         tag: 'Edición',
+        features: ['Polígonos editables', 'Asignación de barrios', 'Exportar zonas'],
       },
       {
         title: 'Seguimiento',
@@ -28,6 +30,7 @@ export class MapaHomeService {
         route: '/mapa/seguimiento',
         accent: 'tertiary',
         tag: 'Tiempo real',
+        features: ['GPS en vivo', 'Historial de rutas', 'Estado de funcionarios'],
       },
       {
         title: 'Crear Anotación',
@@ -36,6 +39,7 @@ export class MapaHomeService {
         route: '/mapa/anotar',
         accent: 'error',
         tag: 'Nuevo',
+        features: ['Formulario guiado', 'Adjuntar evidencias', 'Categorización rápida'],
       },
       {
         title: 'Filtros',
@@ -44,6 +48,7 @@ export class MapaHomeService {
         route: '/mapa/filtros',
         accent: 'surface',
         tag: 'Filtrar',
+        features: ['Por categoría', 'Rango de fechas', 'Buscar por zona'],
       },
     ];
   }
