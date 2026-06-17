@@ -1,7 +1,8 @@
-﻿import { Component, inject, input, OnChanges, signal } from '@angular/core';
+﻿import { Component, inject, input, OnChanges, output, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { MaterialModule } from 'src/app/material.module';
+import { MatSnackBar } from '@angular/material/snack-bar';
 import { Annotation } from '../../../../models/annotation.model';
 import { VotesService } from '../../services/votes.service';
 import { Vote } from '../../../../models/vote.model';
@@ -10,6 +11,7 @@ import { Evidence } from '../../../../models/evidence.model';
 import { AnnotationCategoriesService } from '../../services/annotation-categories.service';
 import { CategoriesService } from '../../services/categories.service';
 import { Category } from '../../../../models/category.model';
+import { AnnotationsService } from '../../services/annotations.service';
 
 @Component({
   selector: 'app-anotacion-detalle',
@@ -23,8 +25,11 @@ export class AnotacionDetalleComponent implements OnChanges {
   private evidencesSvc = inject(EvidencesService);
   private annCatSvc = inject(AnnotationCategoriesService);
   private catSvc = inject(CategoriesService);
+  private annotationsSvc = inject(AnnotationsService);
+  private snack = inject(MatSnackBar);
 
   annotation = input<Annotation | null>(null);
+  deleted = output<number>();
 
   votes = signal<Vote[]>([]);
   avgStars = signal<number>(0);
@@ -36,6 +41,8 @@ export class AnotacionDetalleComponent implements OnChanges {
   stars = 0;
   comment = '';
   saving = signal(false);
+  confirmDelete = signal(false);
+  deleting = signal(false);
 
   readonly ID_CITIZEN = 1;
   readonly stars_range = [1, 2, 3, 4, 5];
@@ -48,6 +55,8 @@ export class AnotacionDetalleComponent implements OnChanges {
     this.evidences.set([]);
     this.categories.set([]);
     this.selectedImageIndex.set(0);
+    this.confirmDelete.set(false);
+    this.deleting.set(false);
     this.loadVotes(ann.id_annotation);
     this.loadEvidences(ann.id_annotation);
     this.loadCategories(ann.id_annotation);
@@ -121,5 +130,23 @@ export class AnotacionDetalleComponent implements OnChanges {
     if (days < 7) return `Hace ${days} días`;
     if (days < 30) return `Hace ${Math.floor(days / 7)} semana(s)`;
     return `Hace ${Math.floor(days / 30)} mes(es)`;
+  }
+
+  deleteAnnotation() {
+    const ann = this.annotation();
+    if (!ann) return;
+    this.deleting.set(true);
+    this.annotationsSvc.delete(ann.id_annotation).subscribe({
+      next: () => {
+        this.annotationsSvc.removeFromCache(ann.id_annotation);
+        this.snack.open('Anotación eliminada', '✕', { duration: 3000 });
+        this.deleted.emit(ann.id_annotation);
+      },
+      error: () => {
+        this.deleting.set(false);
+        this.confirmDelete.set(false);
+        this.snack.open('No se pudo eliminar la anotación', '✕', { duration: 4000 });
+      }
+    });
   }
 } 

@@ -42,6 +42,15 @@ export class AnnotationsService {
     });
   }
 
+  delete(id: number) {
+    return this.http.delete(`${this.base}/${id}`);
+  }
+
+  removeFromCache(id: number) {
+    this.all.update(list => list.filter(a => a.id_annotation !== id));
+    this.filtered.update(list => list.filter(a => a.id_annotation !== id));
+  }
+
   applyFilter(allowedIds: number[] | null) {
     if (allowedIds === null) {
       this.filtered.set(this.all());

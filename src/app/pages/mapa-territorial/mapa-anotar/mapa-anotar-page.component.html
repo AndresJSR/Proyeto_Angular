@@ -83,7 +83,9 @@
           </button>
         </div>
         <div class="side-panel__content">
-          <app-anotacion-detalle [annotation]="selectedAnnotation()" />
+          <app-anotacion-detalle
+            [annotation]="selectedAnnotation()"
+            (deleted)="onAnnotationDeleted($event)" />
         </div>
       </aside>
     }

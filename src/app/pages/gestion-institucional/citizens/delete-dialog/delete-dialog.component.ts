@@ -1,4 +1,4 @@
-﻿import { Component, inject } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { MaterialModule } from 'src/app/material.module';
@@ -27,14 +27,14 @@ import { Citizen } from '../../../../models/citizen.model';
       </div>
     </div>
   `,
-  styles: [\`
+  styles: [`
     .delete-dialog { padding: 8px 4px 4px; text-align: center; }
-    .delete-icon { display:flex; justify-content:center; margin-bottom:12px;
-      mat-icon { font-size:44px; width:44px; height:44px; color:#ef4444; } }
+    .delete-icon { display:flex; justify-content:center; margin-bottom:12px; }
+    .delete-icon mat-icon { font-size:44px; width:44px; height:44px; color:#ef4444; }
     .delete-title { font-size:18px; font-weight:700; color:#0f172a; margin:0 0 10px; }
     .delete-body  { font-size:14px; color:#64748b; margin:0 0 24px; line-height:1.5; }
     .delete-actions { display:flex; flex-direction:column; gap:10px; }
-  \`],
+  `],
 })
 export class DeleteCitizenDialogComponent {
   data     = inject<Citizen>(MAT_DIALOG_DATA);

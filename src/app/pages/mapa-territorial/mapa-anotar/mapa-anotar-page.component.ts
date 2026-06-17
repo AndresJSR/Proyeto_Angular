@@ -271,6 +271,16 @@ export class MapaAnotarPageComponent implements OnInit {
     this.clearActiveMarkers();
   }
 
+  onAnnotationDeleted(id: number): void {
+    const marker = this.markerMap.get(id);
+    if (marker && this.markersLayer) {
+      this.markersLayer.removeLayer(marker);
+      this.markerMap.delete(id);
+    }
+    this.sidebarOpen.set(false);
+    this.selectedAnnotation.set(null);
+  }
+
   onFormSaved(_id: number): void {
     this.showForm.set(false);
     this.formCoords.set(null);

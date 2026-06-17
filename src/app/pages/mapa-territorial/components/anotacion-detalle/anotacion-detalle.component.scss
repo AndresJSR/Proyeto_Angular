@@ -243,3 +243,89 @@
 .empty-icon { font-size: 2.25rem; opacity: .45; }
 .empty-title { font-size: .95rem; font-weight: 700; color: var(--mat-sys-on-surface); margin: 0; }
 .empty-sub   { font-size: .8rem; color: var(--mat-sys-on-surface-variant); margin: 0; max-width: 190px; }
+
+/* ── Zona eliminar ── */
+.delete-zone {
+  padding: 14px 0 8px;
+}
+
+.delete-trigger {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: #94a3b8;
+  font-size: .78rem;
+  font-weight: 500;
+  padding: 6px 8px;
+  border-radius: 8px;
+  transition: color .15s, background .15s;
+
+  &:hover {
+    color: #ef4444;
+    background: #fef2f2;
+  }
+}
+
+.delete-confirm {
+  background: #fff5f5;
+  border: 1px solid #fecaca;
+  border-radius: 10px;
+  padding: 12px 14px;
+
+  &__text {
+    font-size: .8rem;
+    color: #7f1d1d;
+    margin: 0 0 12px;
+    line-height: 1.5;
+  }
+
+  &__actions {
+    display: flex;
+    gap: 8px;
+  }
+
+  &__cancel {
+    flex: 1;
+    padding: 8px;
+    border: 1px solid #cbd5e1;
+    border-radius: 8px;
+    background: #fff;
+    font-size: .8rem;
+    font-weight: 600;
+    color: #475569;
+    cursor: pointer;
+    transition: background .15s;
+
+    &:hover:not(:disabled) { background: #f8fafc; }
+    &:disabled { opacity: .5; cursor: not-allowed; }
+  }
+
+  &__ok {
+    flex: 1;
+    padding: 8px;
+    border: none;
+    border-radius: 8px;
+    background: #ef4444;
+    font-size: .8rem;
+    font-weight: 600;
+    color: #fff;
+    cursor: pointer;
+    transition: background .15s;
+
+    &:hover:not(:disabled) { background: #dc2626; }
+    &:disabled { opacity: .6; cursor: not-allowed; }
+  }
+}
+
+:host-context(.dark-theme) {
+  .delete-trigger:hover { background: rgba(239,68,68,.12); }
+  .delete-confirm {
+    background: rgba(239,68,68,.08);
+    border-color: rgba(239,68,68,.25);
+    &__text { color: #fca5a5; }
+    &__cancel { background: #1c2536; border-color: #334155; color: #94a3b8; &:hover:not(:disabled) { background: #243044; } }
+  }
+}
