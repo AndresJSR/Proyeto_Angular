@@ -137,3 +137,45 @@
     width: 100%;
   }
 }
+
+/* ── Modo oscuro ─────────────────────────────────────────── */
+:host-context(.dark-theme) {
+  .report-chart-card {
+    background: #1c2536;
+    border-color: #2e3f50;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+  }
+
+  .chart-header {
+    h3 { color: rgba(255, 255, 255, 0.9); }
+    p  { color: rgba(255, 255, 255, 0.5); }
+  }
+
+  .chart-badge {
+    background: #1e3a5f;
+    color: #93c5fd;
+  }
+
+  .chart-controls .chart-control {
+    background: #243044;
+    border-color: #2e3f50;
+    color: #93c5fd;
+
+    &:hover:not(:disabled) {
+      background: #1e3a5f;
+      border-color: #3b82f6;
+    }
+
+    &.active {
+      background: #2563eb;
+      border-color: #2563eb;
+      color: #ffffff;
+    }
+  }
+
+  .empty-chart {
+    background: #19212a;
+    border-color: #2e3f50;
+    color: rgba(255, 255, 255, 0.5);
+  }
+}

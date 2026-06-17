@@ -35,35 +35,7 @@
     </button>
   }
 
-  <!-- Notification Dropdown -->
-  <button
-    mat-icon-button
-    [matBadge]="notifications.length"
-    [matMenuTriggerFor]="notificationmenu"
-    aria-label="Notificaciones"
-    class="notification-badge"
-  >
-    <i class="iconify" data-icon="solar:bell-line-duotone"></i>
-  </button>
-
-  <mat-menu #notificationmenu="matMenu" class="topbar-dd cardWithShadow">
-    <div class="flex items-center px-6 py-4">
-      <h6 class="text-lg">Notificaciones</h6>
-    </div>
-
-    @for (notification of notifications; track notification.id) {
-      <button mat-menu-item class="px-6 py-2">
-        <div>
-          <h5 class="text-sm font-semibold m-0">
-            {{ notification.title }}
-          </h5>
-          <span class="text-xs text-muted">{{ notification.subtitle }}</span>
-        </div>
-      </button>
-    }
-  </mat-menu>
-
-  <!-- Profile Dropdown -->
+<!-- Profile Dropdown -->
   @if (currentUser) {
     <span class="hidden! sm:inline-flex! ml-2">
       {{ currentUser.name }}

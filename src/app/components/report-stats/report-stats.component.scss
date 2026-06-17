@@ -132,3 +132,48 @@
     grid-template-columns: 1fr;
   }
 }
+
+/* ── Modo oscuro ─────────────────────────────────────────── */
+:host-context(.dark-theme) {
+  .report-stats-card {
+    background: #1c2536;
+    border-color: #2e3f50;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+  }
+
+  .stats-header {
+    h3 { color: rgba(255, 255, 255, 0.9); }
+    p  { color: rgba(255, 255, 255, 0.5); }
+  }
+
+  .stats-tabs {
+    background: #19212a;
+  }
+
+  .stats-tab {
+    color: rgba(255, 255, 255, 0.55);
+
+    &.active {
+      background: #2563eb;
+      color: #ffffff;
+    }
+  }
+
+  .stat-card {
+    background: #243044;
+    border-color: #2e3f50;
+
+    strong { color: rgba(255, 255, 255, 0.9); }
+  }
+
+  .stat-card.primary {
+    background: #1e3a5f;
+    border-color: #2563eb;
+
+    strong { color: #93c5fd; }
+  }
+
+  .stat-label {
+    color: rgba(255, 255, 255, 0.5);
+  }
+}

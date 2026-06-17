@@ -167,3 +167,40 @@
     width: 100%;
   }
 }
+
+/* ── Modo oscuro ─────────────────────────────────────────── */
+:host-context(.dark-theme) {
+  .report-chat-card {
+    background: #1c2536;
+    border-color: #2e3f50;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+  }
+
+  .chat-header {
+    h3 { color: rgba(255, 255, 255, 0.9); }
+    p  { color: rgba(255, 255, 255, 0.5); }
+  }
+
+  .example-chip {
+    background: #1e3a5f;
+    border-color: #2563eb;
+    color: #93c5fd;
+  }
+
+  .empty-chat {
+    background: #19212a;
+    border-color: #2e3f50;
+    color: rgba(255, 255, 255, 0.5);
+
+    strong { color: rgba(255, 255, 255, 0.85); }
+  }
+
+  .message-system .message-content {
+    background: #243044;
+    color: rgba(255, 255, 255, 0.85);
+  }
+
+  .message-role {
+    color: rgba(255, 255, 255, 0.45);
+  }
+}

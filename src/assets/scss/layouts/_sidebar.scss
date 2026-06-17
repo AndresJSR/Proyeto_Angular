@@ -112,6 +112,21 @@
   }
 }
 
+.sidebar-list .top-parent .menu-list-item.danger-item {
+  .mdc-list-item__primary-text {
+    color: #e05c5c !important;
+  }
+
+  .mat-mdc-list-item-icon,
+  .routeIcon {
+    color: #e05c5c !important;
+  }
+
+  &:hover {
+    background-color: rgba(224, 92, 92, 0.08) !important;
+  }
+}
+
 .sidebar-list .top-parent .menu-list-item.activemenu {
   background-color: color-mix(in srgb, var(--mat-sys-primary) 10%, transparent);
 

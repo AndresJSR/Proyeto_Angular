@@ -57,36 +57,14 @@ export const navItems: NavItem[] = [
     navCap: 'Reportes Inteligentes',
   },
   {
-    displayName: 'Consultas',
-    iconName: 'solar:search-line-duotone',
-    route: '/reportes/consultas',
-  },
-  {
-    displayName: 'Estadísticas',
+    displayName: 'Reportes Inteligentes',
     iconName: 'solar:chart-bar-line-duotone',
-    route: '/reportes/estadisticas',
-  },
-  {
-    displayName: 'Gráficas',
-    iconName: 'solar:chart-pie-line-duotone',
-    route: '/reportes/graficas',
-  },
-  {
-    navCap: 'Cuenta',
-  },
-  {
-    displayName: 'Perfil',
-    iconName: 'solar:user-circle-line-duotone',
-    route: '/cuenta/perfil',
-  },
-  {
-    displayName: 'Configuración',
-    iconName: 'solar:settings-line-duotone',
-    route: '/cuenta/configuracion',
+    route: '/reportes/consultas',
   },
   {
     displayName: 'Cerrar sesión',
     iconName: 'solar:logout-1-line-duotone',
     route: '/cuenta/logout',
+    danger: true,
   },
 ];
