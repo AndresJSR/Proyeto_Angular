@@ -1,21 +1,220 @@
-<div class="grid grid-cols-12 gap-6">
-  <div class="col-span-12">
-    <app-mathew-anderson></app-mathew-anderson>
+@if (loading()) {
+  <div class="dash-loading">
+    <mat-progress-bar mode="indeterminate"></mat-progress-bar>
   </div>
-  <div class="col-span-12">
-    <app-top-cards></app-top-cards>
+}
+
+<div class="dashboard" [class.is-loading]="loading()">
+
+  <!-- ── Fila 1: KPIs ──────────────────────────────────────── -->
+  <div class="kpi-row">
+
+    <div class="kpi-card kpi-blue">
+      <div class="kpi-icon"><mat-icon>people</mat-icon></div>
+      <div class="kpi-body">
+        <span class="kpi-label">Ciudadanos registrados</span>
+        <strong class="kpi-value">{{ totalCitizens() }}</strong>
+      </div>
+    </div>
+
+    <div class="kpi-card kpi-green">
+      <div class="kpi-icon"><mat-icon>badge</mat-icon></div>
+      <div class="kpi-body">
+        <span class="kpi-label">Funcionarios activos</span>
+        <strong class="kpi-value">{{ activeOfficials() }}</strong>
+      </div>
+    </div>
+
+    <div class="kpi-card kpi-purple">
+      <div class="kpi-icon"><mat-icon>account_balance</mat-icon></div>
+      <div class="kpi-body">
+        <span class="kpi-label">Entidades</span>
+        <strong class="kpi-value">{{ totalEntities() }}</strong>
+      </div>
+    </div>
+
+    <div class="kpi-card kpi-orange">
+      <div class="kpi-icon"><mat-icon>pin_drop</mat-icon></div>
+      <div class="kpi-body">
+        <span class="kpi-label">Anotaciones en el mapa</span>
+        <strong class="kpi-value">{{ totalAnnotations() }}</strong>
+      </div>
+    </div>
+
   </div>
-  <div class="col-span-12 lg:col-span-8">
-    <app-revenue-updates></app-revenue-updates>
+
+  <!-- ── Fila 2: Gráfica de barras + Mapa ──────────────────── -->
+  <div class="row-2">
+
+    <div class="dash-card chart-card">
+      <div class="card-header">
+        <mat-icon class="card-icon">bar_chart</mat-icon>
+        <div>
+          <h3>Anotaciones por barrio</h3>
+          <p>Top 10 barrios con más actividad</p>
+        </div>
+      </div>
+      @if (barChart) {
+        <app-bar-chart [report]="barChart" />
+      } @else if (!loading()) {
+        <div class="empty-state"><mat-icon>info</mat-icon> Sin datos suficientes</div>
+      }
+    </div>
+
+    <div class="dash-card map-card">
+      <div class="card-header">
+        <mat-icon class="card-icon">map</mat-icon>
+        <div>
+          <h3>Mapa de calor</h3>
+          <p>Intensidad de anotaciones por barrio</p>
+        </div>
+      </div>
+
+      <div class="map-legend">
+        <span class="legend-item"><span class="dot" style="background:#cbd5e1"></span> Sin datos</span>
+        <span class="legend-item"><span class="dot" style="background:#dbeafe"></span> Muy bajo</span>
+        <span class="legend-item"><span class="dot" style="background:#93c5fd"></span> Bajo</span>
+        <span class="legend-item"><span class="dot" style="background:#3b82f6"></span> Medio</span>
+        <span class="legend-item"><span class="dot" style="background:#1d4ed8"></span> Alto</span>
+        <span class="legend-item"><span class="dot" style="background:#1e3a8a"></span> Muy alto</span>
+      </div>
+
+      @if (mapLoading()) {
+        <mat-progress-bar mode="indeterminate" class="map-progress"></mat-progress-bar>
+      }
+
+      <div class="map-wrapper">
+        <app-mapa-base (mapReady)="onMapReady($event)" />
+      </div>
+    </div>
+
   </div>
-  <div class="col-span-12 lg:col-span-4">
-    <app-yearly-breakup></app-yearly-breakup>
-    <app-monthly-earnings></app-monthly-earnings>
+
+  <!-- ── Fila 3: Últimas anotaciones + Torta funcionarios ───── -->
+  <div class="row-3">
+
+    <div class="dash-card">
+      <div class="card-header">
+        <mat-icon class="card-icon">history</mat-icon>
+        <div>
+          <h3>Últimas anotaciones</h3>
+          <p>Las 5 más recientes registradas</p>
+        </div>
+        <a mat-stroked-button routerLink="/mapa/ver" class="ml-auto header-link">
+          Ver mapa <mat-icon>arrow_forward</mat-icon>
+        </a>
+      </div>
+
+      <table mat-table [dataSource]="recentAnnotations()" class="w-full">
+        <ng-container matColumnDef="barrio">
+          <th mat-header-cell *matHeaderCellDef>Barrio</th>
+          <td mat-cell *matCellDef="let a">{{ getBarrioName(a.id_neighborhood) }}</td>
+        </ng-container>
+        <ng-container matColumnDef="descripcion">
+          <th mat-header-cell *matHeaderCellDef>Descripción</th>
+          <td mat-cell *matCellDef="let a" class="desc-cell">{{ a.description }}</td>
+        </ng-container>
+        <ng-container matColumnDef="fecha">
+          <th mat-header-cell *matHeaderCellDef>Fecha</th>
+          <td mat-cell *matCellDef="let a">{{ a.registration_date | date:'dd/MM/yyyy' }}</td>
+        </ng-container>
+        <ng-container matColumnDef="estado">
+          <th mat-header-cell *matHeaderCellDef>Estado</th>
+          <td mat-cell *matCellDef="let a">
+            <span class="status-pill" [class.status-active]="a.status === 'active'">{{ a.status }}</span>
+          </td>
+        </ng-container>
+        <tr mat-header-row *matHeaderRowDef="['barrio','descripcion','fecha','estado']"></tr>
+        <tr mat-row *matRowDef="let row; columns: ['barrio','descripcion','fecha','estado']"></tr>
+      </table>
+
+      @if (!loading() && !recentAnnotations().length) {
+        <div class="empty-state"><mat-icon>info</mat-icon> No hay anotaciones registradas</div>
+      }
+    </div>
+
+    <div class="dash-card">
+      <div class="card-header">
+        <mat-icon class="card-icon">donut_large</mat-icon>
+        <div>
+          <h3>Funcionarios por entidad</h3>
+          <p>Distribución del personal institucional</p>
+        </div>
+      </div>
+      @if (pieChart) {
+        <app-pie-chart [report]="pieChart" />
+      } @else if (!loading()) {
+        <div class="empty-state"><mat-icon>info</mat-icon> Sin datos suficientes</div>
+      }
+    </div>
+
   </div>
-  <div class="col-span-12 lg:col-span-4">
-    <app-recent-transactions></app-recent-transactions>
+
+  <!-- ── Fila 4: Estado general ────────────────────────────── -->
+  <div class="row-4">
+
+    <div class="dash-card status-card">
+      <div class="card-header">
+        <mat-icon class="card-icon">people_alt</mat-icon>
+        <div>
+          <h3>Estado de ciudadanos</h3>
+          <p>{{ activeCitizens() }} activos · {{ inactiveCitizens() }} inactivos</p>
+        </div>
+        <span class="pct-badge pct-blue">{{ citizenPct() }}% activos</span>
+      </div>
+      <div class="progress-bar-track">
+        <div class="progress-bar-fill fill-blue" [style.width.%]="citizenPct()"></div>
+      </div>
+      <div class="status-pills">
+        <div class="status-block">
+          <span class="status-dot dot-active"></span>
+          <span class="status-count">{{ activeCitizens() }}</span>
+          <span class="status-name">Activos</span>
+        </div>
+        <div class="status-block">
+          <span class="status-dot dot-inactive"></span>
+          <span class="status-count">{{ inactiveCitizens() }}</span>
+          <span class="status-name">Inactivos</span>
+        </div>
+        <div class="status-block">
+          <span class="status-dot dot-total"></span>
+          <span class="status-count">{{ totalCitizens() }}</span>
+          <span class="status-name">Total</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="dash-card status-card">
+      <div class="card-header">
+        <mat-icon class="card-icon">manage_accounts</mat-icon>
+        <div>
+          <h3>Estado de funcionarios</h3>
+          <p>{{ activeOfficials() }} activos · {{ inactiveOfficials() }} inactivos</p>
+        </div>
+        <span class="pct-badge pct-green">{{ officialPct() }}% activos</span>
+      </div>
+      <div class="progress-bar-track">
+        <div class="progress-bar-fill fill-green" [style.width.%]="officialPct()"></div>
+      </div>
+      <div class="status-pills">
+        <div class="status-block">
+          <span class="status-dot dot-active"></span>
+          <span class="status-count">{{ activeOfficials() }}</span>
+          <span class="status-name">Activos</span>
+        </div>
+        <div class="status-block">
+          <span class="status-dot dot-inactive"></span>
+          <span class="status-count">{{ inactiveOfficials() }}</span>
+          <span class="status-name">Inactivos</span>
+        </div>
+        <div class="status-block">
+          <span class="status-dot dot-total"></span>
+          <span class="status-count">{{ activeOfficials() + inactiveOfficials() }}</span>
+          <span class="status-name">Total</span>
+        </div>
+      </div>
+    </div>
+
   </div>
-  <div class="col-span-12 lg:col-span-8">
-    <app-top-projects></app-top-projects>
-  </div>
+
 </div>

@@ -2,6 +2,8 @@
   <apx-chart
     [series]="chartOptions.series"
     [chart]="chartOptions.chart"
+    [colors]="chartOptions.colors"
+    [fill]="chartOptions.fill"
     [xaxis]="chartOptions.xaxis || {}"
     [yaxis]="chartOptions.yaxis || {}"
     [dataLabels]="chartOptions.dataLabels || {}"
@@ -9,10 +11,11 @@
     [legend]="chartOptions.legend || {}"
     [tooltip]="chartOptions.tooltip || {}"
     [grid]="chartOptions.grid || {}"
+    [states]="chartOptions.states || {}"
     [responsive]="chartOptions.responsive || []"
   ></apx-chart>
 } @else {
   <div class="empty-chart">
-    No hay datos disponibles para la gráfica de barras.
+    No hay datos disponibles.
   </div>
 }

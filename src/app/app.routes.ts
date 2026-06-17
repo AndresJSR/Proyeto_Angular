@@ -70,6 +70,7 @@ export const routes: Routes = [
   },
   {
     path: '**',
-    redirectTo: 'authentication/login',
+    loadComponent: () =>
+      import('./pages/not-found/not-found.component').then((m) => m.NotFoundComponent),
   },
 ];

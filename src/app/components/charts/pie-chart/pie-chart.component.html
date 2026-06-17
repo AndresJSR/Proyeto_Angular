@@ -2,15 +2,19 @@
   <apx-chart
     [series]="chartOptions.series"
     [chart]="chartOptions.chart"
+    [colors]="chartOptions.colors"
     [labels]="chartOptions.labels || []"
-    [dataLabels]="chartOptions.dataLabels || {}"
     [fill]="chartOptions.fill || {}"
+    [stroke]="chartOptions.stroke || {}"
+    [plotOptions]="chartOptions.plotOptions || {}"
+    [dataLabels]="chartOptions.dataLabels || {}"
     [legend]="chartOptions.legend || {}"
     [tooltip]="chartOptions.tooltip || {}"
+    [states]="chartOptions.states || {}"
     [responsive]="chartOptions.responsive || []"
   ></apx-chart>
 } @else {
   <div class="empty-chart">
-    No hay datos disponibles para la gráfica circular.
+    No hay datos disponibles.
   </div>
 }

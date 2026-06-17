@@ -1,32 +1,6 @@
 import { Component, Input, OnChanges, SimpleChanges } from '@angular/core';
-import {
-  ApexAxisChartSeries,
-  ApexChart,
-  ApexDataLabels,
-  ApexGrid,
-  ApexLegend,
-  ApexPlotOptions,
-  ApexResponsive,
-  ApexTooltip,
-  ApexXAxis,
-  ApexYAxis,
-  NgApexchartsModule,
-} from 'ng-apexcharts';
-
+import { NgApexchartsModule } from 'ng-apexcharts';
 import { BarReportResponse } from '../../../models/report-response.model';
-
-export type BarChartOptions = {
-  series: ApexAxisChartSeries;
-  chart: ApexChart;
-  xaxis: ApexXAxis;
-  yaxis: ApexYAxis;
-  dataLabels: ApexDataLabels;
-  plotOptions: ApexPlotOptions;
-  legend: ApexLegend;
-  tooltip: ApexTooltip;
-  grid: ApexGrid;
-  responsive: ApexResponsive[];
-};
 
 @Component({
   selector: 'app-bar-chart',
@@ -37,104 +11,80 @@ export type BarChartOptions = {
 export class BarChartComponent implements OnChanges {
   @Input() report: BarReportResponse | null = null;
 
-  public chartOptions: Partial<BarChartOptions> = {};
+  public chartOptions: any = {};
   public hasData = false;
 
   ngOnChanges(changes: SimpleChanges): void {
-    if (changes['report']) {
-      this.setChartOptions();
-    }
+    if (changes['report']) this.buildChart();
   }
 
-  private setChartOptions(): void {
-    if (!this.report || !this.report.series.length) {
-      this.chartOptions = {};
-      this.hasData = false;
-      return;
-    }
+  private buildChart(): void {
+    if (!this.report?.series?.length) { this.hasData = false; return; }
+    this.hasData = this.report.series.some(s => s.data.length > 0);
+    if (!this.hasData) return;
 
-    this.hasData = this.report.series.some((serie) => serie.data.length > 0);
-
-    if (!this.hasData) {
-      this.chartOptions = {};
-      return;
-    }
-
-    const categories = this.getCategories();
+    const categories  = this.report.labels?.length
+      ? this.report.labels
+      : this.report.series[0].data.map((_, i) => `Item ${i + 1}`);
     const isHorizontal = categories.length > 6;
 
     this.chartOptions = {
       series: this.report.series,
       chart: {
         type: 'bar',
-        height: isHorizontal ? 460 : 380,
-        toolbar: {
-          show: true,
-        },
+        height: isHorizontal ? 420 : 340,
+        toolbar: { show: false },
+        fontFamily: 'inherit',
+        animations: { enabled: true, easing: 'easeinout', speed: 500 },
       },
-      xaxis: {
-        categories,
-      },
-      yaxis: {
-        title: {
-          text: 'Valor',
-        },
-      },
-      dataLabels: {
-        enabled: false,
-      },
+      colors: ['#3b82f6'],
       plotOptions: {
         bar: {
           horizontal: isHorizontal,
-          columnWidth: '45%',
-          borderRadius: 4,
+          columnWidth: '48%',
+          barHeight: '55%',
+          borderRadius: 6,
+          borderRadiusApplication: 'end',
+          distributed: false,
         },
       },
-      legend: {
-        position: 'top',
-        horizontalAlign: 'right',
+      dataLabels: { enabled: false },
+      fill: { opacity: 1 },
+      xaxis: {
+        categories,
+        axisBorder: { show: false },
+        axisTicks: { show: false },
+        labels: {
+          style: { fontSize: '12px', fontWeight: 500, colors: '#94a3b8' },
+          trim: true,
+          maxHeight: 72,
+        },
       },
-      tooltip: {
-        y: {
-          formatter: (value: number) => `${value}`,
+      yaxis: {
+        labels: {
+          style: { fontSize: '12px', colors: '#94a3b8' },
         },
       },
       grid: {
-        borderColor: '#e5e7eb',
+        borderColor: '#f1f5f9',
+        strokeDashArray: 3,
+        xaxis: { lines: { show: isHorizontal } },
+        yaxis: { lines: { show: !isHorizontal } },
+        padding: { top: 4, right: 8, bottom: 0, left: 8 },
       },
-      responsive: [
-        {
-          breakpoint: 768,
-          options: {
-            chart: {
-              height: 360,
-            },
-            plotOptions: {
-              bar: {
-                horizontal: true,
-              },
-            },
-            legend: {
-              position: 'bottom',
-            },
-          },
+      legend: { show: false },
+      tooltip: {
+        theme: 'light',
+        style: { fontSize: '13px' },
+        y: { formatter: (v: number) => `${v} anotaciones` },
+      },
+      responsive: [{
+        breakpoint: 768,
+        options: {
+          chart: { height: 300 },
+          plotOptions: { bar: { horizontal: true } },
         },
-      ],
+      }],
     };
-  }
-
-  private getCategories(): string[] {
-    if (this.report?.labels?.length) {
-      return this.report.labels;
-    }
-
-    const totalDataPoints = Math.max(
-      ...(this.report?.series.map((serie) => serie.data.length) ?? [0]),
-    );
-
-    return Array.from(
-      { length: totalDataPoints },
-      (_, index) => `Dato ${index + 1}`,
-    );
   }
 }

@@ -6,7 +6,9 @@ import {
 import {
   provideHttpClient,
   withInterceptorsFromDi,
+  HTTP_INTERCEPTORS,
 } from '@angular/common/http';
+import { HttpErrorInterceptor } from './interceptors/http-error.interceptor';
 import { routes } from './app.routes';
 import {
   provideRouter,
@@ -45,6 +47,7 @@ export const appConfig: ApplicationConfig = {
       withComponentInputBinding()
     ),
     provideHttpClient(withInterceptorsFromDi()),
+    { provide: HTTP_INTERCEPTORS, useClass: HttpErrorInterceptor, multi: true },
     provideAnimationsAsync(),
 
     provideFirebaseApp(() => initializeApp(environment.firebase)),
