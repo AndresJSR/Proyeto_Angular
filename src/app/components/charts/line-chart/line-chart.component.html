@@ -1,0 +1,19 @@
+@if (hasData && chartOptions.series && chartOptions.chart) {
+  <apx-chart
+    [series]="chartOptions.series"
+    [chart]="chartOptions.chart"
+    [xaxis]="chartOptions.xaxis || {}"
+    [yaxis]="chartOptions.yaxis || {}"
+    [dataLabels]="chartOptions.dataLabels || {}"
+    [stroke]="chartOptions.stroke || {}"
+    [markers]="chartOptions.markers || {}"
+    [legend]="chartOptions.legend || {}"
+    [tooltip]="chartOptions.tooltip || {}"
+    [grid]="chartOptions.grid || {}"
+    [responsive]="chartOptions.responsive || []"
+  ></apx-chart>
+} @else {
+  <div class="empty-chart">
+    No hay datos disponibles para la gráfica de líneas.
+  </div>
+}

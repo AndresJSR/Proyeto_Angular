@@ -1,0 +1,43 @@
+<section class="reportes-page">
+  <div class="page-header">
+    <div>
+      <span class="eyebrow">Módulo 5</span>
+      <h1>Reportes inteligentes</h1>
+      <p>
+        Consulta información del sistema en lenguaje natural y visualiza la
+        respuesta como gráfica circular, barras o líneas sin repetir la
+        pregunta.
+      </p>
+    </div>
+
+    <div class="header-actions">
+      <button
+        type="button"
+        mat-button
+        [disabled]="loading"
+        (click)="clearReport()"
+      >
+        Limpiar
+      </button>
+    </div>
+  </div>
+
+  <div class="page-grid">
+    <div class="left-column">
+      <app-report-chat
+        [loading]="loading"
+        [messages]="messages"
+        (querySubmit)="onQuerySubmit($event)"
+      ></app-report-chat>
+    </div>
+
+    <div class="right-column">
+      <app-report-stats [report]="displayedReport ?? report"></app-report-stats>
+
+      <app-report-chart
+        [report]="report"
+        (displayedReportChange)="onDisplayedReportChange($event)"
+      ></app-report-chart>
+    </div>
+  </div>
+</section>

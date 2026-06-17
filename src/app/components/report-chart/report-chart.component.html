@@ -1,0 +1,48 @@
+<section class="report-chart-card">
+  <div class="chart-header">
+    <div>
+      <h3>Visualización del reporte</h3>
+      <p>{{ chartDescription }}</p>
+    </div>
+
+    <span class="chart-badge">
+      {{ chartTypeLabel }}
+    </span>
+  </div>
+
+  <div class="chart-controls">
+    @for (option of chartOptions; track option.value) {
+      <button
+        type="button"
+        class="chart-control"
+        [class.active]="selectedChartType === option.value"
+        [disabled]="!report"
+        (click)="selectChartType(option.value)"
+      >
+        {{ option.label }}
+      </button>
+    }
+  </div>
+
+  <div class="chart-body">
+    @if (!displayedReport) {
+      <div class="empty-chart">
+        Escribe una consulta para generar un reporte visual.
+      </div>
+    } @else {
+      @switch (displayedReport.type) {
+        @case ('pie') {
+          <app-pie-chart [report]="pieReport"></app-pie-chart>
+        }
+
+        @case ('bar') {
+          <app-bar-chart [report]="barReport"></app-bar-chart>
+        }
+
+        @case ('line') {
+          <app-line-chart [report]="lineReport"></app-line-chart>
+        }
+      }
+    }
+  </div>
+</section>

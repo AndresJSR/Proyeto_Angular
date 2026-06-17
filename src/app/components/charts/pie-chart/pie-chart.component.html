@@ -1,0 +1,16 @@
+@if (hasData && chartOptions.series && chartOptions.chart) {
+  <apx-chart
+    [series]="chartOptions.series"
+    [chart]="chartOptions.chart"
+    [labels]="chartOptions.labels || []"
+    [dataLabels]="chartOptions.dataLabels || {}"
+    [fill]="chartOptions.fill || {}"
+    [legend]="chartOptions.legend || {}"
+    [tooltip]="chartOptions.tooltip || {}"
+    [responsive]="chartOptions.responsive || []"
+  ></apx-chart>
+} @else {
+  <div class="empty-chart">
+    No hay datos disponibles para la gráfica circular.
+  </div>
+}

@@ -1,0 +1,80 @@
+<section class="report-stats-card">
+  <div class="stats-header">
+    <div>
+      <h3>Estadísticas del reporte</h3>
+      <p>
+        @if (selectedView === "user") {
+          Resumen interpretativo de los datos consultados.
+        } @else {
+          Información técnica de la gráfica generada.
+        }
+      </p>
+    </div>
+
+    <div class="stats-tabs">
+      <button
+        type="button"
+        class="stats-tab"
+        [class.active]="selectedView === 'user'"
+        (click)="selectView('user')"
+      >
+        Usuario
+      </button>
+
+      <button
+        type="button"
+        class="stats-tab"
+        [class.active]="selectedView === 'technical'"
+        (click)="selectView('technical')"
+      >
+        Técnica
+      </button>
+    </div>
+  </div>
+
+  @if (selectedView === "user") {
+    <section class="stats-grid">
+      <article class="stat-card primary">
+        <span class="stat-label">Total</span>
+        <strong>{{ stats.user.total | number: "1.0-2" }}</strong>
+      </article>
+
+      <article class="stat-card">
+        <span class="stat-label">Promedio</span>
+        <strong>{{ stats.user.average | number: "1.0-2" }}</strong>
+      </article>
+
+      <article class="stat-card">
+        <span class="stat-label">Valor máximo</span>
+        <strong>{{ stats.user.maxValue | number: "1.0-2" }}</strong>
+      </article>
+
+      <article class="stat-card">
+        <span class="stat-label">Grupo principal</span>
+        <strong>{{ stats.user.mainGroup }}</strong>
+      </article>
+    </section>
+  } @else {
+    <section class="stats-grid">
+      <article class="stat-card">
+        <span class="stat-label">Tipo de gráfica</span>
+        <strong>{{ chartTypeLabel }}</strong>
+      </article>
+
+      <article class="stat-card">
+        <span class="stat-label">Series</span>
+        <strong>{{ stats.technical.totalSeries }}</strong>
+      </article>
+
+      <article class="stat-card">
+        <span class="stat-label">Grupos</span>
+        <strong>{{ stats.technical.totalGroups }}</strong>
+      </article>
+
+      <article class="stat-card">
+        <span class="stat-label">Datos</span>
+        <strong>{{ stats.technical.totalDataPoints }}</strong>
+      </article>
+    </section>
+  }
+</section>

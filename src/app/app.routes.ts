@@ -1,9 +1,9 @@
 import { Routes } from '@angular/router';
 
-import { BlankComponent } from './layouts/blank/blank.component';
-import { FullComponent } from './layouts/full/full.component';
 import { AuthenticatedGuard } from './guards/authenticated.guard';
 import { NoAuthenticatedGuard } from './guards/no-authenticated.guard';
+import { BlankComponent } from './layouts/blank/blank.component';
+import { FullComponent } from './layouts/full/full.component';
 
 export const routes: Routes = [
   {
@@ -32,6 +32,13 @@ export const routes: Routes = [
         path: 'cuenta',
         loadChildren: () =>
           import('./pages/cuenta/cuenta.routes').then((m) => m.CuentaRoutes),
+      },
+      {
+        path: 'reportes',
+        loadChildren: () =>
+          import('./pages/reportes-page/reportes.routes').then(
+            (m) => m.ReportesRoutes,
+          ),
       },
     ],
   },

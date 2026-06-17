@@ -1,0 +1,88 @@
+<section class="report-chat-card">
+  <div class="chat-header">
+    <div>
+      <h3>Consulta inteligente</h3>
+      <p>Escribe una pregunta en lenguaje natural para generar un reporte.</p>
+    </div>
+  </div>
+
+  <div class="examples">
+    @for (example of examples; track example) {
+      <button
+        type="button"
+        class="example-chip"
+        [disabled]="loading"
+        (click)="useExample(example)"
+      >
+        {{ example }}
+      </button>
+    }
+  </div>
+
+  <div class="messages">
+    @if (!messages.length) {
+      <div class="empty-chat">
+        Aún no hay consultas. Prueba con una pregunta como:
+        <strong>“Cantidad de anotaciones por categoría”</strong>
+      </div>
+    }
+
+    @for (message of messages; track message.id) {
+      <div
+        class="message"
+        [class.message-user]="message.role === 'user'"
+        [class.message-system]="message.role === 'system'"
+        [class.message-error]="message.error"
+      >
+        <div class="message-content">
+          <span class="message-role">
+            {{ message.role === 'user' ? 'Tú' : 'Sistema' }}
+          </span>
+
+          <p>{{ message.text }}</p>
+
+          <small>
+            {{ message.createdAt | date: 'shortTime' }}
+          </small>
+        </div>
+      </div>
+    }
+
+    @if (loading) {
+      <div class="message message-system">
+        <div class="message-content">
+          <span class="message-role">Sistema</span>
+          <p>Generando reporte...</p>
+        </div>
+      </div>
+    }
+  </div>
+
+  <form class="chat-form" (ngSubmit)="submitQuery()">
+    <mat-form-field appearance="outline" class="w-full">
+      <mat-label>Pregunta para el reporte</mat-label>
+
+      <textarea
+        matInput
+        rows="3"
+        name="query"
+        [(ngModel)]="query"
+        [disabled]="loading"
+        placeholder="Ej: cantidad de anotaciones por categoría"
+      ></textarea>
+    </mat-form-field>
+
+    <button
+      type="submit"
+      mat-flat-button
+      color="primary"
+      [disabled]="loading || !query.trim()"
+    >
+      @if (loading) {
+        Consultando...
+      } @else {
+        Generar reporte
+      }
+    </button>
+  </form>
+</section>

@@ -1,0 +1,169 @@
+:host {
+  display: block;
+  width: 100%;
+}
+
+.report-chat-card {
+  width: 100%;
+  padding: 24px;
+  border-radius: 18px;
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  box-shadow: 0 8px 24px rgba(15, 23, 42, 0.06);
+}
+
+.chat-header {
+  margin-bottom: 16px;
+
+  h3 {
+    margin: 0 0 6px;
+    font-size: 20px;
+    font-weight: 700;
+    color: #0f172a;
+  }
+
+  p {
+    margin: 0;
+    color: #64748b;
+    font-size: 14px;
+  }
+}
+
+.examples {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 18px;
+}
+
+.example-chip {
+  border: 1px solid #bfdbfe;
+  background: #eff6ff;
+  color: #1d4ed8;
+  border-radius: 999px;
+  padding: 7px 12px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+
+  &:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
+}
+
+.messages {
+  max-height: 340px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-bottom: 18px;
+  padding-right: 4px;
+}
+
+.empty-chat {
+  padding: 18px;
+  border-radius: 12px;
+  background: #f8fafc;
+  border: 1px dashed #cbd5e1;
+  color: #64748b;
+  font-size: 14px;
+
+  strong {
+    display: block;
+    margin-top: 6px;
+    color: #0f172a;
+  }
+}
+
+.message {
+  display: flex;
+}
+
+.message-user {
+  justify-content: flex-end;
+
+  .message-content {
+    background: #2563eb;
+    color: #ffffff;
+  }
+
+  .message-role,
+  small {
+    color: #dbeafe;
+  }
+}
+
+.message-system {
+  justify-content: flex-start;
+
+  .message-content {
+    background: #f1f5f9;
+    color: #0f172a;
+  }
+}
+
+.message-error {
+  .message-content {
+    background: #fef2f2;
+    color: #991b1b;
+    border: 1px solid #fecaca;
+  }
+
+  .message-role,
+  small {
+    color: #991b1b;
+  }
+}
+
+.message-content {
+  max-width: 85%;
+  padding: 12px 14px;
+  border-radius: 14px;
+
+  p {
+    margin: 4px 0 6px;
+    font-size: 14px;
+    line-height: 1.4;
+  }
+
+  small {
+    font-size: 11px;
+  }
+}
+
+.message-role {
+  display: block;
+  font-size: 12px;
+  font-weight: 700;
+  color: #475569;
+}
+
+.chat-form {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+
+  button {
+    align-self: flex-end;
+  }
+}
+
+.w-full {
+  width: 100%;
+}
+
+@media (max-width: 768px) {
+  .report-chat-card {
+    padding: 18px;
+  }
+
+  .message-content {
+    max-width: 100%;
+  }
+
+  .chat-form button {
+    width: 100%;
+  }
+}
